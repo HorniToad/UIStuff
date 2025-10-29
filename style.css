@@ -1,0 +1,129 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow:hidden;
+    background-image: url("background.jpg");
+}
+
+/* Boxes */
+/* Grid Boxes*/
+.gridBox {
+    display: grid;
+}
+
+.gridBox95 {
+    display: grid;
+    width: 95%;
+    height: 95%;
+}
+
+.gridBoxFull {
+    display: grid;
+    width: 100%;
+    height: 100%;
+}
+
+.gridBoxCenter {
+    display: grid;
+    align-self: center;
+    justify-self: center;
+}
+
+.gridBoxCenter95 {
+    display: grid;
+    align-self: center;
+    justify-self: center;
+    width: 95%;
+    height: 95%;
+}
+
+.gridBoxCenterFull {
+    display: grid;
+    align-self: center;
+    justify-self: center;
+    width:100%;
+    height: 100%;
+}
+
+.gridBoxDualRow {
+    display: grid;
+    grid-template-rows: 50% 50%;
+}
+
+.gridBoxDualColumn {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+/* Flex Boxes */
+.flexBoxHorizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.flexBoxVertical {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scroll Boxes */
+.scrollBox {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    overflow:hidden;
+    position: relative;
+}
+
+.scrollBoxInner {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  overflow-y: scroll;
+}
+
+/* Text Boxes */
+.textBoxCenter {
+    text-align: center;
+}
+
+.textBoxLeft {
+    text-align: left;
+}
+
+.textBoxRight {
+    text-align: right;
+}
+
+
+/* Primary UI */
+#mainBox {
+    width: 100vw;
+    height: 100vh;
+    grid-template-rows: 10% 90%;
+}
+
+#topBoxLeft {
+    flex: 15;
+    background: darkslateblue;
+    border: solid;
+    border-width: 0px 5px 0px 0px;
+    border-radius: 10px 0px 0px 0px;
+}
+
+#topBoxRight {
+    flex: 85;
+    background: mediumpurple;
+}
+
+#bottomBoxLeft {
+    flex: 15;
+    background:darkslateblue;
+    width: 100%;
+    height: 100%;
+}
+
+#bottomBoxRight {
+    flex: 85;
+}
