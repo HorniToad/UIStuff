@@ -5,51 +5,135 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doll Inc</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
   <div class="gridBoxDualRow" id="mainBox">
     <div class="flexBoxHorizontal">
       <div class="gridBox" id="topBoxLeft">
-        <div class="gridBoxCenter">Dollmaker Inc</div>
+        <div class="gridBoxCenter">Doll Inc</div>
       </div>
       <div class="gridBox" id="topBoxRight"></div>
     </div>
     <div class="flexBoxHorizontal">
+      <!-- Left Stat Container -->
       <div class="gridBox" id="bottomBoxLeft">
         <div class="gridBoxCenter95">
-          <div class="gridBoxCenterFull">
+          <div class="blockBoxFullCenter">
+            <div class="slotContainerBlank" id="dateStatContainer">
+                <div class="gridBoxDualRow">
+                    <div class="gridBox">
+                      <div class="textBoxCenter">January 1st 2100</div>
+                    </div>
+                    <div class="gridBox">
+                      <div class="progressBar">
+                        <div class="progressBarProgress"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
             <div class="scrollBox">
               <div class="scrollBoxInner">
                 <div class="gridBox">
                   <div class="gridBoxCenterFull">
-                    <div class="gridBoxCenter95">
-                     <div class="gridBoxDualColumn">
-                        <div class="textBoxLeft">
-                          <p>Date:</p>
+                      <!-- Primary Stats Container -->
+                      <div class="hideBoxOuter" id="primaryStatContainer">
+                        <div class="hideBtn">Primary Stats</div>
+                          <div class="hideBoxInner">
+                            <div class="gridBoxCenter95">
+                                <!-- Current Cash Stat -->
+                                <div class="gridBoxDualColumn">
+                                    <div class="textBoxLeft">
+                                      <p>Cash:</p>
+                                    </div>
+                                    <div class="textBoxRight">
+                                      <p>1000</p>
+                                    </div>
+                                </div>
+                                <!-- Capacity Stat -->
+                                <div class="gridBoxDualColumn">
+                                  <div class="textBoxLeft">
+                                    <p>Capacity:</p>
+                                  </div>
+                                  <div class="textBoxRight">
+                                    <p>0/10</p>
+                                  </div>
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                      <!-- Research Stat Container -->
+                      <div class="hideBoxOuter" id="researchStatContainer">
+                        <div class="hideBtn">Research: </div>
+                        <div class="hideBoxInner">
+                          <div class="gridBoxCenter95">
+                            <div class="slotContainerBorder">
+                              <div class="gridBoxDualRow">
+                                <div class="gridBoxDualColumn">
+                                  <div class="textBoxLeft">
+                                    Name
+                                  </div>
+                                  <div class="textBoxRight"></div>
+                                </div>
+                                <div class="gridBox">
+                                  <div class="progressBar">
+                                    <div class="progressBarProgress"></div>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="textBoxCenter">
-                          <p>January 1st 2100</p>
+                      </div>
+                      <!-- Current Doll Stat Container -->
+                      <div class="hideBoxOuter" id="dollStatContainer">
+                        <div class="hideBtn">Current Dolls:</div>
+                        <div class="hideBoxInner">
+                          <div class="gridBoxCenter95">
+                            <div class="slotContainerBorder">
+                              <div class="gridBoxDualRow">
+                                <div class="gridBoxDualColumn">
+                                  <div class="textBoxLeft">
+                                    Name
+                                  </div>
+                                  <div class="textBoxRight">
+                                    Idle
+                                  </div>
+                                </div>
+                                <div class="gridBox">
+                                  <div class="progressBar">
+                                    <div class="progressBarProgress"></div>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Building Stat Container -->
+                      <div class="hideBoxOuter" id="buildingStatContainer">
+                        <div class="hideBtn">Buildings: </div>
+                        <div class="hideBoxInner">
+                          <div class="gridBoxCenter95">
+                             <div class="slotContainerBorder">
+                              <div class="gridBoxDualRow">
+                                <div class="gridBoxDualColumn">
+                                  <div class="textBoxLeft">
+                                    Name
+                                  </div>
+                                  <div class="textBoxRight">Occupant</div>
+                                </div>
+                                <div class="gridBox">
+                                  <div class="progressBar">
+                                    <div class="progressBarProgress"></div>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div class="gridBoxDualColumn">
-                        <div class="textBoxLeft">
-                          <p>Cash:</p>
-                        </div>
-                        <div class="textBoxCenter">
-                          <p>1000</p>
-                        </div>
-                      </div>
-
-                      <div class="gridBoxDualColumn">
-                        <div class="textBoxLeft">
-                          <p>Capacity:</p>
-                        </div>
-                        <div class="textBoxCenter">
-                          <p>0/10</p>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -57,9 +141,12 @@
           </div>
         </div>
       </div>
+
+      <!-- Right Primary Container -->
       <div class="gridBox" id="bottomBoxRight"></div>
     </div>
   </div>
 </body>
+<script src="script.js"></script>
 </html>
 

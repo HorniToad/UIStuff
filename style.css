@@ -1,3 +1,16 @@
+::-webkit-scrollbar {
+width: 0.5em; /* Scales with zoom */
+}
+
+::-webkit-scrollbar-thumb {
+background: mediumpurple;
+border-radius: 0.5em; /* Scales with zoom */
+}
+
+html {
+font-size: 1vw;
+}
+
 body {
     width: 100vw;
     height: 100vh;
@@ -5,8 +18,23 @@ body {
     background-image: url("background.jpg");
 }
 
-/* Boxes */
-/* Grid Boxes*/
+/* Block Boxes */
+.blockBox {
+    display: block;
+}
+
+.blockBoxFull {
+
+}
+
+.blockBoxFullCenter {
+  display: block;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  height: 100%;
+}
+/*Grid Boxes*/
 .gridBox {
     display: grid;
 }
@@ -47,11 +75,15 @@ body {
 
 .gridBoxDualRow {
     display: grid;
+    height:100%;
+    width:100%;
     grid-template-rows: 50% 50%;
 }
 
 .gridBoxDualColumn {
     display: grid;
+    height: 100%;
+    width: 100%;
     grid-template-columns: 50% 50%;
 }
 
@@ -64,6 +96,45 @@ body {
 .flexBoxVertical {
     display: flex;
     flex-direction: column;
+}
+
+/* Progress Boxes */
+.progressBar {
+    display: grid;
+    background: red;
+    width: 100%;
+    height: 100%;
+    border: 1px;
+    border-color: white;
+    border-radius: 10px;
+    overflow: clip;
+    margin: auto;
+    transition: width 0.3s ease;
+}
+
+.progressBarProgress {
+    background: green;
+    overflow: clip;
+}
+
+/*Slot Containers */
+
+.slotContainerBorder {
+    height: 8vh;
+    border:solid;
+    border-color: white;
+    border-radius: 10px;
+    background: white;
+    padding: 1%;
+}
+
+.slotContainerBorder:hover {
+    border-color: blue;
+}
+
+.slotContainerBlank {
+    height: 8vh;
+    padding: 1%;
 }
 
 /* Scroll Boxes */
@@ -96,8 +167,30 @@ body {
     text-align: right;
 }
 
+/* VisibilityBoxes */
+.hideBoxOuter {
+    padding-bottom: 1vh;
+}
+
+.hideBoxInner{
+}
+
+.hideBtn {
+    padding-bottom: 0.5vh;
+}
 
 /* Primary UI */
+#bottomBoxLeft {
+    flex: 15;
+    background:darkslateblue;
+    width: 100%;
+    height: 100%;
+}
+
+#bottomBoxRight {
+    flex: 85;
+}
+
 #mainBox {
     width: 100vw;
     height: 100vh;
@@ -115,15 +208,4 @@ body {
 #topBoxRight {
     flex: 85;
     background: mediumpurple;
-}
-
-#bottomBoxLeft {
-    flex: 15;
-    background:darkslateblue;
-    width: 100%;
-    height: 100%;
-}
-
-#bottomBoxRight {
-    flex: 85;
 }
