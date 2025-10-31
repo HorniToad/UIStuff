@@ -1,5 +1,5 @@
 ::-webkit-scrollbar {
-width: 0.5em; /* Scales with zoom */
+width: 0.25em; /* Scales with zoom */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -34,6 +34,7 @@ body {
   width: 100%;
   height: 100%;
 }
+
 /*Grid Boxes*/
 .gridBox {
     display: grid;
@@ -120,7 +121,7 @@ body {
 /*Slot Containers */
 
 .slotContainerBorder {
-    height: 8vh;
+    height: 5vh;
     border:solid;
     border-color: white;
     border-radius: 10px;
@@ -133,7 +134,7 @@ body {
 }
 
 .slotContainerBlank {
-    height: 8vh;
+    height: 5vh;
     padding: 1%;
 }
 
