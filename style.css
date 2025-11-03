@@ -15,8 +15,11 @@ body {
     width: 100vw;
     height: 100vh;
     overflow:hidden;
-    background-image: url("background.jpg");
+    background-image: url("images/background.jpg");
+    background-repeat: no-repeat;
 }
+
+
 
 /* Block Boxes */
 .blockBox {
@@ -74,11 +77,35 @@ body {
     height: 100%;
 }
 
+/*Hidden Grid Boxes */
+
+.gridBoxHide {
+    display: grid;
+    visibility: hidden;
+}
+
+.gridBoxHideFull {
+    display: grid;
+    width:100%;
+    height: 100%;
+    visibility: hidden;
+}
+
+.gridBoxHide95 {
+    display: grid;
+    width: 95%;
+    height: 95%;
+    visibility: hidden;
+}
+
+/* Grid Box Row / Columns */
+
 .gridBoxDualRow {
     display: grid;
     height:100%;
     width:100%;
-    grid-template-rows: 50% 50%;
+    grid-template-rows: 49% 49%
+    gap: 1%;
 }
 
 .gridBoxDualColumn {
@@ -97,6 +124,26 @@ body {
 .flexBoxVertical {
     display: flex;
     flex-direction: column;
+}
+
+/* Align Boxes */
+
+.centerAlignBox {
+    display: grid;
+    align-self: center;
+    justify-self: center;
+}
+
+.rightAlignBox {
+    display: grid;
+    align-self: center;
+    justify-self: end;
+}
+
+.leftAlignBox {
+    display: grid;
+    align-self: baseline;
+    justify-self: center;
 }
 
 /* Progress Boxes */
@@ -180,6 +227,74 @@ body {
     padding-bottom: 0.5vh;
 }
 
+/*None Display Boxes */
+
+.noneBox {
+    display: none;
+}
+
+.noneBoxFull {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+/* Absolute Boxes */
+
+.absoluteBox {
+    position: absolute;
+}
+
+.absoluteBoxFull {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* Relative Boxes */
+
+.relativeBox {
+    position: relative;
+}
+
+.relativeBoxFull {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Icon Box */
+
+.iconDiv {
+    display: grid;
+    grid-template-rows: 75% 25%;
+    width: 100%;
+    height: 100%
+}
+
+.iconDiv img {
+    object-fit: fill;
+    width: 80%;
+    height: 80%;
+    justify-self: center;
+    align-self: center;
+}
+
+.iconDiv div {
+    text-align: center;
+    font-size: 1em;
+    background: mediumpurple;
+    border: thin;
+    border-radius: 10px;
+    height: fit-content;
+    width: fit-content;
+    padding-left: 5%;
+    padding-right: 5%;
+    justify-self: center;
+    font-family: monospace;
+    color: white;
+}
+
 /* Primary UI */
 #bottomBoxLeft {
     flex: 15;
@@ -209,4 +324,37 @@ body {
 #topBoxRight {
     flex: 85;
     background: mediumpurple;
+}
+
+/* sceneHome Elements */
+#sceneHome {
+    position: relative;
+}
+
+#baseBox {
+     position: absolute;
+     z-index: 0;
+}
+
+#buildBox {
+    position: absolute;
+    z-index: 1;
+    grid-template-rows: 10% 90%;
+
+    background: white;
+    border:solid;
+    border-radius:10px;
+}
+
+#buildBoxCloseBtn {
+    padding-right: 2%;
+    width: 10%;
+
+}
+
+#buildBoxCloseBtn img {
+  object-fit: fill;
+  width: 25%;
+  justify-self: center;
+  align-self: center;
 }

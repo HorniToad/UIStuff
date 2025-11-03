@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doll Inc</title>
+  <title>Test Inc</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
@@ -11,29 +11,17 @@
   <div class="gridBoxDualRow" id="mainBox">
     <div class="flexBoxHorizontal">
       <div class="gridBox" id="topBoxLeft">
-        <div class="gridBoxCenter">Doll Inc</div>
+        <div class="gridBoxCenter">Test Inc</div>
       </div>
-      <div class="gridBox" id="topBoxRight"></div>
+      <div class="gridBox" id="topBoxRight">
+        <div class="gridBoxCenter">Home</div>
+      </div>
     </div>
     <div class="flexBoxHorizontal">
       <!-- Left Stat Container -->
       <div class="gridBox" id="bottomBoxLeft">
         <div class="gridBoxCenter95">
           <div class="blockBoxFullCenter">
-		<div class="slotContainerBlank">
-			<div class="flexBoxHorizontal">
-			<div class="gridBoxFull">
-				<div class="textBoxCenter">></div>
-			</div>
-
-			<div class="gridBoxFull">
-				<div class="textBoxCenter">>></div>
-			</div>
-			<div class="gridBoxFull">
-				<div class="textBoxCenter">>>></div>
-			</div>
-		</div>
-		</div>
             <div class="slotContainerBlank" id="dateStatContainer">
                 <div class="gridBoxDualRow">
                     <div class="gridBox">
@@ -46,6 +34,20 @@
                     </div>
                 </div>
             </div>
+             <div class="slotContainerBlank">
+            <div class="flexBoxHorizontal">
+            <div class="gridBoxFull">
+                <div class="textBoxCenter">></div>
+            </div>
+
+            <div class="gridBoxFull">
+                <div class="textBoxCenter">>></div>
+            </div>
+            <div class="gridBoxFull">
+                <div class="textBoxCenter">>>></div>
+            </div>
+        </div>
+        </div>
             <div class="scrollBox">
               <div class="scrollBoxInner">
                 <div class="gridBox">
@@ -101,7 +103,7 @@
                       </div>
                       <!-- Current Doll Stat Container -->
                       <div class="hideBoxOuter" id="dollStatContainer">
-                        <div class="hideBtn">Current Dolls:</div>
+                        <div class="hideBtn">Current People:</div>
                         <div class="hideBoxInner">
                           <div class="gridBoxCenter95">
                             <div class="slotContainerBorder">
@@ -129,7 +131,7 @@
                         <div class="hideBtn">Buildings: </div>
                         <div class="hideBoxInner">
                           <div class="gridBoxCenter95">
-                             <div class="slotContainerBorder">
+                            <div class="slotContainerBorder">
                               <div class="gridBoxDualRow">
                                 <div class="gridBoxDualColumn">
                                   <div class="textBoxLeft">
@@ -157,10 +159,30 @@
       </div>
 
       <!-- Right Primary Container -->
-      <div class="gridBox" id="bottomBoxRight"></div>
+      <div class="gridBox" id="bottomBoxRight">
+        <div class="gridBoxCenter95" id="sceneContainer">
+          <div class="gridBoxFull" id="sceneHome">
+            <div class="gridBoxFull" id="baseBox"></div>
+            <div class="noneBoxFull" id="buildBox">
+              <div class="gridBoxFull">
+                <div class="rightAlignBox"  id="buildBoxCloseBtn">
+                  <div class="relativeBox">
+                    <div class="absoluteBox">
+                      <div class="gridBoxCenterFull">
+                        <img id="buildBoxCloseBtn" src="./images/iconX.png"></img>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="gridBoxFull"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
 <script src="script.js"></script>
+
 </html>
 
