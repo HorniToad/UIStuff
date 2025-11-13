@@ -9,14 +9,13 @@ for(let i = 0; i < div.length; i++) {
     })
 }
 
-
-let gameState = []
+let gameState;
 
 $(function gameStateHandler () {
-    let buildingTemplate = {floorSlots: [], buildingSlots: [], buildFocus: false, buildTypeFocus: false, buildItemFocus: false}
+    let scene = document.getElementById("baseBox")
+    let buildingTemplate = {floorSlots: [], buildingSlots: [], buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
 
-    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, custFocus: false, employeeFocus: false, conditionFocus: false, charGen: false, buildings: buildingTemplate, buildingSceneFocus: false}
-
+    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, custFocus: false, employeeFocus: false, conditionFocus: false, charGen: false, buildings: buildingTemplate, currentScene: {current: scene, prior: false } }
 
     gameStartUpHandler();
 
@@ -25,20 +24,23 @@ $(function gameStateHandler () {
 // Start Up Function
 function gameStartUpHandler() {
     buildingSetup();
-
 }
 
 // Building Functions
 
 // Handles variables and building functions
 function buildingSetup() {
-    let slots = 12;
-    let floors = 3;
+    let slots = 20
+    let floors = 5;
 
     let closeBtn = document.getElementById("buildBoxCloseBtn")
     let buildBox = document.getElementById("buildBox")
 
-    hideTarget(closeBtn, buildBox)
+    closeBtn.addEventListener("click", function() {
+        sceneChange();
+    })
+
+    //hideTarget(closeBtn, buildBox)
     baseBoxSetup(slots, floors);
     baseBoxButtonSetup();
 }
@@ -52,7 +54,6 @@ function baseBoxSetup(x, y) {
 
     let target = document.getElementById("sceneHome");
     let focus = target.querySelector(".gridBoxFull")
-
 
     let slotCount = slots / floors;
     let floorCount = 0;
@@ -145,17 +146,164 @@ function baseBoxButtonSetup() {
     console.log(buildingSlots)
     for(let i = 0; i < buildingSlots.length; i++) {
         let focus = document.getElementById(buildingSlots[i].id)
-
+        $(focus).off()
         if(buildingSlots[i].active === false) {
-            $("#" + buildingSlots[i].id).on("click", function() {
-                gameState.buildFocus = buildingSlots[i]
+            $("#" + buildingSlots[i].id).on("click", function buildingSlotClickSetup() {
+                gameState.buildings.buildFocus = buildingSlots[i]
                 console.log(gameState.buildFocus)
-                $("#buildBox").slideDown();
-                $("#buildBox").css({"display": "grid"})
+                buildBoxTypeSetup()
+                buildBoxScrollSetup()
+                buildBtnSetup()
+                let scene = document.getElementById("buildBox")
+                sceneChange(scene, "grid")
+            })
+        }
+        else if(buildingSlots[i].active === true) {
+            $("#" + buildingSlots[i].id).on("click", function buildingSlotClickSetup() {
+                buildingFilter(buildingSlots[i])
             })
         }
     }
 }
+// Setups the building type select box and adds event listeners so you can switch between different building types.
+function buildBoxTypeSetup() {
+
+        let buildBox = document.getElementById("buildBox")
+        let target = buildBox.querySelector(".flexBoxHorizontal");
+
+        clearBox(target)
+
+        for(let i = 0; i < buildingTypes.length; i++) {
+            let container = document.createElement("div");
+            let containerInner = document.createElement("div");
+            let containerText = document.createElement("div");
+
+            container.setAttribute("id", buildingTypes[i].type + "BuildBoxTypeBtn")
+
+            container.setAttribute("class", "gridBoxFull");
+            containerInner.setAttribute("class", "gridBoxCenter75");
+            containerText.setAttribute("class", "gridBoxCenter")
+
+            containerText.innerText = buildingTypes[i].name
+
+            containerInner.style.background = "blue";
+            containerInner.style.border = "solid";
+
+            target.append(container)
+            container.append(containerInner);
+            containerInner.append(containerText)
+
+            containerInner.addEventListener("click", function() {
+                gameState.buildings.buildTypeFocus = container.id.replace("BuildBoxTypeBtn", "")
+                gameState.buildings.buildItemFocus = false
+
+                let oldDesc = document.getElementById("buildBoxDescDiv")
+                clearBox(oldDesc)
+
+                buildBoxScrollSetup();
+            })
+
+        }
+    }
+
+// Sets up the buildBox scroll menu and the btns that fill it. It also adds an event listener to each button so when clicked the gameState object changes buildItemFocus
+function buildBoxScrollSetup() {
+        let target = document.getElementById("buildBoxScrollDiv")
+        clearBox(target)
+
+        let gameStateFocus = gameState.buildings
+
+        if(!gameStateFocus.buildTypeFocus) {
+            gameStateFocus.buildTypeFocus = "Conditioning"
+        }
+        let focus = gameStateFocus.buildTypeFocus.toLowerCase();
+        let focusGroup = $.grep(buildings, function(n) {
+            return n.type === focus
+        })
+
+        if(focusGroup) {
+            for(let i = 0; i < focusGroup.length; i++) {
+                let btn = document.createElement("div");
+                btn.setAttribute("id", "buildBtn" + focusGroup[i].id)
+                btn.setAttribute("class", "gridBoxCenter");
+
+                btn.style.background = "green";
+                btn.style.border = "solid";
+                btn.style.marginBottom = "1vh"
+                btn.style.padding = "1vh";
+
+                let text = document.createElement("div");
+                text.setAttribute("class", "textBoxCenter")
+                text.innerText = focusGroup[i].name
+
+                target.append(btn)
+                btn.append(text);
+
+                btn.addEventListener("click", function() {
+                    if(gameState.buildItemFocus != focusGroup[i] && gameStateFocus.buildItemFocus != false) {
+                        let btn = document.getElementById("buildBtn" + gameStateFocus.buildItemFocus.id)
+                        if(btn) {
+                            btn.style.background = "green"
+                        }
+                    }
+                    gameStateFocus.buildItemFocus = focusGroup[i]
+                    buildSelection();
+                })
+            }
+        }
+    }
+
+// Adds an eventListener to the buildBoxBuildBtn so when clicked it fills the current slot with the selected building stats.
+function buildBtnSetup() {
+    let buildBtn = document.getElementById("buildBoxBuildBtn")
+    $("#" + buildBtn.id).off()
+    $("#" + buildBtn.id).on("click", function() {
+            let selectedSlot = gameState.buildings.buildFocus
+            let selectedBuild = gameState.buildings.buildItemFocus;
+
+            selectedSlot.active = true;
+            selectedSlot.capacity = selectedBuild.capacity
+            selectedSlot.desc = selectedBuild.desc
+            selectedSlot.name = selectedBuild.name;
+            selectedSlot.type = selectedBuild.type;
+            selectedSlot.stat = selectedBuild.statInt;
+            selectedSlot.statName = selectedBuild.stat;
+            selectedSlot.trainable = selectedBuild.trainable;
+
+            let slot = document.getElementById(selectedSlot.id)
+
+            let textBox = slot.querySelector(".gridBoxCenter")
+
+            textBox.innerHTML = selectedBuild.name
+            baseBoxButtonSetup();
+            sceneChange()
+    })
+}
+
+function buildSelection() {
+        let btn = document.getElementById("buildBtn" + gameState.buildings.buildItemFocus.id)
+        console.log(gameState.buildings.buildItemFocus.id)
+        btn.style.background = "red"
+        let desc = document.getElementById("buildBoxDescDiv");
+        desc.innerText = gameState.buildings.buildItemFocus.desc
+        $("#" + btn.id).off();
+}
+
+// Filters between different building options to display the correct sceneHome
+
+function buildingFilter(x) {
+    let target = x;
+    console.log(target)
+
+    if(target.type === "conditioning") {
+        gameState.buildingSceneFocus = target
+        let scene = document.getElementById("buildingSceneBox")
+        sceneChange(scene)
+
+    }
+
+}
+
 
 // Helper Functions
 // Function that sets up a click event on an element and adds allows it to hide another element
@@ -168,17 +316,53 @@ function hideTarget(x, y) {
     })
 }
 
+function clearBox(element)
+{
+    element.innerHTML = "";
+}
+
+function sceneChange(x, y) {
+    let newScene = x;
+    console.log(newScene)
+    if(newScene) {
+        gameState.currentScene.prior = gameState.currentScene.current
+        gameState.currentScene.current = newScene
+    }
+    else if(!newScene) {
+        console.log("I made my way down here")
+        let holder = gameState.currentScene.current
+
+        gameState.currentScene.current = gameState.currentScene.prior
+        gameState.currentScene.prior = holder;
+
+        newScene = gameState.currentScene.current
+    }
+        console.log(newScene.id.toString())
+
+    let oldScene = gameState.currentScene.prior;
+
+    $("#" + oldScene.id).hide();
+    $("#" + newScene.id).show();
+
+    if(y) {
+        $("#" + newScene.id).css({"display": y})
+    }
+
+
+    console.log(gameState)
+}
+
 
 
 //Arrays
 
 //BuildingArrays
 let buildingTypes = [
-    { id: "conditioningSlot", name: "Conditioning", cost: 10, build: 5, unlocked: true, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "kinkTrainer", name: "Kink Trainer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "patientCapacity", name: "Patient Capacity", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "bodyChanger", name: "Body Changer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "trainingSlot", name: "Training", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "conditioningSlot", type: "conditioning", name: "Conditioning", cost: 10, build: 5, unlocked: true, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "kinkTrainer", type: "kink", name: "Kink Trainer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "patientCapacity", type: "capacity", name: "Patient Capacity", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "bodyChanger", type: "modification", name: "Body Changer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "trainingSlot", type: "training", name: "Training", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 ]
 
 let buildings = [
@@ -196,9 +380,9 @@ let buildings = [
 
     { id: "hypnoUpg3", name: "Hypno Headpiece", type: "conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "puppyUpg1", name: "Puppy Pound", type: "training", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
+    { id: "puppyUpg1", name: "Puppy Pound", type: "kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
 
-    { id: "farmUpg1", name: "Farm", type: "training", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
+    { id: "farmUpg1", name: "Farm", type: "kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
 
     { id: "cellUpg1", name: "Cell", type: "capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 

@@ -19,8 +19,6 @@ body {
     background-repeat: no-repeat;
 }
 
-
-
 /* Block Boxes */
 .blockBox {
     display: block;
@@ -49,6 +47,12 @@ body {
     height: 95%;
 }
 
+.gridBox75 {
+    display: grid;
+    width: 75%;
+    height: 75%;
+}
+
 .gridBoxFull {
     display: grid;
     width: 100%;
@@ -67,6 +71,14 @@ body {
     justify-self: center;
     width: 95%;
     height: 95%;
+}
+
+.gridBoxCenter75 {
+    display: grid;
+    align-self: center;
+    justify-self: center;
+    width: 75%;
+    height: 75%;
 }
 
 .gridBoxCenterFull {
@@ -104,8 +116,7 @@ body {
     display: grid;
     height:100%;
     width:100%;
-    grid-template-rows: 49% 49%
-    gap: 1%;
+    grid-template-rows: 50% 50%;
 }
 
 .gridBoxDualColumn {
@@ -140,10 +151,44 @@ body {
     justify-self: end;
 }
 
+.rightAlignBoxFull {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    align-self: center;
+    justify-self: end;
+}
+
 .leftAlignBox {
     display: grid;
     align-self: baseline;
     justify-self: center;
+}
+
+/* Specialty Classes */
+
+/* Border Boxes */
+
+.borderBox {
+    border: solid;
+}
+
+.borderBoxREdge {
+    border: solid;
+    border-radius: 10px;
+}
+
+.borderBoxFull {
+    width: 100%;
+    height: 100%;
+    border: solid;
+}
+
+.borderBoxFullREdge {
+    width: 100%;
+    height: 100%;
+    border: solid;
+    border-radius: 10px;
 }
 
 /* Progress Boxes */
@@ -263,6 +308,13 @@ body {
     height: 100%;
 }
 
+.relativeBoxFullGrid {
+    display: grid;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
 /* Icon Box */
 
 .iconDiv {
@@ -331,30 +383,42 @@ body {
     position: relative;
 }
 
+/* sceneHome - baseBox Elements */
+
 #baseBox {
      position: absolute;
      z-index: 0;
 }
 
+/* sceneHome - buildBox Elements */
 #buildBox {
     position: absolute;
     z-index: 1;
     grid-template-rows: 10% 90%;
-
     background: white;
     border:solid;
     border-radius:10px;
 }
 
 #buildBoxCloseBtn {
-    padding-right: 2%;
-    width: 10%;
-
+    justify-self:end;
+    align-self: center;
 }
 
-#buildBoxCloseBtn img {
+#buildBoxCloseBtn img{
   object-fit: fill;
-  width: 25%;
+  width: 35%;
+  height: 100%;
   justify-self: center;
   align-self: center;
+}
+
+#buildBoxDualRow {
+    grid-template-rows: 25% 73%;
+    gap: 2%;
+}
+
+#buildBoxDualColumn {
+    grid-template-columns: 49.5% 49.5%;
+    gap: 1%;
 }

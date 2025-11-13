@@ -14,7 +14,12 @@
         <div class="gridBoxCenter">Test Inc</div>
       </div>
       <div class="gridBox" id="topBoxRight">
-        <div class="gridBoxCenter">Home</div>
+        <div class="gridBoxDualColumn">
+          <div class="gridBoxFull"></div>
+          <div class="gridBoxFull">
+            <div class="gridBoxCenter">Home</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="flexBoxHorizontal">
@@ -23,7 +28,7 @@
         <div class="gridBoxCenter95">
           <div class="blockBoxFullCenter">
             <div class="slotContainerBlank" id="dateStatContainer">
-                <div class="gridBoxDualRow">
+                <div class="gridBoxFull">
                     <div class="gridBox">
                       <div class="textBoxCenter">January 1st 2100</div>
                     </div>
@@ -163,21 +168,121 @@
         <div class="gridBoxCenter95" id="sceneContainer">
           <div class="gridBoxFull" id="sceneHome">
             <div class="gridBoxFull" id="baseBox"></div>
+
             <div class="noneBoxFull" id="buildBox">
               <div class="gridBoxFull">
-                <div class="rightAlignBox"  id="buildBoxCloseBtn">
-                  <div class="relativeBox">
-                    <div class="absoluteBox">
-                      <div class="gridBoxCenterFull">
-                        <img id="buildBoxCloseBtn" src="./images/iconX.png"></img>
+                  <div class="relativeBoxFullGrid">
+                    <div class="gridBoxCenter">
+                      <div class="textBoxCenter">
+                        <h3>Build Menu</h3>
                       </div>
+                    </div>
+                    <div id="buildBoxCloseBtn" class="absoluteBox">
+                      <div class="gridBoxCenterFull">
+                        <img src="./images/iconX.png"></img>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            <div class="gridBoxCenter95">
+              <div class="gridBoxDualRow" id="buildBoxDualRow">
+                <div class="gridBoxFull">
+                  <div class="gridBoxFull" style="border: solid; background: white; border-radius: 10px;">
+                    <div class="flexBoxHorizontal">
+                      <div class="gridBoxFull">
+                        <div class="gridBoxCenter75" style="background: green; border: solid; border-radius: 10px;">
+                          <div class="gridBoxCenter">
+                            Test Icon
+                          </div>
+                        </div>
+                      </div>
+                      <div class="gridBoxFull">
+                        <div class="gridBoxCenter75" style="background: green">
+
+                        </div>
+                      </div>
+                      <div class="gridBoxFull">
+                        <div class="gridBoxCenter75" style="background: green">
+
+                        </div>
+                      </div>
+                      <div class="gridBoxFull">
+                        <div class="gridBoxCenter75" style="background: green">
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="gridBoxFull">
+                    <div class="gridBoxDualColumn" id="buildBoxDualColumn">
+                      <div class="gridBoxCenterFull">
+                          <div class="borderBoxFullREdge">
+                            <div class="gridBoxFull">
+                              <div class="gridBoxCenter95">
+                                <div class="scrollBox">
+                                  <div class="scrollBoxInner" id="buildBoxScrollDiv">
+
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="gridBoxCenterFull">
+                        <div class="borderBoxFullREdge">
+                          <div class="gridBoxCenterFull">
+                            <div class="gridBoxDualRow" style="grid-template-rows: 75% 24%; gap: 1%;">
+                              <div class="gridBoxFull">
+                                <div class="gridBoxCenter95" id="buildBoxDescDiv"></div>
+                              </div>
+
+                              <div class="gridBoxFull">
+                                <div class="gridBoxCenter95">
+                                  <div class="gridBoxCenter" id="buildBoxBuildBtn" style="background: green; border: solid; width: 100%; padding: 1vh;">
+                                    <div class="textBoxCenter">Build</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+           <div class="noneBoxFull" id="buildingSceneBox">
+              <div class="gridBoxFull" id="buildingConditioningScene">
+                <div class="gridBoxDualColumn">
+                  <div class="gridBoxCenter95">
+                    <div class="borderBoxFullREdge" style="background: white">
+                      <div class="gridBoxDualRow">
+                        <div class="gridBoxCenter95"></div>
+                        <div class="gridBoxCenter95"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="gridBoxCenter95">
+                    <div class="gridBoxDualRow" style="grid-template-rows: 49% 49%; gap: 2%">
+                      <div class="gridBoxFull">
+                        <div class="borderBoxFullREdge" style="background: white"></div>
+                      </div>
+                      <div class="gridBoxFull">
+                        <div class="borderBoxFullREdge" style="background: white"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="gridBoxFull"></div>
             </div>
-          </div>
         </div>
+
       </div>
     </div>
   </div>
