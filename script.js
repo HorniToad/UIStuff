@@ -290,18 +290,16 @@ function buildSelection() {
 }
 
 // Filters between different building options to display the correct sceneHome
-
 function buildingFilter(x) {
     let target = x;
-    console.log(target)
+    let buildContainer = document.getElementById("buildingSceneBox")
+    sceneChange(buildContainer)
 
     if(target.type === "conditioning") {
         gameState.buildingSceneFocus = target
-        let scene = document.getElementById("buildingSceneBox")
-        sceneChange(scene)
-
+        let scene = document.getElementById("buildingConditioningScene")
+        scene.style.display = "grid"
     }
-
 }
 
 
@@ -315,7 +313,7 @@ function hideTarget(x, y) {
         $("#" + target.id).slideToggle();
     })
 }
-
+// Clears out child elements
 function clearBox(element)
 {
     element.innerHTML = "";
@@ -347,12 +345,7 @@ function sceneChange(x, y) {
     if(y) {
         $("#" + newScene.id).css({"display": y})
     }
-
-
-    console.log(gameState)
 }
-
-
 
 //Arrays
 

@@ -119,11 +119,27 @@ body {
     grid-template-rows: 50% 50%;
 }
 
+.gridBoxDualRowGap {
+    display: grid;
+    height:100%;
+    width:100%;
+    grid-template-rows: 49.5% 49.5%;
+    gap: 1%;
+}
+
 .gridBoxDualColumn {
     display: grid;
     height: 100%;
     width: 100%;
     grid-template-columns: 50% 50%;
+}
+
+.gridBoxDualColumnGap {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 49.5% 49.5%;
+    gap: 1%;
 }
 
 /* Flex Boxes */
@@ -189,6 +205,14 @@ body {
     height: 100%;
     border: solid;
     border-radius: 10px;
+}
+
+.borderBoxFullREdgeThin {
+    width: 100%;
+    height: 100%;
+    border: solid;
+    border-radius: 10px;
+    border-width: 0.25vh;
 }
 
 /* Progress Boxes */
