@@ -8,7 +8,8 @@ border-radius: 0.5em; /* Scales with zoom */
 }
 
 html {
-font-size: 1vw;
+font-size: 1.5em;
+font-family: monospace;
 }
 
 body {
@@ -87,6 +88,18 @@ body {
     justify-self: center;
     width:100%;
     height: 100%;
+}
+
+.gridBoxCenterLeft {
+    display: grid;
+    align-self: center;
+    justify-self: baseline;
+}
+
+.gridBoxCenterRight {
+    display: grid;
+    align-self: center;
+    justify-self: end;
 }
 
 /*Hidden Grid Boxes */
@@ -213,6 +226,29 @@ body {
     border: solid;
     border-radius: 10px;
     border-width: 0.25vh;
+}
+
+.borderBoxFullREdgeHidden {
+    width: 100%;
+    height: 100%;
+    border: solid;
+    border-radius: 10px;
+    border-width: 0vh;
+}
+
+/* Background Box */
+
+.backgroundInsetTopFull {
+    width: 100%;
+    height: 100%;
+    border: solid;
+    border-radius: 10px;
+    border-width: 0.25vh;
+    background: darkslateblue;
+    border-color: darkslateblue;
+    border-top-style: inset;
+    border-top-width: 0.8vh;
+    border-top-color: mediumslateblue;
 }
 
 /* Progress Boxes */
