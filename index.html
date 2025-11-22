@@ -1,489 +1,909 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test Inc</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
-<body>
-  <div class="gridBoxDualRow" id="mainBox">
-    <div class="flexBoxHorizontal">
-      <div class="gridBox" id="topBoxLeft">
-        <div class="gridBoxCenter">Test Inc</div>
-      </div>
-      <div class="gridBox" id="topBoxRight">
-        <div class="flexBoxHorizontal">
-          <div class="gridBoxFull"></div>
-          <div class="gridBoxFull">
-            <div class="gridBoxCenter">Home</div>
-          </div>
-          <div class="gridBoxFull"></div>
-        </div>
-      </div>
-    </div>
-    <div class="flexBoxHorizontal">
-      <!-- Left Stat Container -->
-      <div class="gridBox" id="bottomBoxLeft">
-        <div class="gridBoxCenter95">
-          <div class="blockBoxFullCenter">
-            <div class="slotContainerBlank" id="dateStatContainer">
-                <div class="gridBoxFull">
-                    <div class="gridBox">
-                      <div class="textBoxCenter">January 1st 2100</div>
-                    </div>
-                    <div class="gridBox">
-                      <div class="progressBar">
-                        <div class="progressBarProgress"></div>
-                      </div>
-                    </div>
-                </div>
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Test Inc</title>
+      <link rel="stylesheet" href="style.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   </head>
+   <body>
+      <div class="gridBoxDualRow" id="mainBox">
+         <div class="flexBoxHorizontal">
+            <div class="gridBox" id="topBoxLeft">
+               <div class="gridBoxCenter">Test Inc</div>
             </div>
-            <div class="slotContainerBlank">
-            <div class="flexBoxHorizontal">
-            <div class="gridBoxFull">
-                <div class="textBoxCenter">></div>
-            </div>
-
-            <div class="gridBoxFull">
-                <div class="textBoxCenter">>></div>
-            </div>
-            <div class="gridBoxFull">
-                <div class="textBoxCenter">>>></div>
-            </div>
-        </div>
-        </div>
-            <div class="scrollBox">
-              <div class="scrollBoxInner">
-                <div class="gridBox">
-                  <div class="gridBoxCenterFull">
-                      <!-- Primary Stats Container -->
-                      <div class="hideBoxOuter" id="primaryStatContainer">
-                        <div class="hideBtn">Primary Stats</div>
-                          <div class="hideBoxInner">
-                            <div class="gridBoxCenter95">
-                                <!-- Current Cash Stat -->
-                                <div class="gridBoxDualColumn">
-                                    <div class="textBoxLeft">
-                                      <p>Cash:</p>
-                                    </div>
-                                    <div class="textBoxRight">
-                                      <p>1000</p>
-                                    </div>
-                                </div>
-                                <!-- Capacity Stat -->
-                                <div class="gridBoxDualColumn">
-                                  <div class="textBoxLeft">
-                                    <p>Capacity:</p>
-                                  </div>
-                                  <div class="textBoxRight">
-                                    <p>0/10</p>
-                                  </div>
-                                </div>
-                            </div>
-                          </div>
-                      </div>
-                      <!-- Research Stat Container -->
-                      <div class="hideBoxOuter" id="researchStatContainer">
-                        <div class="hideBtn">Research: </div>
-                        <div class="hideBoxInner">
-                          <div class="gridBoxCenter95">
-                            <div class="slotContainerBorder">
-                              <div class="gridBoxDualRow">
-                                <div class="gridBoxDualColumn">
-                                  <div class="textBoxLeft">
-                                    Name
-                                  </div>
-                                  <div class="textBoxRight"></div>
-                                </div>
-                                <div class="gridBox">
-                                  <div class="progressBar">
-                                    <div class="progressBarProgress"></div>
-                                  </div>
-                                </div>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Current Doll Stat Container -->
-                      <div class="hideBoxOuter" id="dollStatContainer">
-                        <div class="hideBtn">Current People:</div>
-                        <div class="hideBoxInner">
-                          <div class="gridBoxCenter95">
-                            <div class="slotContainerBorder">
-                              <div class="gridBoxDualRow">
-                                <div class="gridBoxDualColumn">
-                                  <div class="textBoxLeft">
-                                    Name
-                                  </div>
-                                  <div class="textBoxRight">
-                                    Idle
-                                  </div>
-                                </div>
-                                <div class="gridBox">
-                                  <div class="progressBar">
-                                    <div class="progressBarProgress"></div>
-                                  </div>
-                                </div>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Building Stat Container -->
-                      <div class="hideBoxOuter" id="buildingStatContainer">
-                        <div class="hideBtn">Buildings: </div>
-                        <div class="hideBoxInner">
-                          <div class="gridBoxCenter95">
-                            <div class="slotContainerBorder">
-                              <div class="gridBoxDualRow">
-                                <div class="gridBoxDualColumn">
-                                  <div class="textBoxLeft">
-                                    Name
-                                  </div>
-                                  <div class="textBoxRight">Occupant</div>
-                                </div>
-                                <div class="gridBox">
-                                  <div class="progressBar">
-                                    <div class="progressBarProgress"></div>
-                                  </div>
-                                </div>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Primary Container -->
-      <div class="gridBox" id="bottomBoxRight">
-        <div class="gridBoxCenter95" id="sceneContainer">
-          <div class="gridBoxFull" id="sceneHome">
-            <div class="gridBoxFull" id="baseBox"></div>
-            <!-- buildBox div which contains the build menu -->
-            <div class="noneBoxFull" id="buildBox">
-              <div class="gridBoxFull">
-                  <div class="relativeBoxFullGrid">
-                    <div class="gridBoxCenter">
-                      <div class="textBoxCenter">
-                        <h3>Build Menu</h3>
-                      </div>
-                    </div>
-                    <div id="buildBoxCloseBtn" class="absoluteBox">
-                      <div class="gridBoxCenterFull">
-                        <img src="./images/iconX.png"></img>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-            <div class="gridBoxCenter95">
-              <div class="gridBoxDualRow" id="buildBoxDualRow">
-                <div class="gridBoxFull">
-                  <div class="gridBoxFull" style="border: solid; background: white; border-radius: 10px;">
-                    <div class="flexBoxHorizontal">
-                      <div class="gridBoxFull">
-                        <div class="gridBoxCenter75" style="background: green; border: solid; border-radius: 10px;">
-                          <div class="gridBoxCenter">
-                            Test Icon
-                          </div>
-                        </div>
-                      </div>
-                      <div class="gridBoxFull">
-                        <div class="gridBoxCenter75" style="background: green">
-
-                        </div>
-                      </div>
-                      <div class="gridBoxFull">
-                        <div class="gridBoxCenter75" style="background: green">
-
-                        </div>
-                      </div>
-                      <div class="gridBoxFull">
-                        <div class="gridBoxCenter75" style="background: green">
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="gridBoxFull">
-                    <div class="gridBoxDualColumn" id="buildBoxDualColumn">
-                      <div class="gridBoxCenterFull">
-                          <div class="borderBoxFullREdge">
-                            <div class="gridBoxFull">
-                              <div class="gridBoxCenter95">
-                                <div class="scrollBox">
-                                  <div class="scrollBoxInner" id="buildBoxScrollDiv">
-
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                      </div>
-                      <div class="gridBoxCenterFull">
-                        <div class="borderBoxFullREdge">
-                          <div class="gridBoxCenterFull">
-                            <div class="gridBoxDualRow" style="grid-template-rows: 75% 24%; gap: 1%;">
-                              <div class="gridBoxFull">
-                                <div class="gridBoxCenter95" id="buildBoxDescDiv"></div>
-                              </div>
-
-                              <div class="gridBoxFull">
-                                <div class="gridBoxCenter95">
-                                  <div class="gridBoxCenter" id="buildBoxBuildBtn" style="background: green; border: solid; width: 100%; padding: 1vh;">
-                                    <div class="textBoxCenter">Build</div>
-                                  </div>
-                                </div>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Building Scene Container Div -->
-          <div class="noneBoxFull" id="buildingSceneBox">
-          <!-- Conditioning Building Scene -->
-              <div class="noneBoxFull" id="buildingConditioningScene">
-                <div class="gridBoxDualRow" style = "grid-template-rows: 19% 79%; gap: 2%;">
+            <div class="gridBox" id="topBoxRight">
+               <div class="flexBoxHorizontal">
+                  <div class="gridBoxFull"></div>
                   <div class="gridBoxFull">
-                    <div class="backgroundInsetTopFull">
-                      <div class="gridBoxDualRowGap">
+                     <div class="gridBoxCenter">Home</div>
+                  </div>
+                  <div class="gridBoxFull"></div>
+               </div>
+            </div>
+         </div>
+         <div class="flexBoxHorizontal">
+            <!-- Left Stat Container -->
+            <div class="gridBox" id="bottomBoxLeft">
+               <div class="gridBoxCenter95">
+                  <div class="blockBoxFullCenter">
+                     <div class="slotContainerBlank" id="dateStatContainer">
                         <div class="gridBoxFull">
-                          <div class="gridBoxDualRowGap">
-                            <div class="gridBox" style="width: 95%; height: 50%; padding-top: 1%; justify-self: center;">
-                              <div class="progressBar" style="border-radius: 5px;">
-                                <div class="progressBarProgress" style="background: mediumslateblue"></div>
+                           <div class="gridBox">
+                              <div class="textBoxCenter">January 1st 2100</div>
+                           </div>
+                           <div class="gridBox">
+                              <div class="progressBar">
+                                 <div class="progressBarProgress"></div>
                               </div>
-                            </div>
-                            <div class="gridBox">
-                              <div class="gridBoxCenter">Resistance: 90%</div>
-                            </div>
-                          </div>
+                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="gridBoxFull">
-
-                    <div class="gridBoxDualColumn">
-                      <div class="gridBoxFull">
-                        <div class="backgroundInsetTopFull"></div>
-                      </div>
-                      <div class="gridBoxDualRow">
-                          <div class="gridBoxCenter95" style="justify-self: end; align-self: baseline; height: 97%;">
-                            <div class="backgroundInsetTopFull" style="background: darkslateblue">
-                              <div class="gridBoxFull">
-                                <div class="gridBoxCenter95">
-                                    <div class="gridBoxDualColumn" style="grid-template-columns: 34% 64%; gap: 2%">
-                                      <div class="gridBoxFull">
-                                        <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;">
-                                          <div class="gridBoxFull">
-                                           <!-- Occupant Stat Information Div -->
-                                            <div class="gridBoxCenter95">
-                                              <div class="gridBoxDualRowGap">
-                                                <div class="gridBoxFull">
-                                                  <div class="flexBoxVertical">
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxCenter">
-                                                        Candy
-                                                      </div>
-                                                    </div>
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxDualColumnGap">
-                                                        <div class="gridBoxFull">
-                                                          <div class="gridBoxCenterLeft">
-                                                            Gender:
-                                                          </div>
-                                                        </div>
-                                                        <div class="gridBoxFull">
-                                                          <div class="gridBoxCenter">
-                                                            Doll
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxDualColumnGap">
-                                                        <div class="gridBoxFull">
-                                                          <div class="gridBoxCenterLeft">
-                                                            Sexuality:
-                                                          </div>
-                                                        </div>
-                                                        <div class="gridBoxFull">
-                                                          <div class="gridBoxCenter">
-                                                            Pansexual
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxDualColumnGap">
-                                                        <div class="gridBoxFull">
-                                                          <div class="gridBoxCenterLeft">
-                                                            Body-Type:
-                                                          </div>
-                                                        </div>
-                                                        <div class="gridBoxFull">
-                                                          <div class="gridBoxCenter">
-                                                            Plump
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-
-                                                <div class="gridBoxFull">
-                                                  <div class="flexBoxHorizontal">
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxCenter95">
-                                                        <div class="gridBoxDualRowGap">
-                                                          <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
-                                                            <div class="gridBoxFull">
-                                                              <div class="gridBoxCenter" style="color: white">
-                                                                INT
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                          <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
-                                                            <div class="gridBoxFull">
-                                                              <div class="gridBoxCenter" style="color: white">
-                                                                2
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxCenter95">
-                                                        <div class="gridBoxDualRowGap">
-                                                          <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
-                                                            <div class="gridBoxFull">
-                                                              <div class="gridBoxCenter" style="color: white">
-                                                                RES
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                          <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
-                                                            <div class="gridBoxFull">
-                                                              <div class="gridBoxCenter" style="color: white">
-                                                                1
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxCenter95">
-                                                        <div class="gridBoxDualRowGap">
-                                                          <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
-                                                            <div class="gridBoxFull">
-                                                              <div class="gridBoxCenter" style="color: white">
-                                                                STR
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                          <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
-                                                             <div class="gridBoxFull">
-                                                              <div class="gridBoxCenter" style="color: white">
-                                                                0
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-
+                     </div>
+                     <div class="slotContainerBlank">
+                        <div class="flexBoxHorizontal">
+                           <div class="gridBoxFull">
+                              <div class="textBoxCenter">></div>
+                           </div>
+                           <div class="gridBoxFull">
+                              <div class="textBoxCenter">>></div>
+                           </div>
+                           <div class="gridBoxFull">
+                              <div class="textBoxCenter">>>></div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="scrollBox">
+                        <div class="scrollBoxInner">
+                           <div class="gridBox">
+                              <div class="gridBoxCenterFull">
+                                 <!-- Primary Stats Container -->
+                                 <div class="hideBoxOuter" id="primaryStatContainer">
+                                    <div class="hideBtn">Primary Stats</div>
+                                    <div class="hideBoxInner">
+                                       <div class="gridBoxCenter95">
+                                          <!-- Current Cash Stat -->
+                                          <div class="gridBoxDualColumn">
+                                             <div class="textBoxLeft">
+                                                <p>Cash:</p>
+                                             </div>
+                                             <div class="textBoxRight">
+                                                <p>1000</p>
+                                             </div>
                                           </div>
+                                          <!-- Capacity Stat -->
+                                          <div class="gridBoxDualColumn">
+                                             <div class="textBoxLeft">
+                                                <p>Capacity:</p>
+                                             </div>
+                                             <div class="textBoxRight">
+                                                <p>0/10</p>
+                                             </div>
                                           </div>
-                                        </div>
-                                      </div>
-                                      <div class="gridBoxFull">
-                                        <div class="gridBoxDualRowGap" style="grid-template-rows: 49% 49%; gap: 2%;">
-                                          <div class="gridBoxFull">
-                                            <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;">
-                                              <div class="gridBoxFull">
-                                                <div class="gridBoxCenter95">
-                                                  <div class="gridBoxDualRow" style="grid-template-rows: 15% 80%; gap: 5%;">
-                                                    <div class="gridBoxFull">
-                                                      <div class="gridBoxCenter">
-                                                        Traits
-                                                      </div>
-                                                    </div>
-                                                    <div class="scrollBox">
-                                                      <div class="scrollBoxInner">
-                                                        <div class="gridBox">
-                                                          <div class="gridBoxFull">
-                                                            <div class="gridBoxCenter" style="width: 90%">
-                                                              <div class="gridBoxCenter">
-                                                                Loyal
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="gridBoxFull">
-                                            <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;"></div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                       </div>
                                     </div>
-                                  </div>
+                                 </div>
+                                 <!-- Research Stat Container -->
+                                 <div class="hideBoxOuter" id="researchStatContainer">
+                                    <div class="hideBtn">Research: </div>
+                                    <div class="hideBoxInner">
+                                       <div class="gridBoxCenter95">
+                                          <div class="slotContainerBorder">
+                                             <div class="gridBoxDualRow">
+                                                <div class="gridBoxDualColumn">
+                                                   <div class="textBoxLeft">
+                                                      Name
+                                                   </div>
+                                                   <div class="textBoxRight"></div>
+                                                </div>
+                                                <div class="gridBox">
+                                                   <div class="progressBar">
+                                                      <div class="progressBarProgress"></div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <!-- Current Doll Stat Container -->
+                                 <div class="hideBoxOuter" id="dollStatContainer">
+                                    <div class="hideBtn">Current People:</div>
+                                    <div class="hideBoxInner">
+                                       <div class="gridBoxCenter95">
+                                          <div class="slotContainerBorder">
+                                             <div class="gridBoxDualRow">
+                                                <div class="gridBoxDualColumn">
+                                                   <div class="textBoxLeft">
+                                                      Name
+                                                   </div>
+                                                   <div class="textBoxRight">
+                                                      Idle
+                                                   </div>
+                                                </div>
+                                                <div class="gridBox">
+                                                   <div class="progressBar">
+                                                      <div class="progressBarProgress"></div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <!-- Building Stat Container -->
+                                 <div class="hideBoxOuter" id="buildingStatContainer">
+                                    <div class="hideBtn">Buildings: </div>
+                                    <div class="hideBoxInner">
+                                       <div class="gridBoxCenter95">
+                                          <div class="slotContainerBorder">
+                                             <div class="gridBoxDualRow">
+                                                <div class="gridBoxDualColumn">
+                                                   <div class="textBoxLeft">
+                                                      Name
+                                                   </div>
+                                                   <div class="textBoxRight">Occupant</div>
+                                                </div>
+                                                <div class="gridBox">
+                                                   <div class="progressBar">
+                                                      <div class="progressBarProgress"></div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
                               </div>
-                            </div>
-                          </div>
-                          <div class="gridBoxCenter95" style="justify-self: end; align-self: end; height: 97%;">
-                            <div class="backgroundInsetTopFull" style="background: darkslateblue">
-                              <div class="gridBoxFull">
-                                <div class="gridBoxCenter95">
-                                  <div class='borderBoxFullREdgeHidden' style="background: mediumslateblue"></div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                      </div>
-                    </div>
-                    </div>
+                           </div>
+                        </div>
+                     </div>
                   </div>
-                </div>
-              </div>
+               </div>
             </div>
+            <!-- Right Primary Container -->
+            <div class="gridBox" id="bottomBoxRight">
+               <div class="gridBoxCenter95" id="sceneContainer">
+                  <div class="gridBoxFull" id="sceneHome">
+                     <div class="gridBoxFull" id="baseBox"></div>
+                     <!-- buildBox div which contains the build menu -->
+                     <div class="noneBoxFull" id="buildBox">
+                        <div class="gridBoxFull">
+                           <div class="relativeBoxFullGrid">
+                              <div class="gridBoxCenter">
+                                 <div class="textBoxCenter">
+                                    <h3>Build Menu</h3>
+                                 </div>
+                              </div>
+                              <div id="buildBoxCloseBtn" class="absoluteBox">
+                                 <div class="gridBoxCenterFull">
+                                    <img src="./images/iconX.png"></img>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="gridBoxCenter95">
+                           <div class="gridBoxDualRow" id="buildBoxDualRow">
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxFull" style="border: solid; background: white; border-radius: 10px;">
+                                    <div class="flexBoxHorizontal">
+                                       <div class="gridBoxFull">
+                                          <div class="gridBoxCenter75" style="background: green; border: solid; border-radius: 10px;">
+                                             <div class="gridBoxCenter">
+                                                Test Icon
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <div class="gridBoxFull">
+                                          <div class="gridBoxCenter75" style="background: green">
+                                          </div>
+                                       </div>
+                                       <div class="gridBoxFull">
+                                          <div class="gridBoxCenter75" style="background: green">
+                                          </div>
+                                       </div>
+                                       <div class="gridBoxFull">
+                                          <div class="gridBoxCenter75" style="background: green">
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxDualColumn" id="buildBoxDualColumn">
+                                    <div class="gridBoxCenterFull">
+                                       <div class="borderBoxFullREdge">
+                                          <div class="gridBoxFull">
+                                             <div class="gridBoxCenter95">
+                                                <div class="scrollBox">
+                                                   <div class="scrollBoxInner" id="buildBoxScrollDiv">
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="gridBoxCenterFull">
+                                       <div class="borderBoxFullREdge">
+                                          <div class="gridBoxCenterFull">
+                                             <div class="gridBoxDualRow" style="grid-template-rows: 75% 24%; gap: 1%;">
+                                                <div class="gridBoxFull">
+                                                   <div class="gridBoxCenter95" id="buildBoxDescDiv"></div>
+                                                </div>
+                                                <div class="gridBoxFull">
+                                                   <div class="gridBoxCenter95">
+                                                      <div class="gridBoxCenter" id="buildBoxBuildBtn" style="background: green; border: solid; width: 100%; padding: 1vh;">
+                                                         <div class="textBoxCenter">Build</div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <!-- Building Scene Container Div -->
+                     <div class="noneBoxFull" id="buildingSceneBox">
+                        <!-- Conditioning Building Scene -->
+                        <div class="noneBoxFull" id="buildingConditioningScene">
+                           <div class="gridBoxDualRow" style = "grid-template-rows: 19% 79%; gap: 2%;">
+                              <div class="gridBoxFull">
+                                 <div class="backgroundInsetTopFull">
+                                    <div class="gridBoxDualRowGap">
+                                       <div class="gridBoxFull">
+                                          <div class="gridBoxDualRowGap">
+                                             <div class="gridBox" style="width: 95%; height: 50%; padding-top: 1%; justify-self: center;">
+                                                <div class="progressBar" style="border-radius: 5px;">
+                                                   <div class="progressBarProgress" style="background: mediumslateblue"></div>
+                                                </div>
+                                             </div>
+                                             <div class="gridBox">
+                                                <div class="gridBoxCenter">Resistance: 90%</div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxDualColumn">
+                                    <div class="gridBoxFull">
+                                       <div class="backgroundInsetTopFull">
+                                          <div class="gridBoxFull">
+                                             <div class="gridBoxCenter95">
+                                                <div class="gridBoxDualRowGap" style="grid-template-rows: 30% 70%">
+                                                <div class="gridBoxFull">
+                                                   <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxDualRowGap" style="grid-template-rows: 20% 80%;">
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxCenter">
+                                                                  Description
+                                                               </div>
+                                                            </div>
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxCenter95" id="buildingConditioningSceneDesc"></div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="gridBoxFull">
+                                                   <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxCenter95">
+                                                         <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxDualRowGap" style="grid-template-rows: 5% 95%;">
+                                                                  <div class="gridBoxFull">
+                                                                     <div class="gridBoxCenter">
+                                                                        Upgrades
+                                                                     </div>
+                                                                  </div>
+                                                                  <div class="gridBoxFull">
+                                                                     <div class="gridBoxCenter95" id="buildingConditioningSceneUpgrades"></div>
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="gridBoxDualRow">
+                                       <div class="gridBoxCenter95" style="justify-self: end; align-self: baseline; height: 97%;">
+                                          <div class="backgroundInsetTopFull" style="background: darkslateblue">
+                                             <div class="gridBoxFull">
+                                                <div class="gridBoxCenter95">
+                                                   <div class="gridBoxDualColumn" style="grid-template-columns: 34% 64%; gap: 2%">
+                                                      <div class="gridBoxFull">
+                                                         <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;">
+                                                            <div class="gridBoxFull">
+                                                               <!-- Occupant Stat Information Div -->
+                                                               <div class="gridBoxCenter95">
+                                                                  <div class="gridBoxDualRowGap">
+                                                                     <div class="gridBoxFull">
+                                                                        <div class="flexBoxVertical">
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxCenter">
+                                                                                 Candy
+                                                                              </div>
+                                                                           </div>
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxDualColumnGap">
+                                                                                 <div class="gridBoxFull">
+                                                                                    <div class="gridBoxCenterLeft">
+                                                                                       Gender:
+                                                                                    </div>
+                                                                                 </div>
+                                                                                 <div class="gridBoxFull">
+                                                                                    <div class="gridBoxCenter">
+                                                                                       Doll
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxDualColumnGap">
+                                                                                 <div class="gridBoxFull">
+                                                                                    <div class="gridBoxCenterLeft">
+                                                                                       Sexuality:
+                                                                                    </div>
+                                                                                 </div>
+                                                                                 <div class="gridBoxFull">
+                                                                                    <div class="gridBoxCenter">
+                                                                                       Pansexual
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxDualColumnGap">
+                                                                                 <div class="gridBoxFull">
+                                                                                    <div class="gridBoxCenterLeft">
+                                                                                       Body-Type:
+                                                                                    </div>
+                                                                                 </div>
+                                                                                 <div class="gridBoxFull">
+                                                                                    <div class="gridBoxCenter">
+                                                                                       Plump
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
+                                                                     </div>
+                                                                     <div class="gridBoxFull">
+                                                                        <div class="flexBoxHorizontal">
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxCenter95">
+                                                                                 <div class="gridBoxDualRowGap">
+                                                                                    <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
+                                                                                       <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter" style="color: white">
+                                                                                             INT
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                    <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
+                                                                                       <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter" style="color: white">
+                                                                                             2
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxCenter95">
+                                                                                 <div class="gridBoxDualRowGap">
+                                                                                    <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                       <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter" style="color: white">
+                                                                                             RES
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                    <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                       <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter" style="color: white">
+                                                                                             1
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxCenter95">
+                                                                                 <div class="gridBoxDualRowGap">
+                                                                                    <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
+                                                                                       <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter" style="color: white">
+                                                                                             STR
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                    <div class="borderBoxFullREdgeHidden" style="background: darkslateblue;  border-radius: 5px">
+                                                                                       <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter" style="color: white">
+                                                                                             0
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
+                                                                     </div>
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxDualRowGap" style="grid-template-rows: 49% 49%; gap: 2%;">
+                                                            <div class="gridBoxFull">
+                                                               <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;">
+                                                                  <div class="gridBoxFull">
+                                                                     <div class="gridBoxCenter95">
+                                                                        <div class="gridBoxDualRow" style="grid-template-rows: 15% 80%; gap: 5%;">
+                                                                           <div class="gridBoxFull">
+                                                                              <div class="gridBoxCenter">
+                                                                                 Traits
+                                                                              </div>
+                                                                           </div>
+                                                                           <div class="gridBoxDualColumn" style="grid-template-columns: 30% 30% 30%; gap: 5%;">
+                                                                              <div class="gridBoxFull">
+                                                                                <div class="gridBoxDualRow" style="grid-template-rows: 20% 20% 20% 20%; gap: 1.5%">
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Loyal
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Night Owl
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Mind Broken
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                    <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Silly
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                              </div>
+                                                                              <div class="gridBoxFull">
+                                                                                <div class="gridBoxDualRow" style="grid-template-rows: 20% 20% 20% 20%; gap: 1.5%">
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Loyal
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Night Owl
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Mind Broken
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                    <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Silly
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                              </div>
+                                                                              <div class="gridBoxFull">
+                                                                                <div class="gridBoxDualRow" style="grid-template-rows: 20% 20% 20% 20%; gap: 1.5%">
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Loyal
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Night Owl
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                     <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Mind Broken
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                    <div class="gridBoxFull" style="padding: 2%;">
+                                                                                      <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px;">
+                                                                                        <div class="gridBoxFull">
+                                                                                          <div class="gridBoxCenter">
+                                                                                            Silly
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
+                                                                     </div>
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                            <div class="gridBoxFull">
+                                                               <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;">
+                                                                <div class="gridBoxFull">
+                                                                  <div class="gridBoxCenter95">
+                                                                    <div class="gridBoxDualRowGap" style="grid-template-rows: 48.5% 48.5%; gap: 3%;">
+                                                                      <div class="gridBoxFull">
+                                                                        <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
+                                                                           <div class="gridBoxDualRowGap" style="grid-template-rows: 50% 30%;">
+                                                                              <div class="gridBoxFull">
+                                                                                 <div class="gridBoxCenter" style="color: white;">
+                                                                                    Mood
+                                                                                 </div>
+                                                                              </div>
+                                                                              <div class="gridBoxCenter95">
+                                                                                 <div class="progressBar">
+                                                                                    <div class="progressBarProgress"></div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
+                                                                      </div>
 
+                                                                       <div class="gridBoxFull">
+                                                                        <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
+                                                                           <div class="gridBoxDualRowGap" style="grid-template-rows: 50% 30%;">
+                                                                              <div class="gridBoxFull">
+                                                                                 <div class="gridBoxCenter" style="color: white;">
+                                                                                    Energy
+                                                                                 </div>
+                                                                              </div>
+                                                                              <div class="gridBoxCenter95">
+                                                                                 <div class="progressBar">
+                                                                                    <div class="progressBarProgress"></div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
+                                                                      </div>
+
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <div class="gridBoxCenter95" style="justify-self: end; align-self: end; height: 97%;">
+                                          <div class="backgroundInsetTopFull" style="background: darkslateblue">
+                                             <div class="gridBoxFull">
+                                                <div class="gridBoxCenter95">
+                                                   <div class='borderBoxFullREdgeHidden' style="background: mediumslateblue">
+                                                    <div class="gridBoxFull">
+                                                      <div class="gridBoxCenter95">
+                                                         <div class="gridBoxDualRowGap" style="grid-template-rows: 10% 90%">
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxCenter">
+                                                                  Patients
+                                                               </div>
+                                                            </div>
+                                                            <div class="scrollBox">
+                                                               <div class="scrollBoxInner">
+
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                    </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Building Capacity Scene -->
+                        <div class="noneBoxFull" id="buildingCapacityScene">
+                           <div class="gridBoxDualRow" style = "grid-template-rows: 19% 79%; gap: 2%;">
+                              <div class="gridBoxFull">
+                                 <div class="backgroundInsetTopFull">
+                                    <div class="gridBoxDualRowGap">
+                                       <div class="gridBoxFull">
+                                          <div class="gridBoxDualRowGap">
+                                             <div class="gridBox" style="width: 95%; height: 50%; padding-top: 1%; justify-self: center;">
+                                                <div class="progressBar" style="border-radius: 5px;">
+                                                   <div class="progressBarProgress" style="background: mediumslateblue"></div>
+                                                </div>
+                                             </div>
+                                             <div class="gridBox">
+                                                <div class="gridBoxCenter">Capacity: 1/2</div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxDualColumnGap">
+                                    <div class="gridBoxFull">
+                                       <div class="backgroundInsetTopFull">
+                                          <div class="gridBoxFull">
+                                             <div class="gridBoxCenter95">
+                                                <div class="gridBoxDualRowGap" style="grid-template-rows: 30% 70%">
+                                                <div class="gridBoxFull">
+                                                   <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxDualRowGap" style="grid-template-rows: 20% 80%;">
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxCenter">
+                                                                  Description
+                                                               </div>
+                                                            </div>
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxCenter95" id="buildingCapacitySceneDesc"></div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="gridBoxFull">
+                                                   <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxCenter95">
+                                                         <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                            <div class="gridBoxFull">
+                                                               <div class="gridBoxDualRowGap" style="grid-template-rows: 5% 95%;">
+                                                                  <div class="gridBoxFull">
+                                                                     <div class="gridBoxCenter">
+                                                                        Upgrades
+                                                                     </div>
+                                                                  </div>
+                                                                  <div class="gridBoxFull">
+                                                                     <div class="gridBoxCenter95" id="buildingConditioningSceneUpgrades"></div>
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="gridBoxFull">
+                                       <div class="backgroundInsetTopFull">
+                                          <div class="gridBoxFull">
+                                             <div class="gridBoxCenter95">
+                                                <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
+                                                <div class="gridBoxFull">
+                                                   <div class="gridBoxDualRowGap" style="grid-template-rows: 7% 90%">
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxCenter">
+                                                            Occupants:
+                                                         </div>
+                                                      </div>
+                                                      <div class="gridBoxFull">
+                                                         <div class="gridBoxCenter95">
+                                                            <div class="scrollBox">
+                                                               <div class="scrollBoxInner">
+                                                                  <div class="blockBoxFullCenter">
+                                                                     <div class="blockBox" style="height: 15vh; margin-bottom: 3%;">
+                                                                        <div class="gridBoxFull">
+                                                                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue; border-radius: 5px; padding-top: 1%; padding-bottom: 1%;">
+                                                                              <div class="gridBoxFull">
+                                                                                 <div class="gridBoxDualColumnGap" style="grid-template-columns: 40% 60%">
+                                                                                    <div class="gridBoxFull">
+                                                                                       <div class="gridBoxCenter95">
+                                                                                          <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue;">
+                                                                                             <div class="gridBoxFull">
+                                                                                                <!-- Occupant Stat Information Div -->
+                                                                                                <div class="gridBoxCenter95">
+                                                                                                   <div class="gridBoxFull">
+                                                                                                      <div class="gridBoxFull">
+                                                                                                         <div class="flexBoxVertical">
+                                                                                                            <div class="gridBoxFull">
+                                                                                                               <div class="gridBoxCenter">
+                                                                                                                  Candy
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                            <div class="gridBoxFull">
+                                                                                                               <div class="gridBoxDualColumnGap">
+                                                                                                                  <div class="gridBoxFull">
+                                                                                                                     <div class="gridBoxCenterLeft">
+                                                                                                                        Gender:
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                                  <div class="gridBoxFull">
+                                                                                                                     <div class="gridBoxCenter">
+                                                                                                                        Doll
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                            <div class="gridBoxFull">
+                                                                                                               <div class="gridBoxDualColumnGap">
+                                                                                                                  <div class="gridBoxFull">
+                                                                                                                     <div class="gridBoxCenterLeft">
+                                                                                                                        Sexuality:
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                                  <div class="gridBoxFull">
+                                                                                                                     <div class="gridBoxCenter">
+                                                                                                                        Pansexual
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                            <div class="gridBoxFull">
+                                                                                                               <div class="gridBoxDualColumnGap">
+                                                                                                                  <div class="gridBoxFull">
+                                                                                                                     <div class="gridBoxCenterLeft">
+                                                                                                                        Body-Type:
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                                  <div class="gridBoxFull">
+                                                                                                                     <div class="gridBoxCenter">
+                                                                                                                        Plump
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                         </div>
+                                                                                                      </div>
+                                                                                                   </div>
+                                                                                                </div>
+                                                                                             </div>
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                    <div class="gridBoxFull">
+                                                                                       <div class="gridBoxDualRowGap">
+                                                                                          <div class="gridBoxFull">
+                                                                                             <div class="gridBoxCenter95">
+                                                                                                   <div class="gridBoxFull">
+                                                                                                      <div class="gridBoxCenter95">
+                                                                                                         <div class="gridBoxDualRowGap">
+                                                                                                            <div class="gridBox95" style="color: white;">
+                                                                                                               <div class="textBoxLeftr">
+                                                                                                                     Energy
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                            <div class="gridBox95">
+                                                                                                               <div class="progressBar">
+                                                                                                                  <div class="progressBarProgress"></div>
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                         </div>
+                                                                                                      </div>
+                                                                                                   </div>
+                                                                                             </div>
+                                                                                          </div>
+
+                                                                                          <div class="gridBoxFull">
+                                                                                             <div class="gridBoxCenter95">
+                                                                                                   <div class="gridBoxFull">
+                                                                                                      <div class="gridBoxCenter95">
+                                                                                                         <div class="gridBoxDualRowGap" style="grid-template-rows: ">
+                                                                                                            <div class="gridBox95" style="color: white;">
+                                                                                                               <div class="textBoxLeft">
+                                                                                                                     Comfort
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                            <div class="gridBox95">
+                                                                                                               <div class="progressBar">
+                                                                                                                  <div class="progressBarProgress"></div>
+                                                                                                               </div>
+                                                                                                            </div>
+                                                                                                         </div>
+                                                                                                      </div>
+                                                                                                   </div>
+                                                                                             </div>
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
+                                                                     </div>
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     </div>
+                  </div>
+               </div>
             </div>
-        </div>
-
+         </div>
       </div>
-    </div>
-  </div>
-</body>
-<script src="script.js"></script>
-
+      </div>
+   </body>
+   <script src="script.js"></script>
 </html>
-
