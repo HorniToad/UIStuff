@@ -308,6 +308,12 @@ function buildingFilter(x) {
         scene.style.display = "grid"
         $("#buildingCapacitySceneDesc").text(target.desc)
     }
+    else if(target.type === "modification") {
+        gameState.buildingSceneFocus = target
+        let scene = document.getElementById("buildingModificationScene");
+        scene.style.display = "grid";
+        $("#buildingModificationSceneDesc").text(target.desc)
+    }
 }
 
 
