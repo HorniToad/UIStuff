@@ -216,7 +216,7 @@ function buildBoxScrollSetup() {
         if(!gameStateFocus.buildTypeFocus) {
             gameStateFocus.buildTypeFocus = "Conditioning"
         }
-        let focus = gameStateFocus.buildTypeFocus.toLowerCase();
+        let focus = gameStateFocus.buildTypeFocus;
         let focusGroup = $.grep(buildings, function(n) {
             return n.type === focus
         })
@@ -292,27 +292,17 @@ function buildSelection() {
 // Filters between different building options to display the correct sceneHome
 function buildingFilter(x) {
     let target = x;
-    let buildContainer = document.getElementById("buildingSceneBox")
-    sceneChange(buildContainer)
-
-    if(target.type === "conditioning") {
+    if(target != undefined) {
+        let buildContainer = document.getElementById("buildingSceneBox")
+        sceneChange(buildContainer)
         gameState.buildingSceneFocus = target
-        let scene = document.getElementById("buildingConditioningScene")
+        console.log(target)
+        let scene = document.getElementById("building" + target.type + "Scene")
         scene.style.display = "grid"
-        $("#buildingConditioningSceneDesc").text(target.desc)
+        $("#building" + target.type + "SceneDesc").text(target.desc)
     }
-
-    else if(target.type === "capacity") {
-        gameState.buildingSceneFocus = target
-        let scene = document.getElementById("buildingCapacityScene")
-        scene.style.display = "grid"
-        $("#buildingCapacitySceneDesc").text(target.desc)
-    }
-    else if(target.type === "modification") {
-        gameState.buildingSceneFocus = target
-        let scene = document.getElementById("buildingModificationScene");
-        scene.style.display = "grid";
-        $("#buildingModificationSceneDesc").text(target.desc)
+    else {
+        console.log("Something has gone wrong with the building filter. Target is undefined!")
     }
 }
 
@@ -365,34 +355,34 @@ function sceneChange(x, y) {
 
 //BuildingArrays
 let buildingTypes = [
-    { id: "conditioningSlot", type: "conditioning", name: "Conditioning", cost: 10, build: 5, unlocked: true, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "kinkTrainer", type: "kink", name: "Kink Trainer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "patientCapacity", type: "capacity", name: "Patient Capacity", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "bodyChanger", type: "modification", name: "Body Changer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-    { id: "trainingSlot", type: "training", name: "Training", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "conditioningSlot", type: "Conditioning", name: "Conditioning", cost: 10, build: 5, unlocked: true, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "kinkTrainer", type: "Kink", name: "Kink Trainer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "patientCapacity", type: "Capacity", name: "Patient Capacity", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "bodyChanger", type: "Modification", name: "Body Changer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "trainingSlot", type: "Training", name: "Training", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 ]
 
 let buildings = [
-    { id: "cookingTraining", name: "Basic Kitchen", type: "training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "cleaningTraining", name: "Mock Room", type: "training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "makeupTraining", name: "Makeup Room", type: "training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "speechTraining", name: "Speech Training", type: "training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "resistanceRemoval1", name: "Relaxation Center", type: "conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
+    { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
 
-    { id: "hypnoUpg2", name: "Hypno Headphones", type: "conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
+    { id: "hypnoUpg2", name: "Hypno Headphones", type: "Conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "hypnoUpg3", name: "Hypno Headpiece", type: "conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
+    { id: "hypnoUpg3", name: "Hypno Headpiece", type: "Conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "puppyUpg1", name: "Puppy Pound", type: "kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
+    { id: "puppyUpg1", name: "Puppy Pound", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
 
-    { id: "farmUpg1", name: "Farm", type: "kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
+    { id: "farmUpg1", name: "Farm", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
 
-    { id: "cellUpg1", name: "Cell", type: "capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, desc: "A small cell used to hold patients during their stay at the Spa." },
+    { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 
-    { id: "basicSurgery", name: "Basic Surgery Station", type: "modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, desc: "A basic surgery station used to enhance dolls." }
+    { id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, desc: "A basic surgery station used to enhance dolls." }
 ]
 
