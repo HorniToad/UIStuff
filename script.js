@@ -12,11 +12,16 @@ for(let i = 0; i < div.length; i++) {
 let gameState;
 
 $(function gameStateHandler () {
+    // Test Dummy Char
+    let testDummy = {name: "Mat", id: "mat01", status: false}
+
     let scene = document.getElementById("baseBox")
-    let buildingTemplate = {floorSlots: [], buildingSlots: [], buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
+    let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
+    let personnelTemplate = {patients: [testDummy], employees: [], customers: []};
 
-    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, custFocus: false, employeeFocus: false, conditionFocus: false, charGen: false, buildings: buildingTemplate, currentScene: {current: scene, prior: false } }
 
+    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false } }
+    console.log(gameState)
     gameStartUpHandler();
 
 })
@@ -24,14 +29,16 @@ $(function gameStateHandler () {
 // Start Up Function
 function gameStartUpHandler() {
     buildingSetup();
+    personnelSetup();
+
 }
 
-// Building Functions
+// Start of Building Functions
 
 // Handles variables and building functions
 function buildingSetup() {
-    let slots = 20
-    let floors = 5;
+    let slots = gameState.buildings.slots;
+    let floors = gameState.buildings.floors;
 
     let closeBtn = document.getElementById("buildBoxCloseBtn")
     let buildBox = document.getElementById("buildBox")
@@ -177,14 +184,16 @@ function buildBoxTypeSetup() {
             let container = document.createElement("div");
             let containerInner = document.createElement("div");
             let containerText = document.createElement("div");
+            let containerTextInner = document.createElement("div");
 
             container.setAttribute("id", buildingTypes[i].type + "BuildBoxTypeBtn")
 
             container.setAttribute("class", "gridBoxFull");
             containerInner.setAttribute("class", "gridBoxCenter75");
             containerText.setAttribute("class", "gridBoxCenter")
+            containerTextInner.setAttribute("class", "textBoxCenter");
 
-            containerText.innerText = buildingTypes[i].name
+            containerTextInner.innerText = buildingTypes[i].name
 
             containerInner.style.background = "blue";
             containerInner.style.border = "solid";
@@ -192,6 +201,7 @@ function buildBoxTypeSetup() {
             target.append(container)
             container.append(containerInner);
             containerInner.append(containerText)
+            containerText.append(containerTextInner);
 
             containerInner.addEventListener("click", function() {
                 gameState.buildings.buildTypeFocus = container.id.replace("BuildBoxTypeBtn", "")
@@ -305,6 +315,77 @@ function buildingFilter(x) {
         console.log("Something has gone wrong with the building filter. Target is undefined!")
     }
 }
+
+// End of Building Functions
+
+// Start of Personnel Functions
+function personnelSetup() {
+    let personnelSidePanel = document.getElementById("dollStatContainer");
+    let personnelContainer = personnelSidePanel.querySelector(".gridBoxCenter95")
+
+    clearBox(personnelContainer)
+
+    let patients = gameState.personnel.patients;
+
+    for(let i = 0; i < patients.length; i++) {
+
+        let newSlot = slotBuilder(patients[i], personnelContainer)
+
+    }
+
+}
+
+
+// Sidepanel UI Builder Function
+
+function slotBuilder(x, y) {
+    let slotFocus = x;
+    let slotAppendTarget = y;
+
+    //Slot Container and Inner Container Setups
+    let slotContainer = document.createElement("div");
+    let slotGridDualRow = document.createElement("div")
+
+    slotContainer.setAttribute("class", "slotContainerBorder");
+    slotGridDualRow.setAttribute("class", "gridBoxDualRowGap");
+
+
+    slotAppendTarget.append(slotContainer)
+    slotContainer.append(slotGridDualRow);
+
+    // Slot Rows Setup
+    let slotInnerTopContainer = document.createElement("div");
+    let slotInnerBottomContainer = document.createElement("div");
+
+    slotInnerTopContainer.setAttribute("class", "gridBoxDualColumn");
+    slotInnerBottomContainer.setAttribute("class", "gridBox");
+
+    slotGridDualRow.append(slotInnerTopContainer);
+    slotGridDualRow.append(slotInnerBottomContainer);
+
+    // Top Slot Setups
+    let slotInnerTopTextLeft = document.createElement("div");
+    let slotInnerTopTextRight = document.createElement("div");
+
+    slotInnerTopTextLeft.setAttribute("class", "textBoxLeft");
+    slotInnerTopTextRight.setAttribute("class", "textBoxRight");
+
+    slotInnerTopContainer.append(slotInnerTopTextLeft);
+    slotInnerTopContainer.append(slotInnerTopTextRight);
+
+    // Bottom Slot Setup
+    let slotInnerBottomProgressDiv = document.createElement("div");
+    let slotInnerBottomProgressBar = document.createElement("div");
+
+    slotInnerBottomProgressDiv.setAttribute("class", "progressBar");
+    slotInnerBottomProgressBar.setAttribute("class", "progressBarProgress");
+
+    slotInnerBottomContainer.append(slotInnerBottomProgressDiv);
+    slotInnerBottomProgressDiv.append(slotInnerBottomProgressBar);
+}
+
+
+// End of Personnel Functions
 
 
 // Helper Functions
