@@ -340,11 +340,10 @@ function personnelSetup() {
         textStatus.innerText = patients[i].status;
 
         newSlot.addEventListener("click", function() {
-            let scene = document.getElementById("testPersonScene")
+            let scene = document.getElementById("scenePersonnelInformation")
             sceneChange(scene, "grid")
         })
     }
-
 }
 
 
