@@ -13,14 +13,15 @@ let gameState;
 
 $(function gameStateHandler () {
     // Test Dummy Char
-    let testDummy = {name: "Mat", id: "mat01", status: false}
+    let testDummy = {name: "Mat", id: "mat01", status: "Idle"}
 
     let scene = document.getElementById("baseBox")
+    let parent = $(scene).parent([".sceneContainerHidden"])
+    parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
-    let personnelTemplate = {patients: [testDummy], employees: [], customers: []};
+    let personnelTemplate = {patients: [testDummy, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy], employees: [], customers: []};
 
-
-    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false } }
+    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
     gameStartUpHandler();
 
@@ -330,7 +331,18 @@ function personnelSetup() {
     for(let i = 0; i < patients.length; i++) {
 
         let newSlot = slotBuilder(patients[i], personnelContainer)
+        console.log(newSlot)
 
+        let textName = newSlot.querySelector(".textBoxLeft");
+        let textStatus = newSlot.querySelector(".textBoxRight");
+
+        textName.innerText = patients[i].name;
+        textStatus.innerText = patients[i].status;
+
+        newSlot.addEventListener("click", function() {
+            let scene = document.getElementById("testPersonScene")
+            sceneChange(scene, "grid")
+        })
     }
 
 }
@@ -382,6 +394,9 @@ function slotBuilder(x, y) {
 
     slotInnerBottomContainer.append(slotInnerBottomProgressDiv);
     slotInnerBottomProgressDiv.append(slotInnerBottomProgressBar);
+
+    return slotContainer;
+
 }
 
 
@@ -411,6 +426,7 @@ function sceneChange(x, y) {
         gameState.currentScene.prior = gameState.currentScene.current
         gameState.currentScene.current = newScene
     }
+
     else if(!newScene) {
         console.log("I made my way down here")
         let holder = gameState.currentScene.current
@@ -420,11 +436,20 @@ function sceneChange(x, y) {
 
         newScene = gameState.currentScene.current
     }
-        console.log(newScene.id.toString())
+    console.log(newScene.id.toString())
+    let parent = $(newScene).parent([".sceneContainerHidden"])
+        console.log(parent[0])
+        if(parent[0] != gameState.currentScene.parent) {
+            console.log("Switched parents on me didn't ya")
+            parent[0].style.display = "grid";
+            gameState.currentScene.parent.style.display = "none"
+            gameState.currentScene.parent = parent[0]
+
+        }
 
     let oldScene = gameState.currentScene.prior;
 
-    $("#" + oldScene.id).hide();
+    $("#" + oldScene.id).css({"display": "none"});
     $("#" + newScene.id).show();
 
     if(y) {

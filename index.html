@@ -15,7 +15,40 @@
             </div>
             <div class="gridBox" id="topBoxRight">
                <div class="flexBoxHorizontal">
-                  <div class="gridBoxFull"></div>
+                  <div class="gridBoxFull">
+                     <div class="gridBoxCenter">
+                        <div class="flexBoxHorizontal" style="gap: 5%">
+                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
+                                    Home
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
+                                    Personnel
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
+                                    Research
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
+                              <div class="gridBoxFull">
+                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
+                                    Sector
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                   <div class="gridBoxFull">
                      <div class="gridBoxCenter">Home</div>
                   </div>
@@ -110,7 +143,7 @@
                                  <div class="hideBoxOuter" id="dollStatContainer">
                                     <div class="hideBtn">Current People:</div>
                                     <div class="hideBoxInner">
-                                       <div class="gridBoxCenter95">
+                                       <div class="gridBoxCenter95" style="gap: 1vw;">
                                           <div class="slotContainerBorder">
                                              <div class="gridBoxDualRow">
                                                 <div class="gridBoxDualColumn">
@@ -132,7 +165,7 @@
                                     </div>
                                  </div>
                                  <!-- Building Stat Container -->
-                                 <div class="hideBoxOuter" id="buildingStatContainer">
+                                 <div class="hideBoxOuter" id="buildingStatContainer" style="position: relative;">
                                     <div class="hideBtn">Buildings: </div>
                                     <div class="hideBoxInner">
                                        <div class="gridBoxCenter95">
@@ -165,7 +198,7 @@
             <div class="gridBox" id="bottomBoxRight">
                <div class="gridBoxCenter95" id="sceneContainer">
                   <!-- Start of the sceneHome container-->
-                  <div class="gridBoxFull" id="sceneHome">
+                  <div class="sceneContainerHidden" id="sceneHome">
                      <!-- Start of the baseBox scene -->
                      <div class="gridBoxFull" id="baseBox"></div>
                      <!-- Start of the baseBox scene -->
@@ -1280,8 +1313,8 @@
                   </div>
                   <!-- End of sceneHome -->
                   <!-- Start of scenePersonnel-->
-                  <div class="noneBoxFull" id="scenePersonnel">
-                     <div class="backgroundInsetTopFull">
+                  <div class="sceneContainerHidden" id="scenePersonnel">
+                     <div class="backgroundInsetTopFull" id="testPersonScene">
 
                      </div>
                   </div>
