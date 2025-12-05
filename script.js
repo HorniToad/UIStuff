@@ -13,13 +13,15 @@ let gameState;
 
 $(function gameStateHandler () {
     // Test Dummy Char
-    let testDummy = {name: "Mat", id: "mat01", status: "Idle"}
+    let testDummy = {name: "Mat", id: "mat01", status: "Idle", gender: "Male", sexuality: "Bisexual", bodyType: "Plump",}
+    let testDummy2 = {name: "Perrin", id: "perrin01", status: "Idle", gender: "Wolf-Boi", sexuality: "Straight", bodyType: "Stocky"}
+
 
     let scene = document.getElementById("baseBox")
     let parent = $(scene).parent([".sceneContainerHidden"])
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
-    let personnelTemplate = {patients: [testDummy, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy], employees: [], customers: []};
+    let personnelTemplate = {patients: [testDummy, testDummy2, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy], employees: [], customers: []};
 
     gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
@@ -340,10 +342,22 @@ function personnelSetup() {
         textStatus.innerText = patients[i].status;
 
         newSlot.addEventListener("click", function() {
+            personnelInformationHandler(patients[i])
             let scene = document.getElementById("scenePersonnelInformation")
             sceneChange(scene, "grid")
         })
     }
+}
+
+// Personnel Character filter
+function personnelInformationHandler(x) {
+    let characterFocus = x;
+    console.log(characterFocus)
+
+    $("#scenePersonnelInformationCharName").text(characterFocus.name)
+    $("#scenePersonnelInformationCharGender").text(characterFocus.gender)
+    $("#scenePersonnelInformationCharSexuality").text(characterFocus.sexuality)
+    $("#scenePersonnelInformationCharBodyType").text(characterFocus.bodyType)
 }
 
 
