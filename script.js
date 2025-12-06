@@ -5,7 +5,7 @@ for(let i = 0; i < div.length; i++) {
     let divBtn = div[i].querySelector(".hideBtn");
 
     divBtn.addEventListener("click", function() {
-        $("#" + div[i].id).children(".hideBoxInner").slideToggle();
+        $("#" + div[i].id).children(".hideBoxInner").toggle();
     })
 }
 
@@ -21,7 +21,7 @@ $(function gameStateHandler () {
     let parent = $(scene).parent([".sceneContainerHidden"])
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
-    let personnelTemplate = {patients: [testDummy, testDummy2, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy,testDummy], employees: [], customers: []};
+    let personnelTemplate = {patients: [testDummy, testDummy2, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy,testDummy,testDummy,testDummy,testDummy], employees: [], customers: []};
 
     gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
@@ -31,9 +31,36 @@ $(function gameStateHandler () {
 
 // Start Up Function
 function gameStartUpHandler() {
+    leftStatContainerBtnSlot();
     buildingSetup();
     personnelSetup();
 
+}
+
+// Left Stat Container Btn Slot Setup
+
+function leftStatContainerBtnSlot() {
+
+    //Home Scene Btn Setup and Event Listener
+    let homeScene = document.getElementById("baseBox")
+    $("#leftStatBoxScenBtnHome").on("click", function() {
+        sceneChange(homeScene)
+    })
+    //Personnel Scene Btn Setup and Event Listener
+    let personnelScene = document.getElementById("scenePersonnelInformation")
+    $("#leftStatBoxScenBtnPersonnel").on("click", function() {
+        sceneChange(personnelScene)
+    })
+    //Research Scene Btn Setup and Event Listener
+    let researchScene = document.getElementById("sceneResearchTree")
+    $("#leftStatBoxScenBtnResearch").on("click", function() {
+        sceneChange(researchScene)
+    })
+    // Sector Scene Btn Setup and Event Listener
+    let sectorScene = document.getElementById("sceneResearchTree")
+    $("#leftStatBoxScenBtnSector").on("click", function() {
+        sceneChange(sectorScene)
+    })
 }
 
 // Start of Building Functions

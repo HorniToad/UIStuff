@@ -11,46 +11,19 @@
       <div class="gridBoxDualRow" id="mainBox">
          <div class="flexBoxHorizontal">
             <div class="gridBox" id="topBoxLeft">
-               <div class="gridBoxCenter">Test Inc</div>
+               <div class="gridBoxCenter">
+               <h2>HomeMaker INC</h1>
+               </div>
             </div>
             <div class="gridBox" id="topBoxRight">
                <div class="flexBoxHorizontal">
                   <div class="gridBoxFull">
-                     <div class="gridBoxCenter">
-                        <div class="flexBoxHorizontal" style="gap: 5%">
-                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
-                              <div class="gridBoxFull">
-                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
-                                    Home
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
-                              <div class="gridBoxFull">
-                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
-                                    Personnel
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
-                              <div class="gridBoxFull">
-                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
-                                    Research
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="borderBoxFullREdgeHidden" style="background: darkslateblue">
-                              <div class="gridBoxFull">
-                                 <div class="gridBoxCenter" style="padding: 1vh; color: white">
-                                    Sector
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
+
                   </div>
                   <div class="gridBoxFull">
-                     <div class="gridBoxCenter">Home</div>
+                     <div class="gridBoxCenter">
+                        <h2>Home</h1>
+                     </div>
                   </div>
                   <div class="gridBoxFull"></div>
                </div>
@@ -73,6 +46,7 @@
                            </div>
                         </div>
                      </div>
+                     <!-- Start of Game Spped Slot -->
                      <div class="slotContainerBlank">
                         <div class="flexBoxHorizontal">
                            <div class="gridBoxFull">
@@ -86,13 +60,15 @@
                            </div>
                         </div>
                      </div>
+                      <!-- End of Game Spped Slot -->
+                      <!-- Start of Scene Btn Slot -->
                      <div class="slotContainerBlank" style="padding-bottom: 5%;">
                         <div class="gridBoxFull">
                            <div class="gridBoxDualRowGap" style="gap: 5%;">
                               <div class="gridBoxFull">
                                  <div class="gridBoxCenter95">
                                     <div class="gridBoxDualColumnGap">
-                                       <div class="gridBoxFull">
+                                       <div class="gridBoxFull" id="leftStatBoxScenBtnHome">
                                           <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
                                              <div class="gridBoxFull">
                                                 <div class="gridBoxCenter">
@@ -102,7 +78,7 @@
                                           </div>
                                        </div>
 
-                                       <div class="gridBoxFull">
+                                       <div class="gridBoxFull" id="leftStatBoxScenBtnPersonnel">
                                           <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
                                              <div class="gridBoxFull">
                                                 <div class="gridBoxCenter">
@@ -114,7 +90,7 @@
                                     </div>
                                  </div>
                               </div>
-                              <div class="gridBoxFull">
+                              <div class="gridBoxFull" id="leftStatBoxScenBtnResearch">
                                  <div class="gridBoxCenter95">
                                     <div class="gridBoxDualColumnGap">
                                        <div class="gridBoxFull">
@@ -127,7 +103,7 @@
                                           </div>
                                        </div>
 
-                                       <div class="gridBoxFull">
+                                       <div class="gridBoxFull" id="leftStatBoxScenBtnSectors">
                                           <div class="borderBoxFullREdgeHidden" style="background: mediumslateblue">
                                              <div class="gridBoxFull">
                                                 <div class="gridBoxCenter">
@@ -142,6 +118,7 @@
                            </div>
                         </div>
                      </div>
+                     <!-- End of Scene Btn Slot-->
                      <div class="scrollBox">
                         <div class="scrollBoxInner" style="height: 80%;">
                            <div class="gridBox">
@@ -1973,10 +1950,28 @@
                   <!-- Start of sceneResearch-->
                   <div class="sceneContainerHidden" id="sceneResearch">
                      <div class="noneBoxFull" id="sceneResearchTree">
-                        <div class="gridBoxFull">
-                           <div class="backgroundInsetTopFull">
-                              <div class="gridBoxFull">
-                                 <div class="gridBoxCenter95">
+                        <div class="gridBoxDualRow" style = "grid-template-rows: 19% 79%; gap: 2%;">
+                           <div class="gridBoxFull">
+                              <div class="backgroundInsetTopFull">
+                                 <div class="gridBoxDualRowGap">
+                                    <div class="gridBoxFull">
+                                       <div class="gridBoxDualRowGap">
+                                          <div class="gridBox" style="width: 95%; height: 50%; padding-top: 1%; justify-self: center;">
+                                             <div class="progressBar" style="border-radius: 5px;">
+                                                <div class="progressBarProgress" style="background: mediumslateblue"></div>
+                                             </div>
+                                          </div>
+                                          <div class="gridBox">
+                                             <div class="gridBoxCenter">Research Progress: 90%</div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="gridBoxFull">
+                              <div class="backgroundInsetTopFull">
+                                 <div class="gridBoxFull">
 
                                  </div>
                               </div>
