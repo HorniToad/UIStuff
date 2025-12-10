@@ -31,7 +31,7 @@ $(function gameStateHandler () {
 
 // Start Up Function
 function gameStartUpHandler() {
-    leftStatContainerBtnSlot();
+    leftStatContainerBtnEventSetup();
     buildingSetup();
     personnelSetup();
 
@@ -39,26 +39,26 @@ function gameStartUpHandler() {
 
 // Left Stat Container Btn Slot Setup
 
-function leftStatContainerBtnSlot() {
+function leftStatContainerBtnEventSetup() {
 
     //Home Scene Btn Setup and Event Listener
     let homeScene = document.getElementById("baseBox")
-    $("#leftStatBoxScenBtnHome").on("click", function() {
+    $("#leftStatBoxSceneBtnHome").on("click", function() {
         sceneChange(homeScene)
     })
     //Personnel Scene Btn Setup and Event Listener
     let personnelScene = document.getElementById("scenePersonnelInformation")
-    $("#leftStatBoxScenBtnPersonnel").on("click", function() {
+    $("#leftStatBoxSceneBtnPersonnel").on("click", function() {
         sceneChange(personnelScene)
     })
     //Research Scene Btn Setup and Event Listener
     let researchScene = document.getElementById("sceneResearchTree")
-    $("#leftStatBoxScenBtnResearch").on("click", function() {
+    $("#leftStatBoxSceneBtnResearch").on("click", function() {
         sceneChange(researchScene)
     })
     // Sector Scene Btn Setup and Event Listener
-    let sectorScene = document.getElementById("sceneResearchTree")
-    $("#leftStatBoxScenBtnSector").on("click", function() {
+    let sectorScene = document.getElementById("sceneExpeditionSelect")
+    $("#leftStatBoxSceneBtnSectors").on("click", function() {
         sceneChange(sectorScene)
     })
 }
@@ -360,7 +360,6 @@ function personnelSetup() {
     for(let i = 0; i < patients.length; i++) {
 
         let newSlot = slotBuilder(patients[i], personnelContainer)
-        console.log(newSlot)
 
         let textName = newSlot.querySelector(".textBoxLeft");
         let textStatus = newSlot.querySelector(".textBoxRight");
