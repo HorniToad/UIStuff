@@ -333,6 +333,10 @@ function buildSelection() {
 function buildingFilter(x) {
     let target = x;
     if(target != undefined) {
+        if(gameState.buildingSceneFocus && gameState.buildingSceneFocus != target) {
+            let oldTarget = document.getElementById("building" + gameState.buildingSceneFocus.type + "Scene")
+            oldTarget.style.display = "none";
+        }
         let buildContainer = document.getElementById("buildingSceneBox")
         sceneChange(buildContainer)
         gameState.buildingSceneFocus = target
