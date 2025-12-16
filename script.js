@@ -61,6 +61,10 @@ function leftStatContainerBtnEventSetup() {
     $("#leftStatBoxSceneBtnSectors").on("click", function() {
         sceneChange(sectorScene)
     })
+    let bountyScene = document.getElementById("sceneBounties")
+    $("#leftStatBoxSceneBtnBounties").on("click", function() {
+        sceneChange(bountyScene)
+    })
 }
 
 // Start of Building Functions
