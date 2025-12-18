@@ -1,14 +1,3 @@
-
-let div = document.getElementsByClassName("hideBoxOuter");
-for(let i = 0; i < div.length; i++) {
-    let divHideBox = div[i].querySelector(".hideBoxInner");
-    let divBtn = div[i].querySelector(".hideBtn");
-
-    divBtn.addEventListener("click", function() {
-        $("#" + div[i].id).children(".hideBoxInner").toggle();
-    })
-}
-
 let gameState;
 
 $(function gameStateHandler () {
@@ -31,16 +20,28 @@ $(function gameStateHandler () {
 
 // Start Up Function
 function gameStartUpHandler() {
+    hideBoxSetup();
     leftStatContainerBtnEventSetup();
     buildingSetup();
     personnelSetup();
+}
 
+// Left Stat Container Hide Box Setu
+function hideBoxSetup() {
+    let div = document.getElementsByClassName("hideBoxOuter");
+    for(let i = 0; i < div.length; i++) {
+        let divHideBox = div[i].querySelector(".hideBoxInner");
+        let divBtn = div[i].querySelector(".hideBtn");
+
+        divBtn.addEventListener("click", function() {
+            $("#" + div[i].id).children(".hideBoxInner").toggle();
+        })
+    }
 }
 
 // Left Stat Container Btn Slot Setup
 
 function leftStatContainerBtnEventSetup() {
-
     //Home Scene Btn Setup and Event Listener
     let homeScene = document.getElementById("baseBox")
     $("#leftStatBoxSceneBtnHome").on("click", function() {
