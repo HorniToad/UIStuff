@@ -44,7 +44,7 @@
                                  </div>
                                  <div class="gridBox">
                                     <div class="progressBar">
-                                       <div class="progressBarProgress"></div>
+                                       <div class="progressBarProgress" id="progressBarCurrentTick"></div>
                                     </div>
                                  </div>
                               </div>
@@ -52,13 +52,16 @@
                            <!-- Start of Game Speed Slot -->
                            <div class="slotContainerBlank">
                               <div class="flexBoxHorizontal">
-                                 <div class="gridBoxFull">
+                                 <div class="gridBoxFull" id="gameSpeedPauseBtn">
+                                    <div class="textBoxCenter">||</div>
+                                 </div>
+                                 <div class="gridBoxFull" id="gameSpeedSlowBtn">
                                     <div class="textBoxCenter">></div>
                                  </div>
-                                 <div class="gridBoxFull">
+                                 <div class="gridBoxFull" id="gameSpeedNormalBtn">
                                     <div class="textBoxCenter">>></div>
                                  </div>
-                                 <div class="gridBoxFull">
+                                 <div class="gridBoxFull" id="gameSpeedFastBtn">
                                     <div class="textBoxCenter">>>></div>
                                  </div>
                               </div>

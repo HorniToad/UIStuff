@@ -284,6 +284,8 @@ body {
 .progressBarProgress {
     background: green;
     overflow: clip;
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
 /*Slot Containers */

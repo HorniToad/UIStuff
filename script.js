@@ -1,6 +1,42 @@
 let gameState;
 
-$(function gameStateHandler () {
+//gameStateHandler-- Start of the Game State Handler
+function gameStateHandler() {
+
+}
+
+// Tick Counter Function
+function tickStateCounter() {
+    if(gameState.currentTick < gameState.completeTick) {
+        gameState.currentTick++;
+    }
+    else if(gameState.currentTick == 10){
+        gameState.currentTick = -1;
+        dateUpdate();
+    }
+    let progress = progressCheck(gameState.currentTick, gameState.completeTick)
+    $("#progressBarCurrentTick").css({width: progress + "%"})
+
+    function dateUpdater() {
+
+    }
+}
+
+function speedSetFunction(x) {
+    let speed = x;
+    clearInterval(gameState.tickRate)
+    if(speed) {
+        gameState.tickRate = setInterval(tickStateCounter, speed)
+    }
+}
+
+
+
+//gameStateHandler-- End of the Game State Handler
+
+
+//Start-Up--Start of the gameStartUpFunction and Child Setup Functions
+$(function gameStartUpFunction() {
     // Test Dummy Char
     let testDummy = {name: "Mat", id: "mat01", status: "Idle", gender: "Male", sexuality: "Bisexual", bodyType: "Plump",}
     let testDummy2 = {name: "Perrin", id: "perrin01", status: "Idle", gender: "Wolf-Boi", sexuality: "Straight", bodyType: "Stocky"}
@@ -10,205 +46,256 @@ $(function gameStateHandler () {
     let parent = $(scene).parent([".sceneContainerHidden"])
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
-    let personnelTemplate = {patients: [testDummy, testDummy2, testDummy, testDummy, testDummy, testDummy, testDummy, testDummy,testDummy,testDummy,testDummy,testDummy], employees: [], customers: []};
+    let personnelTemplate = {patients: [testDummy, testDummy2], employees: [], customers: []};
 
     gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
-    gameStartUpHandler();
-
-})
-
-// Start Up Function
-function gameStartUpHandler() {
     hideBoxSetup();
     leftStatContainerBtnEventSetup();
     buildingSetup();
     personnelSetup();
-}
+    buildBoxSetup();
+    gameSpeedBtnSetup();
 
-// Left Stat Container Hide Box Setu
-function hideBoxSetup() {
-    let div = document.getElementsByClassName("hideBoxOuter");
-    for(let i = 0; i < div.length; i++) {
-        let divHideBox = div[i].querySelector(".hideBoxInner");
-        let divBtn = div[i].querySelector(".hideBtn");
+    // Start of Left Stat Container UI Setup Functions
+    // Left Stat Container Hide Box Setup
+    function hideBoxSetup() {
+        let div = document.getElementsByClassName("hideBoxOuter");
+        for(let i = 0; i < div.length; i++) {
+            let divHideBox = div[i].querySelector(".hideBoxInner");
+            let divBtn = div[i].querySelector(".hideBtn");
 
-        divBtn.addEventListener("click", function() {
-            $("#" + div[i].id).children(".hideBoxInner").toggle();
+            divBtn.addEventListener("click", function() {
+                $("#" + div[i].id).children(".hideBoxInner").toggle();
+            })
+        }
+    }
+
+    // Left Stat Container Btn Slot Setup
+    function leftStatContainerBtnEventSetup() {
+        //Home Scene Btn Setup and Event Listener
+        let homeScene = document.getElementById("baseBox")
+        $("#leftStatBoxSceneBtnHome").on("click", function() {
+            sceneChange(homeScene)
+        })
+        //Personnel Scene Btn Setup and Event Listener
+        let personnelScene = document.getElementById("scenePersonnelInformation")
+        $("#leftStatBoxSceneBtnPersonnel").on("click", function() {
+            sceneChange(personnelScene)
+        })
+        //Research Scene Btn Setup and Event Listener
+        let researchScene = document.getElementById("sceneResearchTree")
+        $("#leftStatBoxSceneBtnResearch").on("click", function() {
+            sceneChange(researchScene)
+        })
+        // Sector Scene Btn Setup and Event Listener
+        let sectorScene = document.getElementById("sceneExpeditionSelect")
+        $("#leftStatBoxSceneBtnSectors").on("click", function() {
+            sceneChange(sectorScene)
+        })
+        let bountyScene = document.getElementById("sceneBounties")
+        $("#leftStatBoxSceneBtnBounties").on("click", function() {
+            sceneChange(bountyScene)
         })
     }
-}
 
-// Left Stat Container Btn Slot Setup
+    function gameSpeedBtnSetup() {
+        $("#gameSpeedPauseBtn").on("click", function() {
+            speedSetFunction();
+        })
+        $("#gameSpeedSlowBtn").on("click", function() {
+            speedSetFunction(2000)
+        })
+        $("#gameSpeedNormalBtn").on("click", function() {
+            speedSetFunction(1000)
+        })
+        $("#gameSpeedFastBtn").on("click", function() {
+            speedSetFunction(500)
+        })
+    }
+    // End of Left Stat Container UI Setup Functions
 
-function leftStatContainerBtnEventSetup() {
-    //Home Scene Btn Setup and Event Listener
-    let homeScene = document.getElementById("baseBox")
-    $("#leftStatBoxSceneBtnHome").on("click", function() {
-        sceneChange(homeScene)
-    })
-    //Personnel Scene Btn Setup and Event Listener
-    let personnelScene = document.getElementById("scenePersonnelInformation")
-    $("#leftStatBoxSceneBtnPersonnel").on("click", function() {
-        sceneChange(personnelScene)
-    })
-    //Research Scene Btn Setup and Event Listener
-    let researchScene = document.getElementById("sceneResearchTree")
-    $("#leftStatBoxSceneBtnResearch").on("click", function() {
-        sceneChange(researchScene)
-    })
-    // Sector Scene Btn Setup and Event Listener
-    let sectorScene = document.getElementById("sceneExpeditionSelect")
-    $("#leftStatBoxSceneBtnSectors").on("click", function() {
-        sceneChange(sectorScene)
-    })
-    let bountyScene = document.getElementById("sceneBounties")
-    $("#leftStatBoxSceneBtnBounties").on("click", function() {
-        sceneChange(bountyScene)
-    })
-}
+    // Start of Base Box Setup Functions
+    // Handles variables and building functions
+    function buildingSetup() {
+        let slots = gameState.buildings.slots;
+        let floors = gameState.buildings.floors;
 
-// Start of Building Functions
+        let closeBtn = document.getElementById("buildBoxCloseBtn")
+        let buildBox = document.getElementById("buildBox")
 
-// Handles variables and building functions
-function buildingSetup() {
-    let slots = gameState.buildings.slots;
-    let floors = gameState.buildings.floors;
+        closeBtn.addEventListener("click", function() {
+            sceneChange();
+        })
 
-    let closeBtn = document.getElementById("buildBoxCloseBtn")
-    let buildBox = document.getElementById("buildBox")
+        //hideTarget(closeBtn, buildBox)
+        baseBoxSetup(slots, floors);
+        baseBoxButtonSetup();
+    }
 
-    closeBtn.addEventListener("click", function() {
-        sceneChange();
-    })
+    // Sets up the baseBox rows and the indivdual boxes.
+    function baseBoxSetup(x, y) {
+        let slots = x
+        let floors = y
+        let floorSlots = gameState.buildings.floorSlots
+        let buildingSlots = gameState.buildings.buildingSlots
 
-    //hideTarget(closeBtn, buildBox)
-    baseBoxSetup(slots, floors);
-    baseBoxButtonSetup();
-}
+        let target = document.getElementById("sceneHome");
+        let focus = target.querySelector(".gridBoxFull")
 
-// Sets up the baseBox rows and the indivdual boxes.
-function baseBoxSetup(x, y) {
-    let slots = x
-    let floors = y
-    let floorSlots = gameState.buildings.floorSlots
-    let buildingSlots = gameState.buildings.buildingSlots
+        let slotCount = slots / floors;
+        let floorCount = 0;
+        let count = 0;
 
-    let target = document.getElementById("sceneHome");
-    let focus = target.querySelector(".gridBoxFull")
+        let buildingRowBase = {floorUnlocked: false, id: false }
+        let currentFloor = document.createElement("div")
+        currentFloor.setAttribute("class", "flexBoxHorizontal")
+        currentFloor.setAttribute("id", "buildingRow" + floorCount)
+        buildingRowBase.id = currentFloor.id
 
-    let slotCount = slots / floors;
-    let floorCount = 0;
-    let count = 0;
+        floorSlots.push(buildingRowBase)
+        focus.append(currentFloor)
 
-    let buildingRowBase = {floorUnlocked: false, id: false }
-    let currentFloor = document.createElement("div")
-    currentFloor.setAttribute("class", "flexBoxHorizontal")
-    currentFloor.setAttribute("id", "buildingRow" + floorCount)
-    buildingRowBase.id = currentFloor.id
+        for(let i = 0; i < slots; i++) {
+            let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: false, type: false, capacity: false, progress: false, stat: false }
+            let slotDiv = document.createElement("div");
+            let slotDivInner = document.createElement("div");
+            let slotDivCenter = document.createElement("div")
+            let slotDivText = document.createElement("div");
 
-    floorSlots.push(buildingRowBase)
-    focus.append(currentFloor)
+            slotDiv.setAttribute("class", "gridBoxFull")
+            slotDiv.setAttribute("id", "buildingSlot" + i)
+            slotDivText.setAttribute("class", "textBoxCenter")
+            slotDivInner.setAttribute("class", "gridBoxCenter95")
+            slotDivCenter.setAttribute("class", "gridBoxCenter")
 
-    for(let i = 0; i < slots; i++) {
-        let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: false, type: false, capacity: false, progress: false, stat: false }
-        let slotDiv = document.createElement("div");
-        let slotDivInner = document.createElement("div");
-        let slotDivCenter = document.createElement("div")
-        let slotDivText = document.createElement("div");
+            buildingBase.id = slotDiv.id
+            buildingSlots.push(buildingBase)
 
-        slotDiv.setAttribute("class", "gridBoxFull")
-        slotDiv.setAttribute("id", "buildingSlot" + i)
-        slotDivText.setAttribute("class", "textBoxCenter")
-        slotDivInner.setAttribute("class", "gridBoxCenter95")
-        slotDivCenter.setAttribute("class", "gridBoxCenter")
+            slotDivText.innerText = i
+            slotDivText.style.color = "black";
 
-        buildingBase.id = slotDiv.id
-        buildingSlots.push(buildingBase)
+            slotDivInner.style.background = "white"
+            slotDivInner.style.border = "solid";
+            slotDivInner.style.borderRadius = "10px"
 
-        slotDivText.innerText = i
-        slotDivText.style.color = "black";
+            slotDiv.append(slotDivInner);
+            slotDivInner.append(slotDivCenter)
+            slotDivCenter.append(slotDivText)
+            currentFloor.append(slotDiv)
 
-        slotDivInner.style.background = "white"
-        slotDivInner.style.border = "solid";
-        slotDivInner.style.borderRadius = "10px"
+            count = count + 1;
+            if(count === slotCount / 2) {
+                let centralBox = document.createElement("div");
+                let centralBoxDivInner = document.createElement("div");
+                let centralBoxDivCenter = document.createElement("div")
+                let centralBoxText = document.createElement("div");
 
-        slotDiv.append(slotDivInner);
-        slotDivInner.append(slotDivCenter)
-        slotDivCenter.append(slotDivText)
-        currentFloor.append(slotDiv)
-
-        count = count + 1;
-        if(count === slotCount / 2) {
-            let centralBox = document.createElement("div");
-            let centralBoxDivInner = document.createElement("div");
-            let centralBoxDivCenter = document.createElement("div")
-            let centralBoxText = document.createElement("div");
-
-            centralBox.setAttribute("class", "gridBoxFull");
-            centralBoxDivInner.setAttribute("class", "gridBoxCenter95")
-            centralBoxDivCenter.setAttribute("class", "gridBoxCenter")
+                centralBox.setAttribute("class", "gridBoxFull");
+                centralBoxDivInner.setAttribute("class", "gridBoxCenter95")
+                centralBoxDivCenter.setAttribute("class", "gridBoxCenter")
 
 
-            centralBox.setAttribute("id", "centralBox" + floorCount);
+                centralBox.setAttribute("id", "centralBox" + floorCount);
 
-            centralBoxText.innerText =  "Floor: " + (floorCount + 1)
-            centralBoxText.style.color = "black";
+                centralBoxText.innerText =  "Floor: " + (floorCount + 1)
+                centralBoxText.style.color = "black";
 
-            centralBoxDivInner.style.background = "white"
-            centralBoxDivInner.style.border = "solid";
-            centralBoxDivInner.style.borderRadius = "10px"
+                centralBoxDivInner.style.background = "white"
+                centralBoxDivInner.style.border = "solid";
+                centralBoxDivInner.style.borderRadius = "10px"
 
-            centralBox.append(centralBoxDivInner);
-            centralBoxDivInner.append(centralBoxDivCenter)
-            centralBoxDivCenter.append(centralBoxText)
-            currentFloor.append(centralBox)
-        }
-        if(count === slotCount) {
-            floorCount++;
-            if(floorCount < floors) {
-                let buildingRowBase = {floorUnlocked: false, id: false }
-                currentFloor = document.createElement("div");
-                currentFloor.setAttribute("class", "flexBoxHorizontal")
-                currentFloor.setAttribute("id", "buildingRow" + floorCount)
+                centralBox.append(centralBoxDivInner);
+                centralBoxDivInner.append(centralBoxDivCenter)
+                centralBoxDivCenter.append(centralBoxText)
+                currentFloor.append(centralBox)
+            }
+            if(count === slotCount) {
+                floorCount++;
+                if(floorCount < floors) {
+                    let buildingRowBase = {floorUnlocked: false, id: false }
+                    currentFloor = document.createElement("div");
+                    currentFloor.setAttribute("class", "flexBoxHorizontal")
+                    currentFloor.setAttribute("id", "buildingRow" + floorCount)
 
-                buildingRowBase.id = currentFloor.id
+                    buildingRowBase.id = currentFloor.id
 
-                floorSlots.push(buildingRowBase)
-                focus.append(currentFloor)
-                count = 0;
+                    floorSlots.push(buildingRowBase)
+                    focus.append(currentFloor)
+                    count = 0;
+                }
             }
         }
     }
-}
 
-// Adds click events to each of the buildSlot elements that show the buildBox when clicked
-function baseBoxButtonSetup() {
-    let buildingSlots = gameState.buildings.buildingSlots
-    console.log(buildingSlots)
-    for(let i = 0; i < buildingSlots.length; i++) {
-        let focus = document.getElementById(buildingSlots[i].id)
-        $(focus).off()
-        if(buildingSlots[i].active === false) {
-            $("#" + buildingSlots[i].id).on("click", function buildingSlotClickSetup() {
-                gameState.buildings.buildFocus = buildingSlots[i]
-                console.log(gameState.buildFocus)
-                buildBoxTypeSetup()
-                buildBoxScrollSetup()
-                buildBtnSetup()
-                let scene = document.getElementById("buildBox")
-                sceneChange(scene, "grid")
-            })
-        }
-        else if(buildingSlots[i].active === true) {
-            $("#" + buildingSlots[i].id).on("click", function buildingSlotClickSetup() {
-                buildingFilter(buildingSlots[i])
-            })
+    // Adds click events to each of the buildSlot elements that show the buildBox when clicked
+    function baseBoxButtonSetup() {
+        let buildingSlots = gameState.buildings.buildingSlots
+        console.log(buildingSlots)
+        for(let i = 0; i < buildingSlots.length; i++) {
+            let focus = document.getElementById(buildingSlots[i].id)
+            $(focus).off()
+            if(buildingSlots[i].active === false) {
+                $("#" + buildingSlots[i].id).on("click", function buildingSlotClickSetup() {
+                    gameState.buildings.buildFocus = buildingSlots[i]
+                    buildBoxHandler();
+                })
+            }
+            else if(buildingSlots[i].active === true) {
+                $("#" + buildingSlots[i].id).on("click", function buildingSlotClickSetup() {
+                    buildingFilter(buildingSlots[i])
+                })
+            }
         }
     }
+    // End of the Base Box Setup Functions
+
+    // Start of the buildBoxSetup and its child functions
+    function buildBoxSetup() {
+        buildBtnSetup()
+    }
+
+    // Adds an eventListener to the buildBoxBuildBtn so when clicked it fills the current slot with the selected building stats.
+    function buildBtnSetup() {
+        let buildBtn = document.getElementById("buildBoxBuildBtn")
+        $("#" + buildBtn.id).on("click", function() {
+                console.log("How many times am I going???")
+                let selectedSlot = gameState.buildings.buildFocus
+                let selectedBuild = gameState.buildings.buildItemFocus;
+
+                selectedSlot.active = true;
+                selectedSlot.capacity = selectedBuild.capacity
+                selectedSlot.desc = selectedBuild.desc
+                selectedSlot.name = selectedBuild.name;
+                selectedSlot.type = selectedBuild.type;
+                selectedSlot.stat = selectedBuild.statInt;
+                selectedSlot.statName = selectedBuild.stat;
+                selectedSlot.trainable = selectedBuild.trainable;
+
+                let slot = document.getElementById(selectedSlot.id)
+
+                let textBox = slot.querySelector(".gridBoxCenter")
+
+                textBox.innerHTML = selectedBuild.name
+                baseBoxButtonSetup();
+                sceneChange()
+        })
+    }
+})
+// End of the buildBoxSetup functions
+//Start-Up--End of the gameStartUpFunction and Child Setup Functions
+
+
+// BuildBoxHandler--Start of the buildingBoxHandler Function and its child funcs
+function buildBoxHandler() {
+    buildBoxTypeHandler();
+    buildBoxScrollHandler()
+    let scene = document.getElementById("buildBox")
+    sceneChange(scene, "grid")
 }
+
 // Setups the building type select box and adds event listeners so you can switch between different building types.
-function buildBoxTypeSetup() {
+function buildBoxTypeHandler() {
 
         let buildBox = document.getElementById("buildBox")
         let target = buildBox.querySelector(".flexBoxHorizontal");
@@ -245,14 +332,14 @@ function buildBoxTypeSetup() {
                 let oldDesc = document.getElementById("buildBoxDescDiv")
                 clearBox(oldDesc)
 
-                buildBoxScrollSetup();
+                buildBoxScrollHandler();
             })
 
         }
     }
 
 // Sets up the buildBox scroll menu and the btns that fill it. It also adds an event listener to each button so when clicked the gameState object changes buildItemFocus
-function buildBoxScrollSetup() {
+function buildBoxScrollHandler() {
         let target = document.getElementById("buildBoxScrollDiv")
         clearBox(target)
 
@@ -298,32 +385,6 @@ function buildBoxScrollSetup() {
         }
     }
 
-// Adds an eventListener to the buildBoxBuildBtn so when clicked it fills the current slot with the selected building stats.
-function buildBtnSetup() {
-    let buildBtn = document.getElementById("buildBoxBuildBtn")
-    $("#" + buildBtn.id).off()
-    $("#" + buildBtn.id).on("click", function() {
-            let selectedSlot = gameState.buildings.buildFocus
-            let selectedBuild = gameState.buildings.buildItemFocus;
-
-            selectedSlot.active = true;
-            selectedSlot.capacity = selectedBuild.capacity
-            selectedSlot.desc = selectedBuild.desc
-            selectedSlot.name = selectedBuild.name;
-            selectedSlot.type = selectedBuild.type;
-            selectedSlot.stat = selectedBuild.statInt;
-            selectedSlot.statName = selectedBuild.stat;
-            selectedSlot.trainable = selectedBuild.trainable;
-
-            let slot = document.getElementById(selectedSlot.id)
-
-            let textBox = slot.querySelector(".gridBoxCenter")
-
-            textBox.innerHTML = selectedBuild.name
-            baseBoxButtonSetup();
-            sceneChange()
-    })
-}
 
 function buildSelection() {
         let btn = document.getElementById("buildBtn" + gameState.buildings.buildItemFocus.id)
@@ -334,6 +395,9 @@ function buildSelection() {
         $("#" + btn.id).off();
 }
 
+//buildBoxHandler--End of the buildBoxHandler functions
+
+//buildingFunction--Start of the building functions
 // Filters between different building options to display the correct sceneHome
 function buildingFilter(x) {
     let target = x;
@@ -354,10 +418,9 @@ function buildingFilter(x) {
         console.log("Something has gone wrong with the building filter. Target is undefined!")
     }
 }
+//buildingFunction--End of Building Functions
 
-// End of Building Functions
-
-// Start of Personnel Functions
+// personnelFunctions--Start of Personnel Functions
 function personnelSetup() {
     let personnelSidePanel = document.getElementById("dollStatContainer");
     let personnelContainer = personnelSidePanel.querySelector(".gridBoxCenter95")
@@ -395,6 +458,7 @@ function personnelInformationHandler(x) {
     $("#scenePersonnelInformationCharBodyType").text(characterFocus.bodyType)
 }
 
+//personnelFunctions--End of the Personnel Function
 
 // Sidepanel UI Builder Function
 
@@ -447,10 +511,6 @@ function slotBuilder(x, y) {
 
 }
 
-
-// End of Personnel Functions
-
-
 // Helper Functions
 // Function that sets up a click event on an element and adds allows it to hide another element
 function hideTarget(x, y) {
@@ -467,6 +527,17 @@ function clearBox(element)
     element.innerHTML = "";
 }
 
+// Determines the current progress of a process and returns it
+function progressCheck(x, y) {
+    let currentProgress = x;
+    let totalProgress = y;
+
+    let currentPercentage = currentProgress / totalProgress
+    currentPercentage = currentPercentage * 100;
+    return currentPercentage
+}
+
+// Hides prior scene and displays the new one. The y element is used if you want a specifc display type.
 function sceneChange(x, y) {
     let newScene = x;
     console.log(newScene)
