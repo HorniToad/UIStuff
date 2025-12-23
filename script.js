@@ -12,13 +12,65 @@ function tickStateCounter() {
     }
     else if(gameState.currentTick == 10){
         gameState.currentTick = -1;
-        dateUpdate();
+        dateUpdater();
+        console.log(gameState)
+        $("#dateStatText").text(gameState.currentDate.week + " " + gameState.currentDate.month.name + " " + gameState.currentDate.day)
     }
     let progress = progressCheck(gameState.currentTick, gameState.completeTick)
     $("#progressBarCurrentTick").css({width: progress + "%"})
 
     function dateUpdater() {
+        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        let months = [
+            {id: "monthJanuary", name: "January", days: 31},
+            {id: "monthFebruary", name: "February", days: 28},
+            {id: "monthMarch", name: "March", days: 31},
+            {id: "monthApril", name: "April", days: 30},
+            {id: "monthMay", name: "May", days: 31},
+            {id: "monthJune", name: "June", days: 30},
+            {id: "monthJuly", name: "July", days: 31},
+            {id: "monthAugust", name: "August", days: 31},
+            {id: "monthSeptember", name: "September", days: 30},
+            {id: "monthOctober", name: "October", days: 31},
+            {id: "monthNovember", name: "November", days: 30},
+            {id: "monthDecember", name: "December", days: 31},
+        ]
 
+        if(!gameState.currentDate) {
+            gameState.currentDate = {month: months[0], week: days[0], day: 1}
+        }
+        if(gameState.currentDate) {
+            let currentDate = gameState.currentDate
+            for(let k = 0; k < days.length; k++) {
+                if(days[6] === currentDate.week) {
+                    currentDate.week = days[0];
+                    break;
+                }
+
+                else if(days[k] === currentDate.week) {
+                    currentDate.week = days[k + 1];
+                    break;
+                }
+            }
+            if(currentDate.day === currentDate.month.days) {
+                for(let i = 0; i < months.length; i++) {
+                    if(currentDate.month.id === months[11].id && currentDate.day === months[11].days) {
+                        currentDate.month = months[0];
+                        currentDate.day = 1
+                        break;
+                    }
+                    else if(currentDate.month.id === months[i].id) {
+                        currentDate.month = months[i + 1]
+                        console.log(currentDate.month)
+                        currentDate.day = 1
+                        break;
+                    }
+                }
+            }
+            else {
+                currentDate.day += 1;
+            }
+        }
     }
 }
 
@@ -48,7 +100,7 @@ $(function gameStartUpFunction() {
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
     let personnelTemplate = {patients: [testDummy, testDummy2], employees: [], customers: []};
 
-    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false, currentDay: 1, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
+    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
     hideBoxSetup();
     leftStatContainerBtnEventSetup();
