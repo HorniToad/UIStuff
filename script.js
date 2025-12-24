@@ -7,82 +7,90 @@ function gameStateHandler() {
 
 // Tick Counter Function
 function tickStateCounter() {
-    if(gameState.currentTick < gameState.completeTick) {
-        gameState.currentTick++;
+    if(gameState.tickState.currentTick < gameState.tickState.completeTick) {
+        gameState.tickState.currentTick++;
     }
-    else if(gameState.currentTick == 10){
-        gameState.currentTick = -1;
+    else if(gameState.tickState.currentTick == 10){
+        gameState.tickState.currentTick = -1;
         dateUpdater();
         console.log(gameState)
         $("#dateStatText").text(gameState.currentDate.week + " " + gameState.currentDate.month.name + " " + gameState.currentDate.day)
     }
-    let progress = progressCheck(gameState.currentTick, gameState.completeTick)
+    let progress = progressCheck(gameState.tickState.currentTick, gameState.tickState.completeTick)
     $("#progressBarCurrentTick").css({width: progress + "%"})
-
-    function dateUpdater() {
-        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        let months = [
-            {id: "monthJanuary", name: "January", days: 31},
-            {id: "monthFebruary", name: "February", days: 28},
-            {id: "monthMarch", name: "March", days: 31},
-            {id: "monthApril", name: "April", days: 30},
-            {id: "monthMay", name: "May", days: 31},
-            {id: "monthJune", name: "June", days: 30},
-            {id: "monthJuly", name: "July", days: 31},
-            {id: "monthAugust", name: "August", days: 31},
-            {id: "monthSeptember", name: "September", days: 30},
-            {id: "monthOctober", name: "October", days: 31},
-            {id: "monthNovember", name: "November", days: 30},
-            {id: "monthDecember", name: "December", days: 31},
-        ]
-
-        if(!gameState.currentDate) {
-            gameState.currentDate = {month: months[0], week: days[0], day: 1}
-        }
-        if(gameState.currentDate) {
-            let currentDate = gameState.currentDate
-            for(let k = 0; k < days.length; k++) {
-                if(days[6] === currentDate.week) {
-                    currentDate.week = days[0];
-                    break;
-                }
-
-                else if(days[k] === currentDate.week) {
-                    currentDate.week = days[k + 1];
-                    break;
-                }
-            }
-            if(currentDate.day === currentDate.month.days) {
-                for(let i = 0; i < months.length; i++) {
-                    if(currentDate.month.id === months[11].id && currentDate.day === months[11].days) {
-                        currentDate.month = months[0];
-                        currentDate.day = 1
-                        break;
-                    }
-                    else if(currentDate.month.id === months[i].id) {
-                        currentDate.month = months[i + 1]
-                        console.log(currentDate.month)
-                        currentDate.day = 1
-                        break;
-                    }
-                }
-            }
-            else {
-                currentDate.day += 1;
-            }
-        }
-    }
 }
 
+// Function that handles how fast the gameState.tickState.tick is running at
 function speedSetFunction(x) {
     let speed = x;
-    clearInterval(gameState.tickRate)
+    if(gameState.tickState.tickRate === x) {
+        console.log("No speed change.")
+        return 0;
+    }
+    clearInterval(gameState.tickState.tick)
     if(speed) {
-        gameState.tickRate = setInterval(tickStateCounter, speed)
+        gameState.tickState.tickRate = speed;
+        gameState.tickState.tick = setInterval(tickStateCounter, speed)
+    }
+    else {
+        gameState.tickState.tickRate = false;
     }
 }
 
+// Determines the date based on the number of ticks that have passed
+function dateUpdater() {
+    let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    let months = [
+        {id: "monthJanuary", name: "January", days: 31},
+        {id: "monthFebruary", name: "February", days: 28},
+        {id: "monthMarch", name: "March", days: 31},
+        {id: "monthApril", name: "April", days: 30},
+        {id: "monthMay", name: "May", days: 31},
+        {id: "monthJune", name: "June", days: 30},
+        {id: "monthJuly", name: "July", days: 31},
+        {id: "monthAugust", name: "August", days: 31},
+        {id: "monthSeptember", name: "September", days: 30},
+        {id: "monthOctober", name: "October", days: 31},
+        {id: "monthNovember", name: "November", days: 30},
+        {id: "monthDecember", name: "December", days: 31},
+    ]
 
+    if(!gameState.currentDate) {
+        gameState.currentDate = {month: months[0], week: days[0], day: 1}
+    }
+    if(gameState.currentDate) {
+        let currentDate = gameState.currentDate
+        for(let k = 0; k < days.length; k++) {
+            if(days[6] === currentDate.week) {
+                currentDate.week = days[0];
+                break;
+            }
+
+            else if(days[k] === currentDate.week) {
+                currentDate.week = days[k + 1];
+                break;
+            }
+        }
+        if(currentDate.day === currentDate.month.days) {
+            for(let i = 0; i < months.length; i++) {
+                if(currentDate.month.id === months[11].id && currentDate.day === months[11].days) {
+                    currentDate.month = months[0];
+                    currentDate.day = 1
+                    break;
+                }
+                else if(currentDate.month.id === months[i].id) {
+                    currentDate.month = months[i + 1]
+                    console.log(currentDate.month)
+                    currentDate.day = 1
+                    break;
+                }
+            }
+        }
+        else {
+            currentDate.day += 1;
+        }
+    }
+}
 
 //gameStateHandler-- End of the Game State Handler
 
@@ -99,9 +107,11 @@ $(function gameStartUpFunction() {
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
     let personnelTemplate = {patients: [testDummy, testDummy2], employees: [], customers: []};
+    let tickTemplate =  {tick: false, tickRate: false, completeTick: 10, currentTick: 0}
 
-    gameState = {tickState: false, tickRate: false, completeTick: 10, currentTick: 0, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
+    gameState = {tickState: tickTemplate, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
+    personnelGenerator();
     hideBoxSetup();
     leftStatContainerBtnEventSetup();
     buildingSetup();
@@ -500,13 +510,51 @@ function personnelSetup() {
 }
 
 // Personnel Character filter
+function personnelGenerator() {
+    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false}, }
+    console.log(generatedCharacter)
+    // Body Generator
+    for(let i = 0; i < bodyParts.length; i++) {
+        for(let key in bodyParts[i]) {
+            if (bodyParts[i].hasOwnProperty(key)) {
+                value = bodyParts[i][key];
+                let rand = Math.floor(Math.random() * value.length);
+                let choice = value[rand]
+                console.log(key, value, choice);
+                generatedCharacter.appearance[key] = choice
+            }
+        }
+    }
+    //Gender Selector
+    let selectedGender = Math.floor(Math.random() * genders.length);
+    generatedCharacter.gender = genders[selectedGender]
+
+    //Name Selector
+    if(generatedCharacter.gender === "man") {
+        let selectedName = Math.floor(Math.random() * firstName.manNames.length);
+        generatedCharacter.name = firstName.manNames[selectedName]
+    }
+    else if(generatedCharacter.gender == "woman") {
+        let selectedName = Math.floor(Math.random() * firstName.womanNames.length);
+        generatedCharacter.name = firstName.womanNames[selectedName]
+    }
+    //Sexuality Selector
+    let selectedSexuality = Math.floor(Math.random() * sexuality.length);
+    generatedCharacter.sexuality = sexuality[selectedSexuality]
+    //Status Setter
+    generatedCharacter.status = "Idle";
+    //Moves generatedCharacter to the gameState
+    gameState.personnel.patients.push(generatedCharacter)
+    console.log(generatedCharacter)
+}
+
 function personnelInformationHandler(x) {
     let characterFocus = x;
     console.log(characterFocus)
 
     $("#scenePersonnelInformationCharName").text(characterFocus.name)
-    $("#scenePersonnelInformationCharGender").text(characterFocus.gender)
-    $("#scenePersonnelInformationCharSexuality").text(characterFocus.sexuality)
+    $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.gender))
+    $("#scenePersonnelInformationCharSexuality").text(capitalizeFunc(characterFocus.sexuality))
     $("#scenePersonnelInformationCharBodyType").text(characterFocus.bodyType)
 }
 
@@ -579,6 +627,12 @@ function clearBox(element)
     element.innerHTML = "";
 }
 
+//Capitalize First Letting in String Function
+function capitalizeFunc(x) {
+    let focus = x
+    return focus.charAt(0).toUpperCase() + focus.slice(1)
+}
+
 // Determines the current progress of a process and returns it
 function progressCheck(x, y) {
     let currentProgress = x;
@@ -629,7 +683,6 @@ function sceneChange(x, y) {
 }
 
 //Arrays
-
 //BuildingArrays
 let buildingTypes = [
     { id: "conditioningSlot", type: "Conditioning", name: "Conditioning", cost: 10, build: 5, unlocked: true, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
@@ -663,3 +716,38 @@ let buildings = [
     { id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, desc: "A basic surgery station used to enhance dolls." }
 ]
 
+// Character Arrays
+// Body Parts
+bodyParts =[
+    head={
+        hairColor:["green", "blue", "brown", "blonde", "gray"],
+        hairLength: ["short", "long", "medium", "really long", "bald"]
+    },
+    upperBody={
+        bodySize:["tiny", "small", "medium", "large", "huge"],
+        height: ["short", "sort of short", "medium", "tall", "very tall"]
+    },
+    lowerBody={
+        hipSize:["tiny", "small", "medium", "large", "hourglass"],
+        waistSize: ["thin", "small", "medium", "thick", "very thick"]
+    },
+]
+
+//Personnel Names
+firstName = {
+    manNames:[
+        "John", "Steve", "Gary", "Steve", "Frank"
+    ],
+    womanNames:[
+        "Sarah", "Velma", "Daphne", "Chloe", "Jenny"
+    ]
+}
+
+//Personnel Genders
+genders = ["man", "woman"]
+
+//Personnel Sexuality
+sexuality = ["straight", "gay", "bisexual", "asexual"]
+// Preset Objects
+
+//Character Object
