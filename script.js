@@ -718,7 +718,7 @@ let buildings = [
 
 // Character Arrays
 // Body Parts
-bodyParts =[
+let bodyParts =[
     head={
         hairColor:["green", "blue", "brown", "blonde", "gray"],
         hairLength: ["short", "long", "medium", "really long", "bald"]
@@ -734,7 +734,7 @@ bodyParts =[
 ]
 
 //Personnel Names
-firstName = {
+let firstName = {
     manNames:[
         "John", "Steve", "Gary", "Steve", "Frank"
     ],
@@ -744,10 +744,17 @@ firstName = {
 }
 
 //Personnel Genders
-genders = ["man", "woman"]
+let genders = ["man", "woman"]
 
 //Personnel Sexuality
-sexuality = ["straight", "gay", "bisexual", "asexual"]
+let sexuality = ["straight", "gay", "bisexual", "asexual"]
+//Personnel Traits
+let startingTraits = {
+    {name: "Lazy", desc: "This doll has spent their time avoiding hard or complex work, despite societies pressues.", res: -1, str:-1, int: -1; },
+    {name: "Smart", desc: "This dolls mind tends to work quicker than others.", res: 0, str:0, int: 2},
+    {name: "Stubborn", desc: "This doll resists the influences and pushes or others, even if that other is correct.", res: 2, str:1, int: -1},
+    {name: "Slow", desc: "Things tend to go over this dolls head", res: 0, str:0, int: -2},
+    {name: "Strong", desc: "This doll is built quite powerfully. Not someone to underestimate.", res: 0, str:3, int: 0},
+    {name: "Weak", desc: "This doll has a fairly weak build. An easy target.", res: 0, str:-3, int: 0},
+}
 // Preset Objects
-
-//Character Object
