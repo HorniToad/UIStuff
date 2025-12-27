@@ -106,7 +106,7 @@ $(function gameStartUpFunction() {
     let parent = $(scene).parent([".sceneContainerHidden"])
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
-    let personnelTemplate = {patients: [testDummy, testDummy2], employees: [], customers: []};
+    let personnelTemplate = {patients: [], employees: [], customers: []};
     let tickTemplate =  {tick: false, tickRate: false, completeTick: 10, currentTick: 0}
 
     gameState = {tickState: tickTemplate, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
@@ -565,10 +565,44 @@ function personnelInformationHandler(x) {
     let characterFocus = x;
     console.log(characterFocus)
 
+    traitsPanelSetup(characterFocus.traits)
+
     $("#scenePersonnelInformationCharName").text(characterFocus.name)
     $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.gender))
     $("#scenePersonnelInformationCharSexuality").text(capitalizeFunc(characterFocus.sexuality))
     $("#scenePersonnelInformationCharBodyType").text(characterFocus.bodyType)
+}
+
+//personnelInformation Traits Panel Setup
+function traitsPanelSetup(x) {
+    let traits = x;
+    let scene = document.getElementById("scenePersonnelInformationTraits");
+
+    clearBox(scene)
+
+    for(let i = 0; i < traits.length; i++) {
+        let traitContainer = document.createElement("div");
+        let traitCenter = document.createElement("div");
+        let traitBorderBox = document.createElement("div");
+        let traitInnerContainer = document.createElement("div");
+        let traitInnerText = document.createElement("div");
+
+        traitContainer.setAttribute("class", "gridBoxFull");
+        traitCenter.setAttribute("class", "gridBoxCenter99");
+        traitBorderBox.setAttribute("class", "borderBoxFullREdgeHidden");
+        traitInnerContainer.setAttribute("class", "gridBoxFull");
+        traitInnerText.setAttribute("class", "gridBoxCenter");
+
+        traitContainer.append(traitCenter);
+        traitCenter.append(traitBorderBox);
+        traitBorderBox.append(traitInnerContainer);
+        traitInnerContainer.append(traitInnerText);
+
+        scene.append(traitContainer)
+
+        traitBorderBox.style.background = "darkslateblue"
+        traitInnerText.innerText = traits[i].name
+    }
 }
 
 //personnelFunctions--End of the Personnel Function
