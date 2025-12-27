@@ -112,6 +112,7 @@ $(function gameStartUpFunction() {
     gameState = {tickState: tickTemplate, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
     personnelGenerator();
+    personnelGenerator();
     hideBoxSetup();
     leftStatContainerBtnEventSetup();
     buildingSetup();
@@ -511,7 +512,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false}, }
+    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false}, traits: []}
     console.log(generatedCharacter)
     // Body Generator
     for(let i = 0; i < bodyParts.length; i++) {
@@ -541,6 +542,18 @@ function personnelGenerator() {
     //Sexuality Selector
     let selectedSexuality = Math.floor(Math.random() * sexuality.length);
     generatedCharacter.sexuality = sexuality[selectedSexuality]
+    //Trait Selector
+    let traitCount = Math.floor(Math.random() * 4) + 1;
+    let traitSelectionArray = startingTraits.slice();
+    console.log("Trait Count " + traitCount)
+    for(let i = 0; i < traitCount; i++) {
+		let rand = Math.floor(Math.random() * traitSelectionArray.length);
+		let selectedTrait = traitSelectionArray[rand];
+		traitSelectionArray.splice(rand, 1);
+		console.log(traitSelectionArray.length);
+		generatedCharacter.traits.push(selectedTrait);
+			
+	}
     //Status Setter
     generatedCharacter.status = "Idle";
     //Moves generatedCharacter to the gameState
@@ -749,12 +762,13 @@ let genders = ["man", "woman"]
 //Personnel Sexuality
 let sexuality = ["straight", "gay", "bisexual", "asexual"]
 //Personnel Traits
-let startingTraits = {
-    {name: "Lazy", desc: "This doll has spent their time avoiding hard or complex work, despite societies pressues.", res: -1, str:-1, int: -1; },
+let startingTraits = [
+    {name: "Lazy", desc: "This doll has spent their time avoiding hard or complex work, despite societies pressues.", res: -1, str:-1, int: -1},
     {name: "Smart", desc: "This dolls mind tends to work quicker than others.", res: 0, str:0, int: 2},
     {name: "Stubborn", desc: "This doll resists the influences and pushes or others, even if that other is correct.", res: 2, str:1, int: -1},
     {name: "Slow", desc: "Things tend to go over this dolls head", res: 0, str:0, int: -2},
     {name: "Strong", desc: "This doll is built quite powerfully. Not someone to underestimate.", res: 0, str:3, int: 0},
     {name: "Weak", desc: "This doll has a fairly weak build. An easy target.", res: 0, str:-3, int: 0},
-}
+]
+
 // Preset Objects
