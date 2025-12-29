@@ -512,16 +512,23 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false}, traits: []}
+    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false}, traits: [], stats:{res: false, str: false, int: false}, gender: {name: false, pronounPersonal: false, pronounPossesive: false}}
     console.log(generatedCharacter)
     // Body Generator
+
+    //Body Type Selector
+    let bodyTypeRand = Math.floor(Math.random() * bodyType.length);
+    let selectedBodyType = bodyType[bodyTypeRand];
+    generatedCharacter.appearance.bodyType = selectedBodyType;
+    console.log("Max: " + selectedBodyType.max + " Min: " + selectedBodyType.min)
+
     for(let i = 0; i < bodyParts.length; i++) {
         for(let key in bodyParts[i]) {
             if (bodyParts[i].hasOwnProperty(key)) {
                 value = bodyParts[i][key];
-                let rand = Math.floor(Math.random() * value.length);
+                let rand = Math.floor(Math.random() * (selectedBodyType.max - selectedBodyType.min + 1)+ selectedBodyType.min)
+                console.log(rand)
                 let choice = value[rand]
-                console.log(key, value, choice);
                 generatedCharacter.appearance[key] = choice
             }
         }
@@ -531,11 +538,11 @@ function personnelGenerator() {
     generatedCharacter.gender = genders[selectedGender]
 
     //Name Selector
-    if(generatedCharacter.gender === "man") {
+    if(generatedCharacter.gender.name === "man") {
         let selectedName = Math.floor(Math.random() * firstName.manNames.length);
         generatedCharacter.name = firstName.manNames[selectedName]
     }
-    else if(generatedCharacter.gender == "woman") {
+    else if(generatedCharacter.gender.name == "woman") {
         let selectedName = Math.floor(Math.random() * firstName.womanNames.length);
         generatedCharacter.name = firstName.womanNames[selectedName]
     }
@@ -547,20 +554,33 @@ function personnelGenerator() {
     let traitSelectionArray = startingTraits.slice();
     console.log("Trait Count " + traitCount)
     for(let i = 0; i < traitCount; i++) {
-		let rand = Math.floor(Math.random() * traitSelectionArray.length);
-		let selectedTrait = traitSelectionArray[rand];
-		traitSelectionArray.splice(rand, 1);
-		console.log(traitSelectionArray.length);
-		generatedCharacter.traits.push(selectedTrait);
-			
-	}
+        let rand = Math.floor(Math.random() * traitSelectionArray.length);
+        let selectedTrait = traitSelectionArray[rand];
+        personnelStatCounter(selectedTrait, generatedCharacter)
+        traitSelectionArray.splice(rand, 1);
+        generatedCharacter.traits.push(selectedTrait);
+    }
+
     //Status Setter
     generatedCharacter.status = "Idle";
     //Moves generatedCharacter to the gameState
     gameState.personnel.patients.push(generatedCharacter)
     console.log(generatedCharacter)
-}
 
+    function personnelStatCounter(x, y) {
+        let stat = x;
+        let character = y;
+
+        let res = stat["res"];
+        let str = stat["str"];
+        let int = stat["int"];
+
+        character.stats.res += res;
+        character.stats.str += str;
+        character.stats.int += int;
+    }
+}
+// Ensures the personnelInformation screen is always up to date and showing the correct character.
 function personnelInformationHandler(x) {
     let characterFocus = x;
     console.log(characterFocus)
@@ -568,43 +588,46 @@ function personnelInformationHandler(x) {
     traitsPanelSetup(characterFocus.traits)
 
     $("#scenePersonnelInformationCharName").text(characterFocus.name)
-    $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.gender))
+    $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.gender.name))
     $("#scenePersonnelInformationCharSexuality").text(capitalizeFunc(characterFocus.sexuality))
-    $("#scenePersonnelInformationCharBodyType").text(characterFocus.bodyType)
-}
+    $("#scenePersonnelInformationCharBodyType").text(capitalizeFunc(characterFocus.appearance.bodyType.name))
+    $("#scenePersonnelInformationCharStr").text(characterFocus.stats.str)
+    $("#scenePersonnelInformationCharRes").text(characterFocus.stats.res)
+    $("#scenePersonnelInformationCharInt").text(characterFocus.stats.int)
 
-//personnelInformation Traits Panel Setup
-function traitsPanelSetup(x) {
-    let traits = x;
-    let scene = document.getElementById("scenePersonnelInformationTraits");
+    $("#scenePersonnelInformationDesc").text(characterFocus.name + " is a " + characterFocus.appearance.bodyType.name + " " + characterFocus.sexuality +  " " + characterFocus.gender.name + " with tan skin. " + characterFocus.gender.pronounPersonal + " has " + characterFocus.appearance.shoulderWidth.name + "  shoulders and " + characterFocus.appearance.breastSize.name + " breasts. " + capitalizeFunc(characterFocus.gender.pronounPlural2) + " waist is " + characterFocus.appearance.waistSize.name + " " )
+    //personnelInformation Traits Panel Setup
+    function traitsPanelSetup(x) {
+        let traits = x;
+        let scene = document.getElementById("scenePersonnelInformationTraits");
 
-    clearBox(scene)
+        clearBox(scene)
 
-    for(let i = 0; i < traits.length; i++) {
-        let traitContainer = document.createElement("div");
-        let traitCenter = document.createElement("div");
-        let traitBorderBox = document.createElement("div");
-        let traitInnerContainer = document.createElement("div");
-        let traitInnerText = document.createElement("div");
+        for(let i = 0; i < traits.length; i++) {
+            let traitContainer = document.createElement("div");
+            let traitCenter = document.createElement("div");
+            let traitBorderBox = document.createElement("div");
+            let traitInnerContainer = document.createElement("div");
+            let traitInnerText = document.createElement("div");
 
-        traitContainer.setAttribute("class", "gridBoxFull");
-        traitCenter.setAttribute("class", "gridBoxCenter99");
-        traitBorderBox.setAttribute("class", "borderBoxFullREdgeHidden");
-        traitInnerContainer.setAttribute("class", "gridBoxFull");
-        traitInnerText.setAttribute("class", "gridBoxCenter");
+            traitContainer.setAttribute("class", "gridBoxFull");
+            traitCenter.setAttribute("class", "gridBoxCenter99");
+            traitBorderBox.setAttribute("class", "borderBoxFullREdgeHidden");
+            traitInnerContainer.setAttribute("class", "gridBoxFull");
+            traitInnerText.setAttribute("class", "gridBoxCenter");
 
-        traitContainer.append(traitCenter);
-        traitCenter.append(traitBorderBox);
-        traitBorderBox.append(traitInnerContainer);
-        traitInnerContainer.append(traitInnerText);
+            traitContainer.append(traitCenter);
+            traitCenter.append(traitBorderBox);
+            traitBorderBox.append(traitInnerContainer);
+            traitInnerContainer.append(traitInnerText);
 
-        scene.append(traitContainer)
+            scene.append(traitContainer)
 
-        traitBorderBox.style.background = "darkslateblue"
-        traitInnerText.innerText = traits[i].name
+            traitBorderBox.style.background = "darkslateblue"
+            traitInnerText.innerText = traits[i].name
+        }
     }
 }
-
 //personnelFunctions--End of the Personnel Function
 
 // Sidepanel UI Builder Function
@@ -765,19 +788,101 @@ let buildings = [
 
 // Character Arrays
 // Body Parts
+height= ["short", "sort of short", "medium", "tall", "very tall"],
+
+head={
+    hairColor:["green", "blue", "brown", "blonde", "gray"],
+    hairLength: ["short", "long", "medium", "really long", "bald"]
+}
+
 let bodyParts =[
-    head={
-        hairColor:["green", "blue", "brown", "blonde", "gray"],
-        hairLength: ["short", "long", "medium", "really long", "bald"]
-    },
     upperBody={
-        bodySize:["tiny", "small", "medium", "large", "huge"],
-        height: ["short", "sort of short", "medium", "tall", "very tall"]
+        breastSize:[
+            {name: "flat", size: 0 },
+            {name: "very tiny", size: 1},
+            {name: "tiny", size: 2},
+            {name: "very small", size: 3},
+            {name: "small", size: 4},
+            {name: "medium", size: 5},
+            {name: "plump", size: 6},
+            {name: "very plump", size: 7},
+            {name: "fat", size: 8},
+            {name: "very fat", size: 9},
+        ],
+        shoulderWidth: [
+            {name: "extremely tiny", size: 0 },
+            {name: "very tiny", size: 1},
+            {name: "tiny", size: 2},
+            {name: "very small", size: 3},
+            {name: "small", size: 4},
+            {name: "medium", size: 5},
+            {name: "wide", size: 6},
+            {name: "very wide", size: 7},
+            {name: "broad", size: 8},
+            {name: "very broad", size: 9},
+        ],
+        waistSize: [
+            {name: "extremely tiny", size: 0 },
+            {name: "very tiny", size: 1},
+            {name: "tiny", size: 2},
+            {name: "very small", size: 3},
+            {name: "small", size: 4},
+            {name: "medium", size: 5},
+            {name: "plump", size: 6},
+            {name: "very plump", size: 7},
+            {name: "thick", size: 8},
+            {name: "fat", size: 9},
+        ],
     },
     lowerBody={
-        hipSize:["tiny", "small", "medium", "large", "hourglass"],
-        waistSize: ["thin", "small", "medium", "thick", "very thick"]
+        hipSize:[
+            {name: "extremely tiny", size: 0 },
+            {name: "very tiny", size: 1},
+            {name: "tiny", size: 2},
+            {name: "very small", size: 3},
+            {name: "small", size: 4},
+            {name: "medium", size: 5},
+            {name: "wide", size: 6},
+            {name: "very wide", size: 7},
+            {name: "thick", size: 8},
+            {name: "hourglass", size: 9},
+        ],
+        thighSize: [
+            {name: "extremely thin", size: 0 },
+            {name: "very thin", size: 1},
+            {name: "thin", size: 2},
+            {name: "very small", size: 3},
+            {name: "small", size: 4},
+            {name: "medium", size: 5},
+            {name: "plump", size: 6},
+            {name: "very plump", size: 7},
+            {name: "thick", size: 8},
+            {name: "fat", size: 9},
+        ],
+        assSize: [
+            {name: "extremely tiny", size: 0 },
+            {name: "very tiny", size: 1},
+            {name: "tiny", size: 2},
+            {name: "very small", size: 3},
+            {name: "small", size: 4},
+            {name: "medium", size: 5},
+            {name: "plump", size: 6},
+            {name: "very plump", size: 7},
+            {name: "thick", size: 8},
+            {name: "fat", size: 9},
+        ],
     },
+]
+
+//Body Type Scale
+let bodyType = [
+    {name: "extremely thin", min: 0, max: 2},
+    {name: "thin", min: 1, max: 3},
+    {name: "skinny", min: 2, max: 4},
+    {name: "medium", min: 4, max: 6},
+    {name: "plump", min: 5, max: 6},
+    {name: "thick", min: 6, max: 7},
+    {name: "fat", min: 8, max: 9},
 ]
 
 //Personnel Names
@@ -791,7 +896,10 @@ let firstName = {
 }
 
 //Personnel Genders
-let genders = ["man", "woman"]
+let genders = [
+    {name: "man", pronounPersonal: "he", pronounPossesive: "him", pronounPlural: "his", pronounPlural2: "his"},
+    {name: "woman", pronounPersonal: "she", pronounPossesive: "her", pronounPlural: "hers", pronounPlural2: "her"},
+]
 
 //Personnel Sexuality
 let sexuality = ["straight", "gay", "bisexual", "asexual"]
