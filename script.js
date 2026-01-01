@@ -119,6 +119,7 @@ $(function gameStartUpFunction() {
     personnelSetup();
     buildBoxSetup();
     gameSpeedBtnSetup();
+    textHandler();
 
     // Start of Left Stat Container UI Setup Functions
     // Left Stat Container Hide Box Setup
@@ -512,7 +513,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false}, traits: [], stats:{res: false, str: false, int: false}, gender: {name: false, pronounPersonal: false, pronounPossesive: false}}
+    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothing: {clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}}, traits: [], stats:{res: false, str: false, int: false}, gender: {name: false, pronounPersonal: false, pronounPossesive: false}}
     console.log(generatedCharacter)
     // Body Generator
 
@@ -536,7 +537,31 @@ function personnelGenerator() {
     //Gender Selector
     let selectedGender = Math.floor(Math.random() * genders.length);
     generatedCharacter.gender = genders[selectedGender]
-
+    //Clothing Generator
+    let clothingSelectionArray = startingClothing.slice()
+    for(let i = 0; i < clothingSelectionArray.length; i++) {
+        for(let key in clothingSelectionArray[i]) {
+            if (clothingSelectionArray[i].hasOwnProperty(key)) {
+                value = clothingSelectionArray[i][key];
+                let rand = Math.floor(Math.random() * value.length);
+                console.log(rand)
+                let choice = value[rand]
+                // Checks to see if any of the clothes conflicts with each other and rolls again if so.
+                if(generatedCharacter.appearance.clothing.clothingCheck[choice.type] === true) {
+                    while(generatedCharacter.appearance.clothing.clothingCheck[choice.type] === true) {
+                        let rand = Math.floor(Math.random() * value.length);
+                        choice = value[rand]
+                    }
+                }
+                else if(choice.con) {
+                    for(let c = 0; c < choice.con.length; c++) {
+                        generatedCharacter.appearance.clothing.clothingCheck[choice.con[c]] = true;
+                    }
+                }
+                generatedCharacter.appearance.clothing[key] = choice
+            }
+        }
+    }
     //Name Selector
     if(generatedCharacter.gender.name === "man") {
         let selectedName = Math.floor(Math.random() * firstName.manNames.length);
@@ -595,7 +620,7 @@ function personnelInformationHandler(x) {
     $("#scenePersonnelInformationCharRes").text(characterFocus.stats.res)
     $("#scenePersonnelInformationCharInt").text(characterFocus.stats.int)
 
-    $("#scenePersonnelInformationDesc").text(characterFocus.name + " is a " + characterFocus.appearance.bodyType.name + " " + characterFocus.sexuality +  " " + characterFocus.gender.name + " with tan skin. " + characterFocus.gender.pronounPersonal + " has " + characterFocus.appearance.shoulderWidth.name + "  shoulders and " + characterFocus.appearance.breastSize.name + " breasts. " + capitalizeFunc(characterFocus.gender.pronounPlural2) + " waist is " + characterFocus.appearance.waistSize.name + " " )
+    $("#scenePersonnelInformationDesc").text(characterFocus.name + " is a " + characterFocus.appearance.bodyType.name + " " + characterFocus.sexuality +  " " + characterFocus.gender.name + " with tan skin. " + capitalizeFunc(characterFocus.gender.pronounPersonal) + " has " + characterFocus.appearance.shoulderWidth.name + "  shoulders and " + characterFocus.appearance.breastSize.name + " breasts. " + capitalizeFunc(characterFocus.gender.pronounPlural2) + " waist is " + characterFocus.appearance.waistSize.name + " and " + characterFocus.gender.pronounPersonal + " has a pair of " + characterFocus.appearance.thighSize.name + " thighs. " + characterFocus.name + " has " + characterFocus.appearance.hipSize.name + " hips, and a " + characterFocus.appearance.assSize.name + " ass.")
     //personnelInformation Traits Panel Setup
     function traitsPanelSetup(x) {
         let traits = x;
@@ -630,6 +655,48 @@ function personnelInformationHandler(x) {
 }
 //personnelFunctions--End of the Personnel Function
 
+//Start of Text Reader and Converter Handler
+function textHandler() {
+    let textFocus = gameState.personnel.patients[0];
+    let testString = "I have a $waistSize waist and /waistSize=thick^Howdy hips."
+    let parsedString = testString.split(" ");
+    for(let i = 0; i < parsedString.length; i++) {
+        if(parsedString[i].charAt(0) === "$") {
+            let split = parsedString[i].split("$");
+            let keyText = library[split[1]];
+            let finalText = textFocus;
+            for(let c = 0; c < keyText.length; c++) {
+                finalText = finalText[keyText[c]]
+            }
+            console.log(finalText)
+            testString = testString.replace(parsedString[i], finalText)
+        }
+        if(parsedString[i].charAt(0) === "/") {
+            let appearance = textFocus.appearance;
+            let primaryString = parsedString[i].split("/");
+            let parsedPrimary = primaryString[1].split("=");
+            let parsedValue = parsedPrimary[1].split("^");
+            let key = appearance[parsedPrimary[0]];
+            let value = parsedValue[0]
+            let finalText = parsedValue[1]
+            if(key.name === value) {
+                console.log("Key " + key.name + " matches " + value + "!")
+                testString = testString.replace(parsedString[i], finalText)
+            }
+            else {
+                testString = testString.replace(parsedString[i], "")
+            }
+            console.log("Key: " + key.name + " Value: " + value)
+
+        }
+    }
+    console.log(testString)
+}
+let library = {
+    waistSize:["appearance", "waistSize", "name"],
+    hipSize: ["appearance", "hipSize", "name"],
+}
+//End of Text Reader and Converter
 // Sidepanel UI Builder Function
 
 function slotBuilder(x, y) {
@@ -911,6 +978,75 @@ let startingTraits = [
     {name: "Slow", desc: "Things tend to go over this dolls head", res: 0, str:0, int: -2},
     {name: "Strong", desc: "This doll is built quite powerfully. Not someone to underestimate.", res: 0, str:3, int: 0},
     {name: "Weak", desc: "This doll has a fairly weak build. An easy target.", res: 0, str:-3, int: 0},
+]
+
+let startingClothing = [
+    head = {
+        eyeWear: [
+            {name: "glasses"},
+            {name: "eye patch"},
+        ],
+        earJewelery: [
+            {name: "studs"},
+            {name: "hoops"},
+            {name: "pearl earrings"},
+        ],
+    },
+    neck = {
+        neckJewelery: [
+            {name: "choker"},
+            {name: "silver necklace"},
+            {name: "gold necklace"},
+            {name: "statement necklace"},
+        ],
+        neckWear: [
+            {name: "scarf"},
+            {name: "ascot"},
+            {name: "tie"},
+        ]
+    },
+    upperBody = {
+        shirts: [
+            {name: "tank-top", type:"shirt", con: ["dress"]},
+            {name: "t-shirt", type:"shirt", con: ["dress"]},
+            {name: "blouse", type:"shirt", con: ["dress"]},
+            {name: "flannel shirt", type:"shirt", con: ["dress"]},
+        ],
+        overshirt: [
+            {name: "coat"},
+            {name: "leather jacket"},
+            {name: "sweater"},
+        ]
+    },
+    lowerBody = {
+        lowerBodyClothing: [
+            {name: "skirt", type: "skirt", con: ["dress"]},
+            {name: "shorts", type: "skirt", con: ["dress"]},
+            {name: "jeans", type:"pants", con: ["dress", "underClothing"]},
+            {name: "leggings", type:"pants", con: ["dress","underClothing"]},
+        ],
+        underwear: [
+            {name: "boxers"},
+            {name: "panties"},
+            {name: "thong"},
+            {name: "speedo"},
+        ],
+        lowerBodyUnderClothing: [
+            {name: "tights", type: "underClothing", con: ["pants"]},
+            {name: "stockings", type: "underClothing", con:["pants"]},
+            {name: "bare legs", type: "noUnderClothing"},
+        ],
+    },
+    feet = {
+        shoes: [
+            {name: "boots"},
+            {name: "tennis shoes"},
+            {name: "sneakers"},
+            {name: "sandals"},
+            {name: "heels"},
+            {name: "flats"},
+        ],
+    },
 ]
 
 // Preset Objects
