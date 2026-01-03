@@ -119,7 +119,6 @@ $(function gameStartUpFunction() {
     personnelSetup();
     buildBoxSetup();
     gameSpeedBtnSetup();
-    textHandler();
 
     // Start of Left Stat Container UI Setup Functions
     // Left Stat Container Hide Box Setup
@@ -513,7 +512,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothing: {clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}}, traits: [], stats:{res: false, str: false, int: false}, gender: {name: false, pronounPersonal: false, pronounPossesive: false}}
+    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}, traits: [], stats:{res: false, str: false, int: false}, gender: {name: false, pronounPersonal: false, pronounPossesive: false}}
     console.log(generatedCharacter)
     // Body Generator
 
@@ -547,18 +546,18 @@ function personnelGenerator() {
                 console.log(rand)
                 let choice = value[rand]
                 // Checks to see if any of the clothes conflicts with each other and rolls again if so.
-                if(generatedCharacter.appearance.clothing.clothingCheck[choice.type] === true) {
-                    while(generatedCharacter.appearance.clothing.clothingCheck[choice.type] === true) {
+                if(generatedCharacter.appearance.clothingCheck[choice.type] === true) {
+                    while(generatedCharacter.appearance.clothingCheck[choice.type] === true) {
                         let rand = Math.floor(Math.random() * value.length);
                         choice = value[rand]
                     }
                 }
                 else if(choice.con) {
                     for(let c = 0; c < choice.con.length; c++) {
-                        generatedCharacter.appearance.clothing.clothingCheck[choice.con[c]] = true;
+                        generatedCharacter.appearance.clothingCheck[choice.con[c]] = true;
                     }
                 }
-                generatedCharacter.appearance.clothing[key] = choice
+                generatedCharacter.appearance[key] = choice
             }
         }
     }
@@ -620,7 +619,7 @@ function personnelInformationHandler(x) {
     $("#scenePersonnelInformationCharRes").text(characterFocus.stats.res)
     $("#scenePersonnelInformationCharInt").text(characterFocus.stats.int)
 
-    $("#scenePersonnelInformationDesc").text(characterFocus.name + " is a " + characterFocus.appearance.bodyType.name + " " + characterFocus.sexuality +  " " + characterFocus.gender.name + " with tan skin. " + capitalizeFunc(characterFocus.gender.pronounPersonal) + " has " + characterFocus.appearance.shoulderWidth.name + "  shoulders and " + characterFocus.appearance.breastSize.name + " breasts. " + capitalizeFunc(characterFocus.gender.pronounPlural2) + " waist is " + characterFocus.appearance.waistSize.name + " and " + characterFocus.gender.pronounPersonal + " has a pair of " + characterFocus.appearance.thighSize.name + " thighs. " + characterFocus.name + " has " + characterFocus.appearance.hipSize.name + " hips, and a " + characterFocus.appearance.assSize.name + " ass.")
+    $("#scenePersonnelInformationDesc").text(textHandler(characterFocus))
     //personnelInformation Traits Panel Setup
     function traitsPanelSetup(x) {
         let traits = x;
@@ -656,45 +655,67 @@ function personnelInformationHandler(x) {
 //personnelFunctions--End of the Personnel Function
 
 //Start of Text Reader and Converter Handler
-function textHandler() {
-    let textFocus = gameState.personnel.patients[0];
-    let testString = "I have a $waistSize waist and /waistSize=thick^Howdy hips."
+function textHandler(x) {
+    let textFocus = x
+    let testString = "I have a $waistSize waist and /hipSize=thick-lowerBodyClothing=skirt^my_$hipSize_hips_are_barely_covered_by_my_$lowerBodyClothing ."
     let parsedString = testString.split(" ");
     for(let i = 0; i < parsedString.length; i++) {
         if(parsedString[i].charAt(0) === "$") {
-            let split = parsedString[i].split("$");
-            let keyText = library[split[1]];
-            let finalText = textFocus;
-            for(let c = 0; c < keyText.length; c++) {
-                finalText = finalText[keyText[c]]
-            }
-            console.log(finalText)
+            let finalText = valueParser(parsedString[i])
             testString = testString.replace(parsedString[i], finalText)
         }
         if(parsedString[i].charAt(0) === "/") {
-            let appearance = textFocus.appearance;
-            let primaryString = parsedString[i].split("/");
-            let parsedPrimary = primaryString[1].split("=");
-            let parsedValue = parsedPrimary[1].split("^");
-            let key = appearance[parsedPrimary[0]];
-            let value = parsedValue[0]
-            let finalText = parsedValue[1]
-            if(key.name === value) {
-                console.log("Key " + key.name + " matches " + value + "!")
-                testString = testString.replace(parsedString[i], finalText)
-            }
-            else {
-                testString = testString.replace(parsedString[i], "")
-            }
-            console.log("Key: " + key.name + " Value: " + value)
-
+            let finalText = splitParser(parsedString[i]);
+            testString = testString.replace(parsedString[i], finalText)
         }
     }
-    console.log(testString)
-}
-let library = {
-    waistSize:["appearance", "waistSize", "name"],
-    hipSize: ["appearance", "hipSize", "name"],
+    testString = testString.replaceAll(" .", ".")
+    return testString;
+
+    function valueParser(x) {
+        let split = x.split("$");
+        let keyText = library[split[1]];
+        let finalText = textFocus;
+        console.log(textFocus)
+        for(let c = 0; c < keyText.length; c++) {
+            finalText = finalText[keyText[c]]
+        }
+        return finalText;
+    }
+    function splitParser(x) {
+        let appearance = textFocus.appearance;
+        let primaryString = x.split("/");
+        let check = true;
+        let values = primaryString[1].split("^");
+        let finalText = values[1];
+        console.log("Values: " + values)
+        let parsedValues = values[0].split("-")
+        console.log("Parsed Values: " + parsedValues)
+        console.log("Appearance: Waist Size - " + appearance.waistSize.name + " Hip Size - " + appearance.hipSize.name)
+        for(let c = 0; c < parsedValues.length; c++) {
+            let key = parsedValues[c].split("=");
+            console.log(key[1])
+            console.log(key[0])
+            let charAttr = appearance[key[0]];
+            console.log(charAttr)
+            if(charAttr.name != key[1]){
+                check = false
+                finalText = ""
+                break;
+            }
+        }
+        if(check === true) {
+            finalTextSplit = finalText.split("_");
+            for(let k = 0; k < finalTextSplit.length; k++) {
+                if(finalTextSplit[k].charAt(0) === "$") {
+                    let newValue = valueParser(finalTextSplit[k])
+                    finalText = finalText.replace(finalTextSplit[k], newValue)
+                }
+            }
+            finalText = finalText.replaceAll("_", " ")
+        }
+    return finalText;
+    }
 }
 //End of Text Reader and Converter
 // Sidepanel UI Builder Function
@@ -1048,5 +1069,10 @@ let startingClothing = [
         ],
     },
 ]
-
+//Text Parser Library Array
+let library = {
+    waistSize:["appearance", "waistSize", "name"],
+    hipSize: ["appearance", "hipSize", "name"],
+    lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
+}
 // Preset Objects
