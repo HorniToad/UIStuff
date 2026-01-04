@@ -657,7 +657,7 @@ function personnelInformationHandler(x) {
 //Start of Text Reader and Converter Handler
 function textHandler(x) {
     let textFocus = x
-    let testString = "I have a $waistSize waist and /hipSize=thick-lowerBodyClothing=skirt^my_$hipSize_hips_are_barely_covered_by_my_$lowerBodyClothing ."
+    let testString = "I have a $waistSize waist and /eyeWear=none-lowerBodyClothing=skirt^no_glasses_on_my_face*. /eyeWear=glasses-lowerBodyClothing=skirt^have_glasses_on_my_face*. /eyeWear=eyePatch-lowerBodyClothing=skirt^have_an_eyepatch_on_my_face*."
     let parsedString = testString.split(" ");
     for(let i = 0; i < parsedString.length; i++) {
         if(parsedString[i].charAt(0) === "$") {
@@ -713,6 +713,7 @@ function textHandler(x) {
                 }
             }
             finalText = finalText.replaceAll("_", " ")
+            finalText = finalText.replaceAll("*", "")
         }
     return finalText;
     }
@@ -1005,7 +1006,8 @@ let startingClothing = [
     head = {
         eyeWear: [
             {name: "glasses"},
-            {name: "eye patch"},
+            {name: "eyePatch"},
+            {name: "none"},
         ],
         earJewelery: [
             {name: "studs"},
@@ -1074,5 +1076,7 @@ let library = {
     waistSize:["appearance", "waistSize", "name"],
     hipSize: ["appearance", "hipSize", "name"],
     lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
+    eyeWear: ["appearance", "eyeWear", "name"],
+
 }
 // Preset Objects
