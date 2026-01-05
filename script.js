@@ -533,6 +533,19 @@ function personnelGenerator() {
             }
         }
     }
+    for(let i = 0; i < bodyPartsAlt.length; i++) {
+        console.log(bodyPartsAlt[i])
+        for(let key in bodyPartsAlt[i]) {
+            if (bodyPartsAlt[i].hasOwnProperty(key)) {
+                value = bodyPartsAlt[i][key];
+                console.log("Value for BodyPartsAlt: " + value)
+                let rand = Math.floor(Math.random() * bodyPartsAlt.length)
+                console.log(rand)
+                let choice = value[rand]
+                generatedCharacter.appearance[key] = choice
+            }
+        }
+    }
     //Gender Selector
     let selectedGender = Math.floor(Math.random() * genders.length);
     generatedCharacter.gender = genders[selectedGender]
@@ -618,8 +631,8 @@ function personnelInformationHandler(x) {
     $("#scenePersonnelInformationCharStr").text(characterFocus.stats.str)
     $("#scenePersonnelInformationCharRes").text(characterFocus.stats.res)
     $("#scenePersonnelInformationCharInt").text(characterFocus.stats.int)
-
-    $("#scenePersonnelInformationDesc").text(textHandler(characterFocus))
+    console.log(text.personnelInformationSceneDesc.desc)
+    $("#scenePersonnelInformationDesc").text(textHandler(characterFocus, text.personnelInformationSceneDesc.desc))
     //personnelInformation Traits Panel Setup
     function traitsPanelSetup(x) {
         let traits = x;
@@ -654,28 +667,30 @@ function personnelInformationHandler(x) {
 }
 //personnelFunctions--End of the Personnel Function
 
-//Start of Text Reader and Converter Handler
-function textHandler(x) {
+//Start of Text Parser
+function textHandler(x, y) {
     let textFocus = x
-    let testString = "I have a $waistSize waist and /eyeWear=none-lowerBodyClothing=skirt^no_glasses_on_my_face*. /eyeWear=glasses-lowerBodyClothing=skirt^have_glasses_on_my_face*. /eyeWear=eyePatch-lowerBodyClothing=skirt^have_an_eyepatch_on_my_face*."
-    let parsedString = testString.split(" ");
+    let textString = y
+    let parsedString = textString.split(" ");
     for(let i = 0; i < parsedString.length; i++) {
         if(parsedString[i].charAt(0) === "$") {
             let finalText = valueParser(parsedString[i])
-            testString = testString.replace(parsedString[i], finalText)
+            textString = textString.replace(parsedString[i], finalText)
         }
         if(parsedString[i].charAt(0) === "/") {
             let finalText = splitParser(parsedString[i]);
-            testString = testString.replace(parsedString[i], finalText)
+            textString = textString.replace(parsedString[i], finalText)
         }
     }
-    testString = testString.replaceAll(" .", ".")
-    return testString;
+    textString = textString.replaceAll(" .", ".")
+    return textString;
 
     function valueParser(x) {
         let split = x.split("$");
         let keyText = library[split[1]];
+        console.log(keyText)
         let finalText = textFocus;
+        console.log(finalText)
         console.log(textFocus)
         for(let c = 0; c < keyText.length; c++) {
             finalText = finalText[keyText[c]]
@@ -718,7 +733,7 @@ function textHandler(x) {
     return finalText;
     }
 }
-//End of Text Reader and Converter
+//End of Text Parser
 // Sidepanel UI Builder Function
 
 function slotBuilder(x, y) {
@@ -877,12 +892,44 @@ let buildings = [
 
 // Character Arrays
 // Body Parts
-height= ["short", "sort of short", "medium", "tall", "very tall"],
+let bodyPartsAlt = [
+    height= {
+        height:[
+        {name: "short"},
+        {name: "short of short"},
+        {name: "medium"},
+        {name: "tall"},
+        {name: "very tall"},
+        ]
+    },
 
-head={
-    hairColor:["green", "blue", "brown", "blonde", "gray"],
-    hairLength: ["short", "long", "medium", "really long", "bald"]
-}
+    head={
+        hairColor:[
+            {name: "green"},
+            {name: "brown"},
+            {name: "red"},
+            {name: "brown"},
+            {name: "black"},
+            {name: "blue"},
+        ],
+
+        hairLength:[
+            {name: "short"},
+            {name: "long"},
+            {name: "medium"},
+            {name: "really long"},
+            {name: "bald"},
+        ],
+
+         eyeColor:[
+            {name: "green"},
+            {name: "blue"},
+            {name: "brown"},
+            {name: "dark brown"},
+            {name: "gray"},
+        ],
+    }
+]
 
 let bodyParts =[
     upperBody={
@@ -1045,8 +1092,8 @@ let startingClothing = [
         lowerBodyClothing: [
             {name: "skirt", type: "skirt", con: ["dress"]},
             {name: "shorts", type: "skirt", con: ["dress"]},
-            {name: "jeans", type:"pants", con: ["dress", "underClothing"]},
-            {name: "leggings", type:"pants", con: ["dress","underClothing"]},
+            {name: "jeans", type:"pants", con: ["dress", "legWear"]},
+            {name: "leggings", type:"pants", con: ["dress","legWear"]},
         ],
         underwear: [
             {name: "boxers"},
@@ -1054,10 +1101,10 @@ let startingClothing = [
             {name: "thong"},
             {name: "speedo"},
         ],
-        lowerBodyUnderClothing: [
-            {name: "tights", type: "underClothing", con: ["pants"]},
-            {name: "stockings", type: "underClothing", con:["pants"]},
-            {name: "bare legs", type: "noUnderClothing"},
+        legWear: [
+            {name: "tights", type: "legWear", con: ["pants"]},
+            {name: "stockings", type: "legWear", con:["pants"]},
+            {name: "barelegs", type: "noUnderClothing"},
         ],
     },
     feet = {
@@ -1076,7 +1123,19 @@ let library = {
     waistSize:["appearance", "waistSize", "name"],
     hipSize: ["appearance", "hipSize", "name"],
     lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
+    legWear: ["appearance", "legWear", "name"],
     eyeWear: ["appearance", "eyeWear", "name"],
+    shoes: ["appearance", "shoes", "name"],
+    name: ["name"],
+    bodyType:["appearance","bodyType", "name"],
+    gender: ["gender", "name"],
+    hairColor: ["appearance", "hairColor", "name"],
+    hairLength: ["appearance", "hairLength", "name"],
+    eyeColor:["appearance", "eyeColor", "name"]
 
+}
+
+let text = {
+    personnelInformationSceneDesc:{desc: "$name is a $bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*. /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_a_eye_patch*."  }
 }
 // Preset Objects
