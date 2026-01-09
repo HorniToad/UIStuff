@@ -667,17 +667,17 @@ function personnelInformationHandler(x) {
 }
 //personnelFunctions--End of the Personnel Function
 
-//Start of Text Parser
+//Start of Text Handler
 function textHandler(x, y) {
     let textFocus = x
     let textString = y
     let parsedString = textString.split(" ");
     for(let i = 0; i < parsedString.length; i++) {
-        if(parsedString[i].charAt(0) === "$") {
+        if(parsedString[i].charAt(0) === "$" || parsedString[i].charAt(0) === "+") {
             let finalText = valueParser(parsedString[i])
             textString = textString.replace(parsedString[i], finalText)
         }
-        if(parsedString[i].charAt(0) === "/") {
+        else if(parsedString[i].charAt(0) === "/") {
             let finalText = splitParser(parsedString[i]);
             textString = textString.replace(parsedString[i], finalText)
         }
@@ -685,44 +685,61 @@ function textHandler(x, y) {
     textString = textString.replaceAll(" .", ".")
     return textString;
 
-    function valueParser(x) {
-        let split = x.split("$");
+    function valueParser(x, ) {
+        let split = x
+        let flagCap
+        // If a + is found by the split check it will split off the + that indicates a capitalization and mark flagCap as true
+        if(split.charAt(0) === "+") {
+            let capSplit = split.split("+")
+            split = capSplit[1];
+            flagCap = true;
+        }
+        split = x.split("$");
         let keyText = library[split[1]];
-        console.log(keyText)
         let finalText = textFocus;
-        console.log(finalText)
-        console.log(textFocus)
         for(let c = 0; c < keyText.length; c++) {
             finalText = finalText[keyText[c]]
         }
+        // If flagCap is true it capitalizes the final text before returning it
+        if(flagCap === true) {
+            finalText = capitalizeFunc(finalText)
+        }
         return finalText;
     }
+
     function splitParser(x) {
-        let appearance = textFocus.appearance;
-        let primaryString = x.split("/");
-        let check = true;
+        let appearance, primaryString, check, falseCheck, finalText
+        appearance = textFocus.appearance;
+        primaryString = x.split("/");
+        check = true;
         let values = primaryString[1].split("^");
-        let finalText = values[1];
-        console.log("Values: " + values)
+        finalText = values[1];
         let parsedValues = values[0].split("-")
-        console.log("Parsed Values: " + parsedValues)
-        console.log("Appearance: Waist Size - " + appearance.waistSize.name + " Hip Size - " + appearance.hipSize.name)
         for(let c = 0; c < parsedValues.length; c++) {
             let key = parsedValues[c].split("=");
-            console.log(key[1])
-            console.log(key[0])
+            let charValue = key[1];
+            if(charValue.charAt(0) === "!") {
+                falseCheck = true
+                let falseCheckRemoved = charValue.split("!");
+                charValue = falseCheckRemoved[1];
+            }
+            console.log("Key: " + key)
+            console.log("CharValue: " + charValue)
             let charAttr = appearance[key[0]];
             console.log(charAttr)
-            if(charAttr.name != key[1]){
+            if(charAttr.name != charValue){
                 check = false
-                finalText = ""
+            }
+            if(charAttr.name === charValue && falseCheck === true){
+                finalText = "";
+                check = true
                 break;
             }
         }
-        if(check === true) {
+        if(check === true && falseCheck != true || falseCheck === true && check != true) {
             finalTextSplit = finalText.split("_");
             for(let k = 0; k < finalTextSplit.length; k++) {
-                if(finalTextSplit[k].charAt(0) === "$") {
+                if(finalTextSplit[k].charAt(0) === "$" || finalTextSplit[k].charAt(0) === "+") {
                     let newValue = valueParser(finalTextSplit[k])
                     finalText = finalText.replace(finalTextSplit[k], newValue)
                 }
@@ -730,10 +747,13 @@ function textHandler(x, y) {
             finalText = finalText.replaceAll("_", " ")
             finalText = finalText.replaceAll("*", "")
         }
+        else {
+            finalText ="";
+        }
     return finalText;
     }
 }
-//End of Text Parser
+//End of Text Handler
 // Sidepanel UI Builder Function
 
 function slotBuilder(x, y) {
@@ -1033,7 +1053,7 @@ let firstName = {
 
 //Personnel Genders
 let genders = [
-    {name: "man", pronounPersonal: "he", pronounPossesive: "him", pronounPlural: "his", pronounPlural2: "his"},
+    {name: "man", pronounPersonal: "he",  pronounPossesive: "him",  pronounPlural: "his", pronounPlural2: "his"},
     {name: "woman", pronounPersonal: "she", pronounPossesive: "her", pronounPlural: "hers", pronounPlural2: "her"},
 ]
 
@@ -1060,6 +1080,7 @@ let startingClothing = [
             {name: "studs"},
             {name: "hoops"},
             {name: "pearl earrings"},
+            {name: "none"},
         ],
     },
     neck = {
@@ -1068,11 +1089,13 @@ let startingClothing = [
             {name: "silver necklace"},
             {name: "gold necklace"},
             {name: "statement necklace"},
+            {name:"none"},
         ],
         neckWear: [
             {name: "scarf"},
             {name: "ascot"},
             {name: "tie"},
+            {name: "none"}
         ]
     },
     upperBody = {
@@ -1125,17 +1148,23 @@ let library = {
     lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
     legWear: ["appearance", "legWear", "name"],
     eyeWear: ["appearance", "eyeWear", "name"],
+    neckJewelery:["appearance", "neckJewelery", "name"],
+    neckWear:["appearance", "neckWear", "name"],
     shoes: ["appearance", "shoes", "name"],
     name: ["name"],
     bodyType:["appearance","bodyType", "name"],
     gender: ["gender", "name"],
+    pronounPersonal:["gender", "pronounPersonal"],
+    pronounPossesive:["gender", "pronounPossesive"],
+    pronounPlural:["gender", "pronounPlural"],
+    pronounPlural2:["gender", "pronounPlural2"],
     hairColor: ["appearance", "hairColor", "name"],
     hairLength: ["appearance", "hairLength", "name"],
-    eyeColor:["appearance", "eyeColor", "name"]
+    eyeColor:["appearance", "eyeColor", "name"],
 
 }
 
 let text = {
-    personnelInformationSceneDesc:{desc: "$name is a $bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*. /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_a_eye_patch*."  }
+    personnelInformationSceneDesc:{desc: "$name is a $bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*.  /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_a_eye_patch*.  /neckJewelery=!none-neckWear=!none^+$pronounPersonal_wears_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck. /neckJewelery=!none-neckWear=none^$pronounPersonal_wears_a_$neckWear_on_$pronounPlural2_neck. /neckWear=!none-neckJewelery=none^$pronounPersonal_wears_a_$neckJewelery_on_$pronounPlural2_neck. "  }
 }
 // Preset Objects
