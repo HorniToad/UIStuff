@@ -708,7 +708,7 @@ function textHandler(x, y) {
     }
 
     function splitParser(x) {
-        let appearance, primaryString, check, falseCheck, finalText
+        let appearance, primaryString, check, finalText
         appearance = textFocus.appearance;
         primaryString = x.split("/");
         check = true;
@@ -716,6 +716,8 @@ function textHandler(x, y) {
         finalText = values[1];
         let parsedValues = values[0].split("-")
         for(let c = 0; c < parsedValues.length; c++) {
+            check = true;
+            let falseCheck = false;
             let key = parsedValues[c].split("=");
             let charValue = key[1];
             if(charValue.charAt(0) === "!") {
@@ -727,16 +729,18 @@ function textHandler(x, y) {
             console.log("CharValue: " + charValue)
             let charAttr = appearance[key[0]];
             console.log(charAttr)
-            if(charAttr.name != charValue){
+            if(charAttr.name != charValue && falseCheck === false){
                 check = false
+                finalText = ""
+                break;
             }
             if(charAttr.name === charValue && falseCheck === true){
                 finalText = "";
-                check = true
+                check = false
                 break;
             }
         }
-        if(check === true && falseCheck != true || falseCheck === true && check != true) {
+        if(check === true) {
             finalTextSplit = finalText.split("_");
             for(let k = 0; k < finalTextSplit.length; k++) {
                 if(finalTextSplit[k].charAt(0) === "$" || finalTextSplit[k].charAt(0) === "+") {
@@ -915,8 +919,8 @@ let buildings = [
 let bodyPartsAlt = [
     height= {
         height:[
+        {name: "very short"},
         {name: "short"},
-        {name: "short of short"},
         {name: "medium"},
         {name: "tall"},
         {name: "very tall"},
@@ -1114,13 +1118,13 @@ let startingClothing = [
     lowerBody = {
         lowerBodyClothing: [
             {name: "skirt", type: "skirt", con: ["dress"]},
-            {name: "shorts", type: "skirt", con: ["dress"]},
+            {name: "shorts", type: "skirt", con: ["dress", "legWear"]},
             {name: "jeans", type:"pants", con: ["dress", "legWear"]},
             {name: "leggings", type:"pants", con: ["dress","legWear"]},
         ],
         underwear: [
-            {name: "boxers"},
             {name: "panties"},
+            {name: "boxers"},
             {name: "thong"},
             {name: "speedo"},
         ],
@@ -1143,28 +1147,33 @@ let startingClothing = [
 ]
 //Text Parser Library Array
 let library = {
-    waistSize:["appearance", "waistSize", "name"],
-    hipSize: ["appearance", "hipSize", "name"],
-    lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
-    legWear: ["appearance", "legWear", "name"],
+    assSize: ["appearance", "assSize", "name"],
+    bodyType:["appearance","bodyType", "name"],
+    breastSize:["appearance", "breastSize", "name"],
+    eyeColor:["appearance", "eyeColor", "name"],
     eyeWear: ["appearance", "eyeWear", "name"],
+    gender: ["gender", "name"],
+    hairColor: ["appearance", "hairColor", "name"],
+    hairLength: ["appearance", "hairLength", "name"],
+    height:["appearance", "height", "name"],
+    hipSize: ["appearance", "hipSize", "name"],
+    legWear: ["appearance", "legWear", "name"],
+    lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
+    name: ["name"],
     neckJewelery:["appearance", "neckJewelery", "name"],
     neckWear:["appearance", "neckWear", "name"],
-    shoes: ["appearance", "shoes", "name"],
-    name: ["name"],
-    bodyType:["appearance","bodyType", "name"],
-    gender: ["gender", "name"],
     pronounPersonal:["gender", "pronounPersonal"],
     pronounPossesive:["gender", "pronounPossesive"],
     pronounPlural:["gender", "pronounPlural"],
     pronounPlural2:["gender", "pronounPlural2"],
-    hairColor: ["appearance", "hairColor", "name"],
-    hairLength: ["appearance", "hairLength", "name"],
-    eyeColor:["appearance", "eyeColor", "name"],
-
+    shirt:["appearance", "shirts", "name"],
+    shoes: ["appearance", "shoes", "name"],
+    shoulderWidth:["appearance", "shoulderWidth", "name"],
+    thighSize: ["appearance", "thighSize", "name"],
+    underwear:["appearance", "underwear", "name"],
+    waistSize:["appearance", "waistSize", "name"],
 }
 
 let text = {
-    personnelInformationSceneDesc:{desc: "$name is a $bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*.  /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_a_eye_patch*.  /neckJewelery=!none-neckWear=!none^+$pronounPersonal_wears_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck. /neckJewelery=!none-neckWear=none^$pronounPersonal_wears_a_$neckWear_on_$pronounPlural2_neck. /neckWear=!none-neckJewelery=none^$pronounPersonal_wears_a_$neckJewelery_on_$pronounPlural2_neck. "  }
+    personnelInformationSceneDesc:{desc: "$name is a $height /bodyType=medium^medium_sized /bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*.  /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_an_eye_patch*.  /neckJewelery=!none-neckWear=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /neckJewelery=!none-neckWear=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /neckWear=!none-neckJewelery=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /neckWear=none-neckJewelery=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /lowerBodyClothing=skirt^a_skirt /lowerBodyClothing=!skirt^$lowerBodyClothing /legWear=!barelegs^with_$legWear_and /legWear=barelegs^with /underwear=!thong-underwear=!speedo^$underwear /underwear=!panties-underwear=!boxers^a_$underwear underneath and a pair of $shoes ."  }
 }
-// Preset Objects
