@@ -106,7 +106,7 @@ $(function gameStartUpFunction() {
     let parent = $(scene).parent([".sceneContainerHidden"])
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
-    let personnelTemplate = {patients: [], employees: [], customers: []};
+    let personnelTemplate = {patients: [], employees: [], customers: [] , focus: false};
     let tickTemplate =  {tick: false, tickRate: false, completeTick: 10, currentTick: 0}
 
     gameState = {tickState: tickTemplate, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
@@ -344,8 +344,10 @@ $(function gameStartUpFunction() {
                 sceneChange()
         })
     }
+    // End of the buildBoxSetup functions
+
+
 })
-// End of the buildBoxSetup functions
 //Start-Up--End of the gameStartUpFunction and Child Setup Functions
 
 
@@ -512,7 +514,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}, traits: [], stats:{res: false, str: false, int: false}, gender: {name: false, pronounPersonal: false, pronounPossesive: false}}
+    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false},genderQ:{name:false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}, traits: [], stats:{res: false, str: false, int: false}}
     console.log(generatedCharacter)
     // Body Generator
 
@@ -548,7 +550,8 @@ function personnelGenerator() {
     }
     //Gender Selector
     let selectedGender = Math.floor(Math.random() * genders.length);
-    generatedCharacter.gender = genders[selectedGender]
+    generatedCharacter.appearance.gender = genders[selectedGender]
+    generatedCharacter.appearance.genderQ.name = genders[selectedGender].name;
     //Clothing Generator
     let clothingSelectionArray = startingClothing.slice()
     for(let i = 0; i < clothingSelectionArray.length; i++) {
@@ -575,11 +578,11 @@ function personnelGenerator() {
         }
     }
     //Name Selector
-    if(generatedCharacter.gender.name === "man") {
+    if(generatedCharacter.appearance.gender.name === "man") {
         let selectedName = Math.floor(Math.random() * firstName.manNames.length);
         generatedCharacter.name = firstName.manNames[selectedName]
     }
-    else if(generatedCharacter.gender.name == "woman") {
+    else if(generatedCharacter.appearance.gender.name == "woman") {
         let selectedName = Math.floor(Math.random() * firstName.womanNames.length);
         generatedCharacter.name = firstName.womanNames[selectedName]
     }
@@ -620,12 +623,13 @@ function personnelGenerator() {
 // Ensures the personnelInformation screen is always up to date and showing the correct character.
 function personnelInformationHandler(x) {
     let characterFocus = x;
-    console.log(characterFocus)
+    gameState.personnel.focus = characterFocus;
+    console.log("Game State Focus: " + gameState.personnel.focus.name)
 
     traitsPanelSetup(characterFocus.traits)
 
     $("#scenePersonnelInformationCharName").text(characterFocus.name)
-    $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.gender.name))
+    $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.appearance.gender.name))
     $("#scenePersonnelInformationCharSexuality").text(capitalizeFunc(characterFocus.sexuality))
     $("#scenePersonnelInformationCharBodyType").text(capitalizeFunc(characterFocus.appearance.bodyType.name))
     $("#scenePersonnelInformationCharStr").text(characterFocus.stats.str)
@@ -664,6 +668,54 @@ function personnelInformationHandler(x) {
             traitInnerText.innerText = traits[i].name
         }
     }
+}
+
+ // Start of the personnelInformationWardrobeFunction
+    $(function personnelWardrobeSetup() {
+        console.log("Howdy I am personnelWardrobe")
+        $("#personnelInformationWardrobeBtnHeadWear").on("click", function() {
+            personnelWardrobe("headWear");
+        })
+        $("#personnelInformationWardrobeBtnFaceWear").on("click", function() {
+            personnelWardrobe("faceWear");
+        })
+        $("#personnelInformationWardrobeBtnNeckWear").on("click", function() {
+            personnelWardrobe("neckWear");
+        })
+        $("#personnelInformationWardrobeBtnNeckJewelery").on("click", function() {
+            personnelWardrobe("neckJewelery");
+        })
+        $("#personnelInformationWardrobeBtnEarrings").on("click", function() {
+            personnelWardrobe("earrings");
+        })
+        $("#personnelInformationWardrobeBtnRings").on("click", function() {
+            personnelWardrobe("rings");
+        })
+        $("#personnelInformationWardrobeBtnUpperBody").on("click", function() {
+            personnelWardrobe("upperBody");
+        })
+        $("#personnelInformationWardrobeBtnCoat").on("click", function() {
+            personnelWardrobe("coat");
+        })
+        $("#personnelInformationWardrobeBtnLowerBody").on("click", function() {
+            personnelWardrobe("lowerBody");
+        })
+        $("#personnelInformationWardrobeBtnGenitals").on("click", function() {
+            personnelWardrobe("genitals");
+        })
+        $("#personnelInformationWardrobeBtnLegs").on("click", function() {
+            personnelWardrobe("legs");
+        })
+        $("#personnelInformationWardrobeBtnFeet").on("click", function() {
+            personnelWardrobe("feet");
+        })
+    })
+    //End of the personnelInformationSetup
+
+function personnelWardrobe(x) {
+    let clothingFocus = x;
+    let charFocus = gameState.personnel.focus;
+    console.log(clothingFocus)
 }
 //personnelFunctions--End of the Personnel Function
 
@@ -1152,7 +1204,7 @@ let library = {
     breastSize:["appearance", "breastSize", "name"],
     eyeColor:["appearance", "eyeColor", "name"],
     eyeWear: ["appearance", "eyeWear", "name"],
-    gender: ["gender", "name"],
+    gender: ["appearance","gender", "name"],
     hairColor: ["appearance", "hairColor", "name"],
     hairLength: ["appearance", "hairLength", "name"],
     height:["appearance", "height", "name"],
@@ -1162,10 +1214,10 @@ let library = {
     name: ["name"],
     neckJewelery:["appearance", "neckJewelery", "name"],
     neckWear:["appearance", "neckWear", "name"],
-    pronounPersonal:["gender", "pronounPersonal"],
-    pronounPossesive:["gender", "pronounPossesive"],
-    pronounPlural:["gender", "pronounPlural"],
-    pronounPlural2:["gender", "pronounPlural2"],
+    pronounPersonal:["appearance","gender", "pronounPersonal"],
+    pronounPossesive:["appearance","gender", "pronounPossesive"],
+    pronounPlural:["appearance","gender", "pronounPlural"],
+    pronounPlural2:["appearance","gender", "pronounPlural2"],
     shirt:["appearance", "shirts", "name"],
     shoes: ["appearance", "shoes", "name"],
     shoulderWidth:["appearance", "shoulderWidth", "name"],
@@ -1175,5 +1227,5 @@ let library = {
 }
 
 let text = {
-    personnelInformationSceneDesc:{desc: "$name is a $height /bodyType=medium^medium_sized /bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*.  /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_an_eye_patch*.  /neckJewelery=!none-neckWear=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /neckJewelery=!none-neckWear=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /neckWear=!none-neckJewelery=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /neckWear=none-neckJewelery=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /lowerBodyClothing=skirt^a_skirt /lowerBodyClothing=!skirt^$lowerBodyClothing /legWear=!barelegs^with_$legWear_and /legWear=barelegs^with /underwear=!thong-underwear=!speedo^$underwear /underwear=!panties-underwear=!boxers^a_$underwear underneath and a pair of $shoes ."  }
+    personnelInformationSceneDesc:{desc: "$name is a $height /bodyType=medium^medium_sized /bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*.  /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_an_eye_patch*.  /neckJewelery=!none-neckWear=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /neckJewelery=!none-neckWear=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /neckWear=!none-neckJewelery=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /neckWear=none-neckJewelery=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /genderQ=man^pecks, /genderQ=woman^breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /lowerBodyClothing=skirt^a_skirt /lowerBodyClothing=!skirt^$lowerBodyClothing /legWear=!barelegs^with_$legWear_and /legWear=barelegs^with /underwear=!thong-underwear=!speedo^$underwear /underwear=!panties-underwear=!boxers^a_$underwear underneath and a pair of $shoes ."  }
 }
