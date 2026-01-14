@@ -514,7 +514,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false},genderQ:{name:false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}, traits: [], stats:{res: false, str: false, int: false}}
+    let generatedCharacter =  {name: false, id: false, desc: false, changeFlag: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}, traits: [], stats:{res: false, str: false, int: false}}
     console.log(generatedCharacter)
     // Body Generator
 
@@ -551,7 +551,6 @@ function personnelGenerator() {
     //Gender Selector
     let selectedGender = Math.floor(Math.random() * genders.length);
     generatedCharacter.appearance.gender = genders[selectedGender]
-    generatedCharacter.appearance.genderQ.name = genders[selectedGender].name;
     //Clothing Generator
     let clothingSelectionArray = startingClothing.slice()
     for(let i = 0; i < clothingSelectionArray.length; i++) {
@@ -635,8 +634,13 @@ function personnelInformationHandler(x) {
     $("#scenePersonnelInformationCharStr").text(characterFocus.stats.str)
     $("#scenePersonnelInformationCharRes").text(characterFocus.stats.res)
     $("#scenePersonnelInformationCharInt").text(characterFocus.stats.int)
-    console.log(text.personnelInformationSceneDesc.desc)
-    $("#scenePersonnelInformationDesc").text(textHandler(characterFocus, text.personnelInformationSceneDesc.desc))
+    if(characterFocus.desc === false || characterFocus.changeFlag === true) {
+        characterFocus.desc = textHandler(characterFocus, text.personnelInformationSceneDesc.desc)
+        $("#scenePersonnelInformationDesc").text(characterFocus.desc)
+    }
+    else {
+        $("#scenePersonnelInformationDesc").text(characterFocus.desc)
+    }
     //personnelInformation Traits Panel Setup
     function traitsPanelSetup(x) {
         let traits = x;
@@ -676,8 +680,8 @@ function personnelInformationHandler(x) {
         $("#personnelInformationWardrobeBtnHeadWear").on("click", function() {
             personnelWardrobe("headWear");
         })
-        $("#personnelInformationWardrobeBtnFaceWear").on("click", function() {
-            personnelWardrobe("faceWear");
+        $("#personnelInformationWardrobeBtnEyeWear").on("click", function() {
+            personnelWardrobe("eyeWear");
         })
         $("#personnelInformationWardrobeBtnNeckWear").on("click", function() {
             personnelWardrobe("neckWear");
@@ -694,8 +698,8 @@ function personnelInformationHandler(x) {
         $("#personnelInformationWardrobeBtnUpperBody").on("click", function() {
             personnelWardrobe("upperBody");
         })
-        $("#personnelInformationWardrobeBtnCoat").on("click", function() {
-            personnelWardrobe("coat");
+        $("#personnelInformationWardrobeBtnOverShirt").on("click", function() {
+            personnelWardrobe("overShirt");
         })
         $("#personnelInformationWardrobeBtnLowerBody").on("click", function() {
             personnelWardrobe("lowerBody");
@@ -713,9 +717,36 @@ function personnelInformationHandler(x) {
     //End of the personnelInformationSetup
 
 function personnelWardrobe(x) {
+    let wardrobeSelection = document.getElementById("personnelInformationWardrobeSelection")
+    clearBox(wardrobeSelection)
     let clothingFocus = x;
     let charFocus = gameState.personnel.focus;
-    console.log(clothingFocus)
+    let selectedArray = clothing[clothingFocus]
+    console.log(selectedArray)
+    for(let i = 0; i < selectedArray.length; i++) {
+        let btnContainer = document.createElement("div");
+        let btnCenter99 = document.createElement("div");
+        let btnBackground = document.createElement("div");
+        let btnInnerContainer = document.createElement("div");
+        let btnText = document.createElement("div");
+
+        btnContainer.setAttribute("class", "gridBoxFull");
+        btnCenter99.setAttribute("class", "gridBoxCenter99");
+        btnBackground.setAttribute("class", "borderBoxFullREdgeHidden");
+        btnInnerContainer.setAttribute("class", "gridBoxFull");
+        btnText.setAttribute("class", "gridBoxCenter");
+
+        btnText.innerText = capitalizeFunc(selectedArray[i].name);
+        btnText.style.color = "white";
+        btnBackground.style.backgroundColor = "darkslateblue";
+
+        btnContainer.append(btnCenter99);
+        btnCenter99.append(btnBackground);
+        btnBackground.append(btnInnerContainer);
+        btnInnerContainer.append(btnText);
+
+        wardrobeSelection.append(btnContainer)
+    }
 }
 //personnelFunctions--End of the Personnel Function
 
@@ -779,14 +810,14 @@ function textHandler(x, y) {
             }
             console.log("Key: " + key)
             console.log("CharValue: " + charValue)
-            let charAttr = appearance[key[0]];
+            let charAttr = valueParser(key[0]);
             console.log(charAttr)
-            if(charAttr.name != charValue && falseCheck === false){
+            if(charAttr != charValue && falseCheck === false){
                 check = false
                 finalText = ""
                 break;
             }
-            if(charAttr.name === charValue && falseCheck === true){
+            if(charAttr === charValue && falseCheck === true){
                 finalText = "";
                 check = false
                 break;
@@ -1115,6 +1146,7 @@ let genders = [
 
 //Personnel Sexuality
 let sexuality = ["straight", "gay", "bisexual", "asexual"]
+//Starting Arrays
 //Personnel Traits
 let startingTraits = [
     {name: "Lazy", desc: "This doll has spent their time avoiding hard or complex work, despite societies pressues.", res: -1, str:-1, int: -1},
@@ -1197,6 +1229,80 @@ let startingClothing = [
         ],
     },
 ]
+//End of Starting Arrays
+//Non-Starting Arrays
+let clothing = {
+    faceWear: [
+        {name: "glasses"},
+        {name: "eye patch"},
+        {name: "none"},
+    ],
+    headWear: [
+        {name: "hat"},
+    ],
+    neckWear: [
+        {name: "choker"},
+        {name: "scarf"},
+        {name: "ascot"},
+        {name: "collar"},
+    ],
+    neckJewelery: [
+        {name: "gold necklace"},
+        {name: "silver necklace"},
+        {name: "crystal necklace"},
+        {name: "charm necklace"},
+        {name: "pearl necklace"},
+    ],
+    earrings: [
+        {name: "silver studs"},
+        {name: "gold studs"},
+        {name: "pearl earrings"},
+        {name: "hoops"},
+        {name: "charm earrings"},
+    ],
+    rings: [
+        {name: "metal band"},
+        {name: "diamond ring"},
+        {name: "charm ring"},
+    ],
+    upperBody: [
+        {name: "t-shirt"},
+        {name: "tank top"},
+        {name: "blouse"},
+        {name: "baseball-t"},
+        {name: "crop top"},
+        {name: "flannel shirt"},
+    ],
+    overShirt: [
+        {name: "jacket"},
+        {name: "flannel shirt"},
+    ],
+    lowerBody: [
+        {name: "skirt"},
+        {name: "jeans"},
+        {name: "short shorts"},
+        {name: "baseball shorts"},
+        {name: "long skirt"},
+    ],
+    genitals: [
+        {name: "chastity cage"},
+    ],
+    legs: [
+        {name: "stockings"},
+        {name: "fishnets"},
+        {name: "bare legs"}
+    ],
+    feet: [
+        {name: "tennis shoes"},
+        {name: "flats"},
+        {name: "sandals"},
+        {name: "heels"},
+        {name: "high heels"},
+        {name: "boots"},
+        {name: "work shoes"},
+    ],
+}
+//End of Non-Starting Arrays
 //Text Parser Library Array
 let library = {
     assSize: ["appearance", "assSize", "name"],
@@ -1227,5 +1333,5 @@ let library = {
 }
 
 let text = {
-    personnelInformationSceneDesc:{desc: "$name is a $height /bodyType=medium^medium_sized /bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /eyeWear=none^*.  /eyeWear=glasses^with_a_pair_of_glasses*. /eyeWear=eyePatch^with_an_eye_patch*.  /neckJewelery=!none-neckWear=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /neckJewelery=!none-neckWear=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /neckWear=!none-neckJewelery=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /neckWear=none-neckJewelery=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /genderQ=man^pecks, /genderQ=woman^breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /lowerBodyClothing=skirt^a_skirt /lowerBodyClothing=!skirt^$lowerBodyClothing /legWear=!barelegs^with_$legWear_and /legWear=barelegs^with /underwear=!thong-underwear=!speedo^$underwear /underwear=!panties-underwear=!boxers^a_$underwear underneath and a pair of $shoes ."  }
+    personnelInformationSceneDesc:{desc: "$name is a $height /$bodyType=medium^medium_sized /$bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /$eyeWear=none^*.  /$eyeWear=glasses^with_a_pair_of_glasses*. /$eyeWear=eyePatch^with_an_eye_patch*.  /$neckJewelery=!none-$neckWear=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /$neckJewelery=!none-$neckWear=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /$neckWear=!none-$neckJewelery=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /$neckWear=none-$neckJewelery=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /$gender=man^pecs, /$gender=woman^breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /$lowerBodyClothing=skirt^a_skirt /$lowerBodyClothing=!skirt^$lowerBodyClothing /$legWear=!barelegs^with_$legWear_and /$legWear=barelegs^with /$underwear=!thong-$underwear=!speedo^$underwear /$underwear=!panties-$underwear=!boxers^a_$underwear underneath and a pair of $shoes ."  }
 }
