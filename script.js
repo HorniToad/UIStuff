@@ -702,13 +702,13 @@ function personnelInformationHandler(x) {
             personnelWardrobe("overShirt");
         })
         $("#personnelInformationWardrobeBtnLowerBody").on("click", function() {
-            personnelWardrobe("lowerBody");
+            personnelWardrobe("lowerBodyClothing");
         })
         $("#personnelInformationWardrobeBtnGenitals").on("click", function() {
             personnelWardrobe("genitals");
         })
         $("#personnelInformationWardrobeBtnLegs").on("click", function() {
-            personnelWardrobe("legs");
+            personnelWardrobe("legWear");
         })
         $("#personnelInformationWardrobeBtnFeet").on("click", function() {
             personnelWardrobe("feet");
@@ -722,7 +722,6 @@ function personnelWardrobe(x) {
     let clothingFocus = x;
     let charFocus = gameState.personnel.focus;
     let selectedArray = clothing[clothingFocus]
-    console.log(selectedArray)
     for(let i = 0; i < selectedArray.length; i++) {
         let btnContainer = document.createElement("div");
         let btnCenter99 = document.createElement("div");
@@ -746,6 +745,13 @@ function personnelWardrobe(x) {
         btnInnerContainer.append(btnText);
 
         wardrobeSelection.append(btnContainer)
+
+        btnContainer.addEventListener("click", function() {
+            console.log(charFocus.appearance[clothingFocus])
+            charFocus.appearance[clothingFocus] = selectedArray[i];
+            charFocus.desc = textHandler(charFocus, text.personnelInformationSceneDesc.desc)
+            $("#scenePersonnelInformationDesc").text(charFocus.desc)
+        })
     }
 }
 //personnelFunctions--End of the Personnel Function
@@ -1187,7 +1193,7 @@ let startingClothing = [
         ]
     },
     upperBody = {
-        shirts: [
+        upperBody: [
             {name: "tank-top", type:"shirt", con: ["dress"]},
             {name: "t-shirt", type:"shirt", con: ["dress"]},
             {name: "blouse", type:"shirt", con: ["dress"]},
@@ -1232,7 +1238,7 @@ let startingClothing = [
 //End of Starting Arrays
 //Non-Starting Arrays
 let clothing = {
-    faceWear: [
+    eyeWear: [
         {name: "glasses"},
         {name: "eye patch"},
         {name: "none"},
@@ -1277,7 +1283,7 @@ let clothing = {
         {name: "jacket"},
         {name: "flannel shirt"},
     ],
-    lowerBody: [
+    lowerBodyClothing: [
         {name: "skirt"},
         {name: "jeans"},
         {name: "short shorts"},
@@ -1287,7 +1293,7 @@ let clothing = {
     genitals: [
         {name: "chastity cage"},
     ],
-    legs: [
+    legWear: [
         {name: "stockings"},
         {name: "fishnets"},
         {name: "bare legs"}
@@ -1324,7 +1330,7 @@ let library = {
     pronounPossesive:["appearance","gender", "pronounPossesive"],
     pronounPlural:["appearance","gender", "pronounPlural"],
     pronounPlural2:["appearance","gender", "pronounPlural2"],
-    shirt:["appearance", "shirts", "name"],
+    shirt:["appearance", "upperBody", "name"],
     shoes: ["appearance", "shoes", "name"],
     shoulderWidth:["appearance", "shoulderWidth", "name"],
     thighSize: ["appearance", "thighSize", "name"],
