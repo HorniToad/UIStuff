@@ -514,7 +514,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, desc: false, changeFlag: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}}, traits: [], stats:{res: false, str: false, int: false}}
+    let generatedCharacter =  {name: false, id: false, desc: false, changeFlag: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}},skills: [], traits: [], stats:{res: false, str: false, int: false}}
     console.log(generatedCharacter)
     // Body Generator
 
@@ -547,6 +547,16 @@ function personnelGenerator() {
                 generatedCharacter.appearance[key] = choice
             }
         }
+    }
+
+    let skillAmount = Math.floor(Math.random() * 3) + 1;
+    let skillArrayClone = startingSkills.slice();
+    for(let i = 0 ; i < skillAmount; i++) {
+        let skillChoice = Math.floor(Math.random() * skillArrayClone.length);
+        let chosenSkill = skillArrayClone[skillChoice];
+        skillArrayClone.splice(skillChoice, 1);
+        chosenSkill.int = Math.floor(Math.random() * 50)
+        generatedCharacter.skills.push(chosenSkill);
     }
     //Gender Selector
     let selectedGender = Math.floor(Math.random() * genders.length);
@@ -626,6 +636,10 @@ function personnelInformationHandler(x) {
     console.log("Game State Focus: " + gameState.personnel.focus.name)
 
     traitsPanelSetup(characterFocus.traits)
+    skillsPanelSetup(characterFocus.skills)
+
+    let wardrobeSelection = document.getElementById("personnelInformationWardrobeSelection")
+    clearBox(wardrobeSelection)
 
     $("#scenePersonnelInformationCharName").text(characterFocus.name)
     $("#scenePersonnelInformationCharGender").text(capitalizeFunc(characterFocus.appearance.gender.name))
@@ -672,6 +686,39 @@ function personnelInformationHandler(x) {
             traitInnerText.innerText = traits[i].name
         }
     }
+    function skillsPanelSetup(x) {
+        let skills = x
+        let panel = document.getElementById("personnelInformationSkillPanel");
+
+        clearBox(panel)
+
+        for(let i = 0; i < skills.length;  i++) {
+            let skillSlot = document.createElement("div");
+            let skillDualRow = document.createElement("div");
+            let skillDualColumn = document.createElement("div");
+            let skillGridBox = document.createElement("div");
+            let progressBar = document.createElement("div");
+            let progressBarProgress = document.createElement("div");
+
+            skillSlot.setAttribute("class", "slotContainerBorder");
+            skillDualRow.setAttribute("class", "gridBoxDualRowGap");
+            skillDualColumn.setAttribute("class", "gridBoxDualColumnGap");
+            skillGridBox.setAttribute("class", "gridBoxFull");
+            progressBar.setAttribute("class", "progressBar");
+            progressBarProgress.setAttribute("class", "progressBarProgress");
+
+            skillGridBox.innerText = skills[i].name;
+            let progress = progressCheck(skills[i].int, 100);
+            progressBarProgress.style.width = progress + "%"
+
+            panel.append(skillSlot);
+            skillSlot.append(skillDualRow);
+            skillDualRow.append(skillDualColumn);
+            skillDualColumn.append(skillGridBox);
+            skillDualRow.append(progressBar);
+            progressBar.append(progressBarProgress);
+        }
+    }
 }
 
  // Start of the personnelInformationWardrobeFunction
@@ -701,17 +748,20 @@ function personnelInformationHandler(x) {
         $("#personnelInformationWardrobeBtnOverShirt").on("click", function() {
             personnelWardrobe("overShirt");
         })
+        $("#personnelInformationWardrobeBtnUnderwear").on("click", function() {
+            personnelWardrobe("underwear")
+        })
         $("#personnelInformationWardrobeBtnLowerBody").on("click", function() {
             personnelWardrobe("lowerBodyClothing");
         })
         $("#personnelInformationWardrobeBtnGenitals").on("click", function() {
-            personnelWardrobe("genitals");
+            personnelWardrobe("genitalJewelery");
         })
         $("#personnelInformationWardrobeBtnLegs").on("click", function() {
             personnelWardrobe("legWear");
         })
         $("#personnelInformationWardrobeBtnFeet").on("click", function() {
-            personnelWardrobe("feet");
+            personnelWardrobe("feetWear");
         })
     })
     //End of the personnelInformationSetup
@@ -755,6 +805,18 @@ function personnelWardrobe(x) {
     }
 }
 //personnelFunctions--End of the Personnel Function
+
+//trainingFunctions -- Start of the Training Scene Function
+function trainingSceneHandler() {
+
+
+}
+
+function skillTrainingHandler() {
+    let buildings = gameState.buildingSlots;
+    console.log(buildings)
+}
+//trainingFunction -- End of the Training Scene Function
 
 //Start of Text Handler
 function textHandler(x, y) {
@@ -980,13 +1042,13 @@ let buildingTypes = [
 ]
 
 let buildings = [
-    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "makeup/5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
     { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
 
@@ -1163,149 +1225,211 @@ let startingTraits = [
     {name: "Weak", desc: "This doll has a fairly weak build. An easy target.", res: 0, str:-3, int: 0},
 ]
 
+let startingSkills = [
+    {id: "oralSex", name: "Oral Sex", int: false},
+    {id: "analSex", name: "Anal Sex", int: false},
+    {id: "dominatRole", name: "Domination", int: false},
+    {id: "submissiveRole", name: "Submission", int: false},
+    {id: "dirtyTalk", name: "Dirty Talk", int: false},
+    {id: "domesticTasks", name: "Domestic Skills", int: false},
+    {id: "makeup", name: "Makeup Skills", int: false},
+    {id: "etiquette", name: "Etiquette", int: false},
+    {id: "combat", name: "Combat Skills", int: false},
+    {id: "medicine", name: "Medical Skills", int: false},
+    {id: "social", name: "Social Skills", int: false}
+]
+
 let startingClothing = [
     head = {
         eyeWear: [
-            {name: "glasses"},
-            {name: "eyePatch"},
-            {name: "none"},
+            {id: "glasses", name: "glasses"},
+            {id: "eyePatch", name: "eye patch"},
+            {id: "none", name: "none"},
         ],
         earJewelery: [
-            {name: "studs"},
-            {name: "hoops"},
-            {name: "pearl earrings"},
-            {name: "none"},
+            {id: "silverStuds", name: "silver studs"},
+            {id: "goldStuds", name: "gold studs"},
+            {id: "pearlEarrings", name: "pearl earrings"},
+            {id: "hoops", name: "hoops"},
+            {id: "charmEarrings", name: "charm earrings"},
+            {id: "none", name: "none"},
         ],
     },
     neck = {
         neckJewelery: [
-            {name: "choker"},
-            {name: "silver necklace"},
-            {name: "gold necklace"},
-            {name: "statement necklace"},
-            {name:"none"},
+            {id: "goldNecklace", name: "gold necklace"},
+            {id: "silverNecklace", name: "silver necklace"},
+            {id: "crystalNecklace", name: "crystal necklace"},
+            {id: "charmNecklace", name: "charm necklace"},
+            {id: "pearlNecklace", name: "pearl necklace"},
+            {id: "none", name:"none"},
         ],
         neckWear: [
-            {name: "scarf"},
-            {name: "ascot"},
-            {name: "tie"},
-            {name: "none"}
+            {id: "choker", name: "choker"},
+            {id: "scarf", name: "scarf"},
+            {id: "ascot", name: "ascot"},
+            {id: "collar", name: "collar"},
+            {id: "none", name: "none"},
         ]
     },
     upperBody = {
         upperBody: [
-            {name: "tank-top", type:"shirt", con: ["dress"]},
-            {name: "t-shirt", type:"shirt", con: ["dress"]},
-            {name: "blouse", type:"shirt", con: ["dress"]},
-            {name: "flannel shirt", type:"shirt", con: ["dress"]},
+            {id: "tShirt", name: "t-shirt", type: "shirt", con:["dress"]},
+            {id: "tankTop", name: "tank top", type:"shirt", con: ["dress"]},
+            {id: "blouse", name: "blouse", type:"shirt", con: ["dress"]},
+            {id: "baseballT", name: "baseball-t", type:"shirt", con: ["dress"]},
+            {id: "cropTop", name: "crop top", type:"shirt", con: ["dress"]},
+            {id: "flannelShirt", name: "flannel shirt", type:"shirt", con: ["dress"]},
         ],
         overshirt: [
-            {name: "coat"},
-            {name: "leather jacket"},
-            {name: "sweater"},
-        ]
+            {id: "jacket", name: "jacket"},
+            {id: "flannelShirt", name: "flannel shirt"},
+        ],
+        rings: [
+            {id: "metalBand", name: "metal band"},
+            {id: "diamondRing", name: "diamond ring"},
+            {id:"charmRing", name: "charm ring"},
+        ],
     },
     lowerBody = {
         lowerBodyClothing: [
-            {name: "skirt", type: "skirt", con: ["dress"]},
-            {name: "shorts", type: "skirt", con: ["dress", "legWear"]},
-            {name: "jeans", type:"pants", con: ["dress", "legWear"]},
-            {name: "leggings", type:"pants", con: ["dress","legWear"]},
+            {id: "leggings", name: "leggings", type:"pants", con: ["dress","legWear"]},
+            {id: "skirt", name: "skirt", type: "skirt", con: ["dress"]},
+            {id: "jeans", name: "jeans", type:"pants", con: ["dress", "legWear"]},
+            {id: "shortShorts", name: "short shorts", type: "shorts", con: ["dress", "legWear"]},
+            {id: "basketballShorts", name: "basketball shorts"},
+            {id: "longSkirt", name: "long skirt", type: "skirt", con: ["dress"]},
         ],
         underwear: [
-            {name: "panties"},
-            {name: "boxers"},
-            {name: "thong"},
-            {name: "speedo"},
+            {id: "panties", name: "panties"},
+            {id: "boxers", name: "boxers"},
+            {id: "thong", name: "thong"},
+            {id: "speedo", name: "speedo"},
         ],
         legWear: [
-            {name: "tights", type: "legWear", con: ["pants"]},
-            {name: "stockings", type: "legWear", con:["pants"]},
-            {name: "barelegs", type: "noUnderClothing"},
+            {id: "tights", name: "tights", type: "legWear", con: ["pants"]},
+            {id: "stockings", name: "stockings", type: "legWear", con:["pants"]},
+            {id: "fishnets", name: "fishnets"},
+            {id: "none", name: "bare legs", type: "noUnderClothing"}
+        ],
+        genitalJewelery: [
+            {id: "none", name: "none"},
         ],
     },
     feet = {
-        shoes: [
-            {name: "boots"},
-            {name: "tennis shoes"},
-            {name: "sneakers"},
-            {name: "sandals"},
-            {name: "heels"},
-            {name: "flats"},
+        feetWear: [
+            {id: "tennisShoes", name: "tennis shoes"},
+            {id: "flats", name: "flats"},
+            {id: "sandals", name: "sandals"},
+            {id: "heels", name: "heels"},
+            {id: "highHeels", name: "high heels"},
+            {id: "boots", name: "boots"},
+            {id: "workShoes", name: "work shoes"},
         ],
     },
 ]
 //End of Starting Arrays
 //Non-Starting Arrays
+let skills = {
+    oral:{id: "oralSex", name: "Oral Sex", int: false},
+    anal:{id: "analSex", name: "Anal Sex", int: false},
+    dominant:{id: "dominatRole", name: "Domination", int: false},
+    submissive:{id: "submissiveRole", name: "Submission", int: false},
+    dirtyTalk:{id: "dirtyTalk", name: "Dirty Talk", int: false},
+    domesticTasks:{id: "domesticTasks", name: "Domestic Skills", int: false},
+    makeup:{id: "makeup", name: "Makeup Skills", int: false},
+    etiquette:{id: "etiquette", name: "Etiquette", int: false},
+    combat:{id: "combat", name: "Combat Skills", int: false},
+    medicine:{id: "medicine", name: "Medical Skills", int: false},
+    social:{id: "social", name: "Social Skills", int: false}
+}
+
 let clothing = {
     eyeWear: [
-        {name: "glasses"},
-        {name: "eye patch"},
-        {name: "none"},
+        {id: "none", name: "none"},
+        {id: "glasses", name: "glasses"},
+        {id: "eyePatch", name: "eye patch"},
     ],
     headWear: [
-        {name: "hat"},
+        {id: "none", name: "none"},
+        {id: "hat", name: "hat"},
     ],
     neckWear: [
-        {name: "choker"},
-        {name: "scarf"},
-        {name: "ascot"},
-        {name: "collar"},
+        {id: "none", name: "none"},
+        {id: "choker", name: "choker"},
+        {id: "scarf", name: "scarf"},
+        {id: "ascot", name: "ascot"},
+        {id: "collar", name: "collar"},
     ],
     neckJewelery: [
-        {name: "gold necklace"},
-        {name: "silver necklace"},
-        {name: "crystal necklace"},
-        {name: "charm necklace"},
-        {name: "pearl necklace"},
+        {id: "none", name: "none"},
+        {id: "goldNecklace", name: "gold necklace"},
+        {id: "silverNecklace", name: "silver necklace"},
+        {id: "crystalNecklace", name: "crystal necklace"},
+        {id: "charmNecklace", name: "charm necklace"},
+        {id: "pearlNecklace", name: "pearl necklace"},
     ],
     earrings: [
-        {name: "silver studs"},
-        {name: "gold studs"},
-        {name: "pearl earrings"},
-        {name: "hoops"},
-        {name: "charm earrings"},
+        {id: "none", name: "none"},
+        {id: "silverStuds", name: "silver studs"},
+        {id: "goldStuds", name: "gold studs"},
+        {id: "pearlEarrings", name: "pearl earrings"},
+        {id: "hoops", name: "hoops"},
+        {id: "charmEarrings", name: "charm earrings"},
     ],
     rings: [
-        {name: "metal band"},
-        {name: "diamond ring"},
-        {name: "charm ring"},
+        {id: "none", name: "none"},
+        {id: "metalBand", name: "metal band"},
+        {id: "diamondRing", name: "diamond ring"},
+        {id:"charmRing", name: "charm ring"},
     ],
     upperBody: [
-        {name: "t-shirt"},
-        {name: "tank top"},
-        {name: "blouse"},
-        {name: "baseball-t"},
-        {name: "crop top"},
-        {name: "flannel shirt"},
+        {id: "none", name: "none"},
+        {id: "tShirt", name: "t-shirt", type: "shirt", con:["dress"]},
+        {id: "tankTop", name: "tank top", type:"shirt", con: ["dress"]},
+        {id: "blouse", name: "blouse", type:"shirt", con: ["dress"]},
+        {id: "baseballT", name: "baseball-t", type:"shirt", con: ["dress"]},
+        {id: "cropTop", name: "crop top", type:"shirt", con: ["dress"]},
+        {id: "flannelShirt", name: "flannel shirt", type:"shirt", con: ["dress"]},
     ],
     overShirt: [
-        {name: "jacket"},
-        {name: "flannel shirt"},
+        {id: "none", name: "none"},
+        {id: "jacket", name: "jacket"},
+        {id: "flannelShirt", name: "flannel shirt"},
     ],
     lowerBodyClothing: [
-        {name: "skirt"},
-        {name: "jeans"},
-        {name: "short shorts"},
-        {name: "baseball shorts"},
-        {name: "long skirt"},
+        {id: "leggings", name: "leggings", type:"pants", con: ["dress","legWear"]},
+        {id: "skirt", name: "skirt", type: "skirt", con: ["dress"]},
+        {id: "jeans", name: "jeans", type:"pants", con: ["dress", "legWear"]},
+        {id: "shortShorts", name: "short shorts", type: "shorts", con: ["dress", "legWear"]},
+        {id: "basketballShorts", name: "basketball shorts"},
+        {id: "longSkirt", name: "long skirt", type: "skirt", con: ["dress"]},
     ],
-    genitals: [
-        {name: "chastity cage"},
+    underwear: [
+        {id: "panties", name: "panties"},
+        {id: "boxers", name: "boxers"},
+        {id: "thong", name: "thong"},
+        {id: "speedo", name: "speedo"},
+    ],
+    genitalJewelery: [
+        {id: "none", name: "none"},
+        {id: "chastityCage", name: "chastity cage"},
     ],
     legWear: [
-        {name: "stockings"},
-        {name: "fishnets"},
-        {name: "bare legs"}
+        {id: "none", name: "bare legs", type: "noUnderClothing"},
+        {id: "tights", name: "tights", type: "legWear", con: ["pants"]},
+        {id: "stockings", name: "stockings", type: "legWear", con:["pants"]},
+        {id: "fishnets", name: "fishnets"},
     ],
-    feet: [
-        {name: "tennis shoes"},
-        {name: "flats"},
-        {name: "sandals"},
-        {name: "heels"},
-        {name: "high heels"},
-        {name: "boots"},
-        {name: "work shoes"},
+    feetWear: [
+        {id: "none", name: "bare feet"},
+        {id: "tennisShoes", name: "tennis shoes"},
+        {id: "flats", name: "flats"},
+        {id: "sandals", name: "sandals"},
+        {id: "heels", name: "heels"},
+        {id: "highHeels", name: "high heels"},
+        {id: "boots", name: "boots"},
+        {id: "workShoes", name: "work shoes"},
     ],
 }
 //End of Non-Starting Arrays
@@ -1316,28 +1440,38 @@ let library = {
     breastSize:["appearance", "breastSize", "name"],
     eyeColor:["appearance", "eyeColor", "name"],
     eyeWear: ["appearance", "eyeWear", "name"],
+    eyeWearID: ["appearance", "eyeWear", "id"],
     gender: ["appearance","gender", "name"],
+    genitalJewelery: ["appearance", "genitalJewelery", "name"],
+    genitalJeweleryID: ["appearance", "genitalJewelery", "id"],
     hairColor: ["appearance", "hairColor", "name"],
     hairLength: ["appearance", "hairLength", "name"],
     height:["appearance", "height", "name"],
     hipSize: ["appearance", "hipSize", "name"],
     legWear: ["appearance", "legWear", "name"],
+    legWearID: ["appearance", "legWear", "id"],
     lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
+    lowerBodyClothingID: ["appearance", "lowerBodyClothing", "id"],
     name: ["name"],
     neckJewelery:["appearance", "neckJewelery", "name"],
+    neckJeweleryID:["appearance", "neckJewelery", "id"],
     neckWear:["appearance", "neckWear", "name"],
+    neckWearID:["appearance", "neckWear", "id"],
     pronounPersonal:["appearance","gender", "pronounPersonal"],
     pronounPossesive:["appearance","gender", "pronounPossesive"],
     pronounPlural:["appearance","gender", "pronounPlural"],
     pronounPlural2:["appearance","gender", "pronounPlural2"],
     shirt:["appearance", "upperBody", "name"],
-    shoes: ["appearance", "shoes", "name"],
+    shirtID:["appearance", "upperBody", "id"],
+    shoes: ["appearance", "feetWear", "name"],
+    shoesID: ["appearance", "feetWear", "id"],
     shoulderWidth:["appearance", "shoulderWidth", "name"],
     thighSize: ["appearance", "thighSize", "name"],
     underwear:["appearance", "underwear", "name"],
+    underwearID:["appearance", "underwear", "id"],
     waistSize:["appearance", "waistSize", "name"],
 }
 
 let text = {
-    personnelInformationSceneDesc:{desc: "$name is a $height /$bodyType=medium^medium_sized /$bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /$eyeWear=none^*.  /$eyeWear=glasses^with_a_pair_of_glasses*. /$eyeWear=eyePatch^with_an_eye_patch*.  /$neckJewelery=!none-$neckWear=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /$neckJewelery=!none-$neckWear=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /$neckWear=!none-$neckJewelery=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /$neckWear=none-$neckJewelery=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /$gender=man^pecs, /$gender=woman^breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /$lowerBodyClothing=skirt^a_skirt /$lowerBodyClothing=!skirt^$lowerBodyClothing /$legWear=!barelegs^with_$legWear_and /$legWear=barelegs^with /$underwear=!thong-$underwear=!speedo^$underwear /$underwear=!panties-$underwear=!boxers^a_$underwear underneath and a pair of $shoes ."  }
+    personnelInformationSceneDesc:{desc: "$name is a $height /$bodyType=medium^medium_sized /$bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair and $eyeColor eyes /$eyeWear=none^*.  /$eyeWearID=glasses^with_a_pair_of_glasses*. /$eyeWearID=eyePatch^with_an_eye_patch*.  /$neckJeweleryID=!none-$neckWearID=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /$neckJeweleryID=!none-$neckWearID=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /$neckWearID=!none-$neckJeweleryID=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /$neckWearID=none-$neckJeweleryID=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /$gender=man^pecs, /$gender=woman^breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /$lowerBodyClothingID=skirt^a_skirt /$lowerBodyClothingID=!skirt^$lowerBodyClothing /$legWearID=!barelegs^with_$legWear_and /$legWearID=barelegs^with /$underwearID=!thong-$underwearID=!speedo^$underwear /$underwearID=!panties-$underwearID=!boxers^a_$underwear underneath /$genitalJeweleryID=chastityCage-$gender=man^with_a_chastity_cage_tight_around_$pronounPlural2_cock /$genitalJeweleryID=chastityCage-$gender=woman^with_a_chastity_cage_tight_around_$pronounPlural2_pussy and a pair of $shoes ."  }
 }
