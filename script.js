@@ -2,16 +2,21 @@ let gameState;
 
 //gameStateHandler-- Start of the Game State Handler
 function gameStateHandler() {
-
+    tickStateCounter();
+    if(gameState.tickState.tickRollOver === true) {
+        console.log("looks like I rolled over")
+    }
 }
 
 // Tick Counter Function
 function tickStateCounter() {
     if(gameState.tickState.currentTick < gameState.tickState.completeTick) {
         gameState.tickState.currentTick++;
+        gameState.tickState.tickRollOver = false;
     }
     else if(gameState.tickState.currentTick == 10){
         gameState.tickState.currentTick = -1;
+        gameState.tickState.tickRollOver = true;
         dateUpdater();
         console.log(gameState)
         $("#dateStatText").text(gameState.currentDate.week + " " + gameState.currentDate.month.name + " " + gameState.currentDate.day)
@@ -30,7 +35,7 @@ function speedSetFunction(x) {
     clearInterval(gameState.tickState.tick)
     if(speed) {
         gameState.tickState.tickRate = speed;
-        gameState.tickState.tick = setInterval(tickStateCounter, speed)
+        gameState.tickState.tick = setInterval(gameStateHandler, speed)
     }
     else {
         gameState.tickState.tickRate = false;
@@ -107,7 +112,7 @@ $(function gameStartUpFunction() {
     parent[0].style.display = "grid"
     let buildingTemplate = {floorSlots: [], buildingSlots: [], slots: 20, floors: 5, buildFocus: false, buildTypeFocus: false, buildItemFocus: false, buildingSceneFocus: false}
     let personnelTemplate = {patients: [], employees: [], customers: [] , focus: false};
-    let tickTemplate =  {tick: false, tickRate: false, completeTick: 10, currentTick: 0}
+    let tickTemplate =  {tick: false, tickRate: false, completeTick: 10, currentTick: 0, tickRollOver: false}
 
     gameState = {tickState: tickTemplate, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
@@ -806,15 +811,10 @@ function personnelWardrobe(x) {
 }
 //personnelFunctions--End of the Personnel Function
 
-//trainingFunctions -- Start of the Training Scene Function
+//trainingSceneFunctions -- Start of the Training Scene Function
 function trainingSceneHandler() {
 
 
-}
-
-function skillTrainingHandler() {
-    let buildings = gameState.buildingSlots;
-    console.log(buildings)
 }
 //trainingFunction -- End of the Training Scene Function
 
