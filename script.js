@@ -10,7 +10,7 @@ function gameStateHandler() {
             console.log(gameState)
             personnelInformationSceneUpdater();
         }
-        if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Training" && gameState.buildingSceneFocus.occupant != false) {
+        if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Training") {
                 buildingTrainingSceneUpdater();
             }
 
@@ -158,13 +158,24 @@ function personnelInformationSceneUpdater() {
 }
 
 function buildingTrainingSceneUpdater() {
-    console.log("I am in the buildingTrainingSceneUpdater!")
-    let trainingFocus = gameState.buildingSceneFocus.occupant;
-    let progress = progressCheck(trainingFocus.skills[gameState.buildingSceneFocus.stat].int, 100);
-    console.log(progress)
-
     let progressBar = document.getElementById("buildingTrainingSceneProgressBar");
-    progressBar.style.width = progress + "%";
+    // Resets progress bar and text if unoccupied
+    if(gameState.buildingSceneFocus.occupant === false) {
+        $("#buildingTrainingSceneOccupantName").text("None")
+        progressBar.style.width = "0%";
+        $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: 0%");
+        return 0;
+    }
+    let trainingFocus = gameState.buildingSceneFocus.occupant;
+    if(gameState.buildingSceneFocus.occupant.skills[gameState.buildingSceneFocus.stat]) {
+        let progress = progressCheck(trainingFocus.skills[gameState.buildingSceneFocus.stat].int, 100);
+        progressBar.style.width = progress + "%";
+        $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: " + progress + "%")
+    }
+    else {
+        progressBar.style.width = "0%";
+        $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: 0%")
+    }
 }
 
 //personnelInformationSceneUpdater
@@ -558,6 +569,7 @@ function buildingFilter(x) {
         let scene = document.getElementById("building" + target.type + "Scene")
         if(target.type == "Training") {
             trainingSceneHandler(target);
+            buildingTrainingSceneUpdater();
         }
         scene.style.display = "grid"
         $("#building" + target.type + "SceneDesc").text(target.desc)
@@ -633,7 +645,8 @@ function personnelGenerator() {
     }
 
     let skillAmount = Math.floor(Math.random() * 3) + 1;
-    let skillArrayClone = startingSkills.slice();
+    let skillArrayClone =  structuredClone(startingSkills)
+    console.log(skillArrayClone)
     for(let i = 0 ; i < skillAmount; i++) {
         let skillChoice = Math.floor(Math.random() * skillArrayClone.length);
         let chosenSkill = skillArrayClone[skillChoice];
@@ -951,8 +964,23 @@ function trainingSceneHandler(x) {
             charNameTextBox.innerText = gameState.personnel.patients[i].name
             charDescTextBox.innerText = gameState.personnel.patients[i].appearance.gender.name
 
+            if(gameState.buildingSceneFocus.occupant === gameState.personnel.patients[i]) {
+                charBorderBox.style.background = "red"
+            }
+
             charContainer.addEventListener("click", function() {
                 gameState.buildingSceneFocus.occupant = gameState.personnel.patients[i];
+                $("#buildingTrainingSceneOccupantName").text(gameState.buildingSceneFocus.occupant.name)
+                let progressBar = document.getElementById("buildingTrainingSceneProgressBar");
+                if(gameState.buildingSceneFocus.occupant.skills[gameState.buildingSceneFocus.stat]) {
+                    let progress = progressCheck(gameState.buildingSceneFocus.occupant.skills[gameState.buildingSceneFocus.stat].int, 100);
+                    progressBar.style.width = progress + "%";
+                    $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: " + progress + "%")
+                }
+                else {
+                    progressBar.style.width = "0%";
+                    $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: 0%")
+                }
                 console.log(gameState)
             })
 
@@ -1133,6 +1161,7 @@ function progressCheck(x, y) {
 
     let currentPercentage = currentProgress / totalProgress
     currentPercentage = currentPercentage * 100;
+    currentPercentage = currentPercentage.toFixed(2);
     return currentPercentage
 }
 
@@ -1186,27 +1215,27 @@ let buildingTypes = [
 ]
 
 let buildings = [
-    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "domesticTasks", statInt: 1, capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "domesticTasks", statInt: 0.5, capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "makeup/5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "makeup/5", capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
+    { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, changeFlag: false, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
 
-    { id: "hypnoUpg2", name: "Hypno Headphones", type: "Conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
+    { id: "hypnoUpg2", name: "Hypno Headphones", type: "Conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, changeFlag: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "hypnoUpg3", name: "Hypno Headpiece", type: "Conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
+    { id: "hypnoUpg3", name: "Hypno Headpiece", type: "Conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, changeFlag: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "puppyUpg1", name: "Puppy Pound", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
+    { id: "puppyUpg1", name: "Puppy Pound", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, changeFlag: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
 
-    { id: "farmUpg1", name: "Farm", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
+    { id: "farmUpg1", name: "Farm", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, changeFlag: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
 
-    { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, desc: "A small cell used to hold patients during their stay at the Spa." },
+    { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, changeFlag: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 
-    { id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, desc: "A basic surgery station used to enhance dolls." }
+    { id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, changeFlag: false, desc: "A basic surgery station used to enhance dolls." }
 ]
 
 // Character Arrays
