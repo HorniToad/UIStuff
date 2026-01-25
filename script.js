@@ -3,8 +3,20 @@ let gameState;
 //gameStateHandler-- Start of the Game State Handler
 function gameStateHandler() {
     tickStateCounter();
+    trainingHandler();
+    if(gameState.currentScene.current) {
+        sceneCheck = gameState.currentScene.current
+        if(sceneCheck.id === "scenePersonnelInformation") {
+            console.log(gameState)
+            personnelInformationSceneUpdater();
+        }
+        if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Training" && gameState.buildingSceneFocus.occupant != false) {
+                buildingTrainingSceneUpdater();
+            }
+
+
+    }
     if(gameState.tickState.tickRollOver === true) {
-        console.log("looks like I rolled over")
     }
 }
 
@@ -97,6 +109,66 @@ function dateUpdater() {
     }
 }
 
+//TrainingHandler Function Start
+function trainingHandler() {
+    let buildingSlots = gameState.buildings.buildingSlots;
+    let selectedBuildings = $.grep(buildingSlots, function(n) {
+        return n.trainable === true
+    })
+
+    for(let i = 0; i < selectedBuildings.length; i++) {
+        if(selectedBuildings[i].occupant != false) {
+            console.log(selectedBuildings[i])
+            if(!selectedBuildings[i].occupant.skills[selectedBuildings[i].stat]) {
+                selectedBuildings[i].occupant.skills[selectedBuildings[i].stat] = structuredClone(skills[selectedBuildings[i].stat])
+                console.log(skills[selectedBuildings[i].stat])
+                console.log(selectedBuildings[i].occupant.skills[selectedBuildings[i].stat])
+                let statFocus = selectedBuildings[i].occupant.skills[selectedBuildings[i].stat]
+                statFocus.int += selectedBuildings[i].statInt;
+            }
+            else {
+                let statFocus = selectedBuildings[i].occupant.skills[selectedBuildings[i].stat]
+                statFocus.int += selectedBuildings[i].statInt;
+                console.log("Selected Building Stat Int: " + selectedBuildings[i].statInt + " StatFocus: " + statFocus.int)
+                if(statFocus.int > 100) {
+                    statFocus.int = 100;
+                    selectedBuildings[i].occupant = false;
+                }
+            }
+            if(selectedBuildings[i].occupant) {
+                console.log(selectedBuildings[i].occupant.name + " skill in " + selectedBuildings[i].stat + " is " + selectedBuildings[i].occupant.skills[selectedBuildings[i].stat].int)
+            }
+        }
+    }
+}
+//TrainingHanlder Function End
+
+//personnelInformationSceneUpdater
+function personnelInformationSceneUpdater() {
+    let skills = gameState.personnel.focus.skills;
+
+    for(let key in skills) {
+        let focus = document.getElementById("personnelInformation" + key)
+        if(!focus) {
+            personnelInformationHandler(gameState.personnel.focus);
+        }
+        let progress = progressCheck(skills[key].int, 100);
+        $("#personnelInformation" + key).css({"width": progress + "%"})
+    }
+}
+
+function buildingTrainingSceneUpdater() {
+    console.log("I am in the buildingTrainingSceneUpdater!")
+    let trainingFocus = gameState.buildingSceneFocus.occupant;
+    let progress = progressCheck(trainingFocus.skills[gameState.buildingSceneFocus.stat].int, 100);
+    console.log(progress)
+
+    let progressBar = document.getElementById("buildingTrainingSceneProgressBar");
+    progressBar.style.width = progress + "%";
+}
+
+//personnelInformationSceneUpdater
+
 //gameStateHandler-- End of the Game State Handler
 
 
@@ -117,7 +189,9 @@ $(function gameStartUpFunction() {
     gameState = {tickState: tickTemplate, date: false,currentDate: false, cash: 500, patientCap: false, conditionFocus: false, charGen: false, personnel: personnelTemplate, buildings: buildingTemplate, currentScene: {current: scene, prior: false, parent: parent[0] } }
     console.log(gameState)
     personnelGenerator();
-    personnelGenerator();
+    for(let c = 0; c < 20; c++ ) {
+        personnelGenerator();
+    }
     hideBoxSetup();
     leftStatContainerBtnEventSetup();
     buildingSetup();
@@ -336,8 +410,8 @@ $(function gameStartUpFunction() {
                 selectedSlot.desc = selectedBuild.desc
                 selectedSlot.name = selectedBuild.name;
                 selectedSlot.type = selectedBuild.type;
-                selectedSlot.stat = selectedBuild.statInt;
-                selectedSlot.statName = selectedBuild.stat;
+                selectedSlot.statInt = selectedBuild.statInt;
+                selectedSlot.stat = selectedBuild.stat;
                 selectedSlot.trainable = selectedBuild.trainable;
 
                 let slot = document.getElementById(selectedSlot.id)
@@ -471,6 +545,7 @@ function buildSelection() {
 // Filters between different building options to display the correct sceneHome
 function buildingFilter(x) {
     let target = x;
+    console.log(target)
     if(target != undefined) {
         if(gameState.buildingSceneFocus && gameState.buildingSceneFocus != target) {
             let oldTarget = document.getElementById("building" + gameState.buildingSceneFocus.type + "Scene")
@@ -481,6 +556,9 @@ function buildingFilter(x) {
         gameState.buildingSceneFocus = target
         console.log(target)
         let scene = document.getElementById("building" + target.type + "Scene")
+        if(target.type == "Training") {
+            trainingSceneHandler(target);
+        }
         scene.style.display = "grid"
         $("#building" + target.type + "SceneDesc").text(target.desc)
     }
@@ -519,7 +597,7 @@ function personnelSetup() {
 
 // Personnel Character filter
 function personnelGenerator() {
-    let generatedCharacter =  {name: false, id: false, desc: false, changeFlag: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}},skills: [], traits: [], stats:{res: false, str: false, int: false}}
+    let generatedCharacter =  {name: false, id: false, desc: false, changeFlag: false, status: false, sexuality: false, appearance: {gender: {name: false, pronounPersonal: false, pronounPossesive: false}, bodyType: false, hairColor: false, hairLength: false, bodySize: false, height: false, hipSize: false, waistSize: false, clothingCheck:{shirt: false, pants: false, underClothing: false, dress: false}},skills: {}, traits: [], stats:{res: false, str: false, int: false}}
     console.log(generatedCharacter)
     // Body Generator
 
@@ -561,7 +639,7 @@ function personnelGenerator() {
         let chosenSkill = skillArrayClone[skillChoice];
         skillArrayClone.splice(skillChoice, 1);
         chosenSkill.int = Math.floor(Math.random() * 50)
-        generatedCharacter.skills.push(chosenSkill);
+        generatedCharacter.skills[chosenSkill.id] = chosenSkill;
     }
     //Gender Selector
     let selectedGender = Math.floor(Math.random() * genders.length);
@@ -697,7 +775,9 @@ function personnelInformationHandler(x) {
 
         clearBox(panel)
 
-        for(let i = 0; i < skills.length;  i++) {
+        for(let key in skills) {
+            console.log(skills)
+            console.log("Look at this key: " + key)
             let skillSlot = document.createElement("div");
             let skillDualRow = document.createElement("div");
             let skillDualColumn = document.createElement("div");
@@ -712,8 +792,10 @@ function personnelInformationHandler(x) {
             progressBar.setAttribute("class", "progressBar");
             progressBarProgress.setAttribute("class", "progressBarProgress");
 
-            skillGridBox.innerText = skills[i].name;
-            let progress = progressCheck(skills[i].int, 100);
+            progressBarProgress.setAttribute("id", "personnelInformation" + key);
+
+            skillGridBox.innerText = skills[key].name;
+            let progress = progressCheck(skills[key].int, 100);
             progressBarProgress.style.width = progress + "%"
 
             panel.append(skillSlot);
@@ -812,8 +894,70 @@ function personnelWardrobe(x) {
 //personnelFunctions--End of the Personnel Function
 
 //trainingSceneFunctions -- Start of the Training Scene Function
-function trainingSceneHandler() {
+function trainingSceneHandler(x) {
+    let building = x;
+    console.log(building)
+    let desc = document.getElementById("buildingTrainingSceneDesc")
+    console.log(desc)
+    desc.innerText = building.desc;
+    characterTrainingSelect();
 
+
+    function characterTrainingSelect() {
+        console.log("I made it down to the character Training select ma!")
+        let panel = document.getElementById("trainingSceneCharacterSelectionPanel");
+        clearBox(panel)
+        for(let i = 0; i < gameState.personnel.patients.length; i++) {
+            console.log("Looks like I have some patients!")
+            let charContainer = document.createElement("div");
+            let charBorderBox = document.createElement("div");
+            let charGridBoxFull = document.createElement("div");
+            let charBox99 = document.createElement("div");
+            let charBoxDualRow = document.createElement("div");
+            let charNameContainer = document.createElement("div");
+            let charNameCenter = document.createElement("div");
+            let charNameTextBox = document.createElement("div");
+            let charDescContainer = document.createElement("div");
+            let charDescCenter = document.createElement("div");
+            let charDescTextBox = document.createElement("div");
+
+            charContainer.setAttribute("class", "gridBox");
+            charBorderBox.setAttribute("class", "borderBoxFullREdgeHidden");
+            charGridBoxFull.setAttribute("class", "gridBoxFull");
+            charBox99.setAttribute("class", "gridBoxCenter99");
+            charBoxDualRow.setAttribute("class", "gridBoxDualRowGap");
+            charNameContainer.setAttribute("class", "gridBoxFull");
+            charNameCenter.setAttribute("class", "gridBoxCenter");
+            charNameTextBox.setAttribute("class", "textBoxCenter");
+            charDescContainer.setAttribute("class", "gridBoxFull");
+            charDescCenter.setAttribute("class", "gridBoxCenter");
+            charDescTextBox.setAttribute("class", "textBoxCenter");
+
+            panel.append(charContainer);
+            charContainer.append(charBorderBox);
+            charBorderBox.append(charGridBoxFull);
+            charGridBoxFull.append(charBox99);
+            charBox99.append(charBoxDualRow)
+            charBoxDualRow.append(charNameContainer);
+            charNameContainer.append(charNameCenter);
+            charNameCenter.append(charNameTextBox);
+            charBoxDualRow.append(charDescContainer);
+            charDescContainer.append(charDescCenter);
+            charDescCenter.append(charDescTextBox);
+
+            charContainer.style.height = "10vh";
+            charBorderBox.style.background = "mediumslateblue";
+
+            charNameTextBox.innerText = gameState.personnel.patients[i].name
+            charDescTextBox.innerText = gameState.personnel.patients[i].appearance.gender.name
+
+            charContainer.addEventListener("click", function() {
+                gameState.buildingSceneFocus.occupant = gameState.personnel.patients[i];
+                console.log(gameState)
+            })
+
+        }
+    }
 
 }
 //trainingFunction -- End of the Training Scene Function
@@ -1042,7 +1186,7 @@ let buildingTypes = [
 ]
 
 let buildings = [
-    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "domesticTasks", statInt: 1, capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
     { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
