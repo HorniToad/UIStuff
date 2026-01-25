@@ -1,5 +1,5 @@
 let gameState;
-
+console.log("git test")
 //gameStateHandler-- Start of the Game State Handler
 function gameStateHandler() {
     tickStateCounter();
