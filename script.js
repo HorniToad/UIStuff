@@ -11,8 +11,8 @@ function gameStateHandler() {
             personnelInformationSceneUpdater();
         }
         if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Training") {
-                buildingTrainingSceneUpdater();
-            }
+            buildingTrainingSceneUpdater();
+        }
 
 
     }
@@ -117,26 +117,28 @@ function trainingHandler() {
     })
 
     for(let i = 0; i < selectedBuildings.length; i++) {
-        if(selectedBuildings[i].occupant != false) {
-            console.log(selectedBuildings[i])
-            if(!selectedBuildings[i].occupant.skills[selectedBuildings[i].stat]) {
-                selectedBuildings[i].occupant.skills[selectedBuildings[i].stat] = structuredClone(skills[selectedBuildings[i].stat])
-                console.log(skills[selectedBuildings[i].stat])
-                console.log(selectedBuildings[i].occupant.skills[selectedBuildings[i].stat])
-                let statFocus = selectedBuildings[i].occupant.skills[selectedBuildings[i].stat]
-                statFocus.int += selectedBuildings[i].statInt;
-            }
-            else {
-                let statFocus = selectedBuildings[i].occupant.skills[selectedBuildings[i].stat]
-                statFocus.int += selectedBuildings[i].statInt;
-                console.log("Selected Building Stat Int: " + selectedBuildings[i].statInt + " StatFocus: " + statFocus.int)
-                if(statFocus.int > 100) {
-                    statFocus.int = 100;
-                    selectedBuildings[i].occupant = false;
+        for(let c = 0; c < selectedBuildings[i].occupant.length; c++) {
+            if(selectedBuildings[i].occupant[c] != false) {
+                console.log(selectedBuildings[i])
+                if(!selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat]) {
+                    selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat] = structuredClone(skills[selectedBuildings[i].stat])
+                    console.log(skills[selectedBuildings[i].stat])
+                    console.log(selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat])
+                    let statFocus = selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat]
+                    statFocus.int += selectedBuildings[i].statInt;
                 }
-            }
-            if(selectedBuildings[i].occupant) {
-                console.log(selectedBuildings[i].occupant.name + " skill in " + selectedBuildings[i].stat + " is " + selectedBuildings[i].occupant.skills[selectedBuildings[i].stat].int)
+                else {
+                    let statFocus = selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat]
+                    statFocus.int += selectedBuildings[i].statInt;
+                    console.log("Selected Building Stat Int: " + selectedBuildings[i].statInt + " StatFocus: " + statFocus.int)
+                    if(statFocus.int > 100) {
+                        statFocus.int = 100;
+                        selectedBuildings[i].occupant[c] = false;
+                    }
+                }
+                if(selectedBuildings[i].occupant[c]) {
+                    console.log(selectedBuildings[i].occupant[c].name + " skill in " + selectedBuildings[i].stat + " is " + selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat].int)
+                }
             }
         }
     }
@@ -156,32 +158,39 @@ function personnelInformationSceneUpdater() {
         $("#personnelInformation" + key).css({"width": progress + "%"})
     }
 }
-
+//personnelInformationSceneUpdater
 function buildingTrainingSceneUpdater() {
     let progressBar = document.getElementById("buildingTrainingSceneProgressBar");
     // Resets progress bar and text if unoccupied
-    if(gameState.buildingSceneFocus.occupant === false) {
-        $("#buildingTrainingSceneOccupantName").text("None")
-        progressBar.style.width = "0%";
-        $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: 0%");
-        return 0;
-    }
-    let trainingFocus = gameState.buildingSceneFocus.occupant;
-    if(gameState.buildingSceneFocus.occupant.skills[gameState.buildingSceneFocus.stat]) {
-        let progress = progressCheck(trainingFocus.skills[gameState.buildingSceneFocus.stat].int, 100);
-        progressBar.style.width = progress + "%";
-        $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: " + progress + "%")
-    }
-    else {
-        progressBar.style.width = "0%";
-        $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: 0%")
+    if(gameState.buildingSceneFocus.occupant) {
+        for(let i = 0; i < gameState.buildingSceneFocus.occupant.length; i++) {
+            let occupantSlotPage = document.getElementById("buildingTrainingScene");
+            let occupantSlot = occupantSlotPage.querySelectorAll(".occupantCapacitySlot");
+            let progress = occupantSlot[i].querySelector(".progressBarProgress")
+            let text = occupantSlot[i].querySelectorAll(".textBoxCenter")
+            if(gameState.buildingSceneFocus.occupant[i] === false) {
+                progress.style.width = "0%"
+                text[0].innerText = "Unoccupied";
+                text[1].innerText = "Current Progress: 0%"
+                trainingSceneHandler(gameState.buildingSceneFocus)
+            }
+
+            else if(gameState.buildingSceneFocus.occupant[i]) {
+                let trainingFocus = gameState.buildingSceneFocus.occupant[i];
+                if(gameState.buildingSceneFocus.occupant[i].skills[gameState.buildingSceneFocus.stat]) {
+                    let progressInt = progressCheck(trainingFocus.skills[gameState.buildingSceneFocus.stat].int, 100);
+                    progress.style.width = progressInt + "%";
+                    text[0].innerText = "Current Progress: " + progressInt + "%"
+                }
+                else {
+                    progress.style.width = "0%";
+                    text[0].innerText = "Current Progress: 0%"
+                }
+            }
+        }
     }
 }
-
-//personnelInformationSceneUpdater
-
 //gameStateHandler-- End of the Game State Handler
-
 
 //Start-Up--Start of the gameStartUpFunction and Child Setup Functions
 $(function gameStartUpFunction() {
@@ -310,7 +319,7 @@ $(function gameStartUpFunction() {
         focus.append(currentFloor)
 
         for(let i = 0; i < slots; i++) {
-            let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: false, type: false, capacity: false, progress: false, stat: false }
+            let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: [], type: false, capacity: false, progress: false, stat: false }
             let slotDiv = document.createElement("div");
             let slotDivInner = document.createElement("div");
             let slotDivCenter = document.createElement("div")
@@ -412,26 +421,26 @@ $(function gameStartUpFunction() {
     function buildBtnSetup() {
         let buildBtn = document.getElementById("buildBoxBuildBtn")
         $("#" + buildBtn.id).on("click", function() {
-                console.log("How many times am I going???")
-                let selectedSlot = gameState.buildings.buildFocus
-                let selectedBuild = gameState.buildings.buildItemFocus;
+            console.log("How many times am I going???")
+            let selectedSlot = gameState.buildings.buildFocus
+            let selectedBuild = gameState.buildings.buildItemFocus;
 
-                selectedSlot.active = true;
-                selectedSlot.capacity = selectedBuild.capacity
-                selectedSlot.desc = selectedBuild.desc
-                selectedSlot.name = selectedBuild.name;
-                selectedSlot.type = selectedBuild.type;
-                selectedSlot.statInt = selectedBuild.statInt;
-                selectedSlot.stat = selectedBuild.stat;
-                selectedSlot.trainable = selectedBuild.trainable;
+            selectedSlot.active = true;
+            selectedSlot.capacity = selectedBuild.capacity
+            selectedSlot.desc = selectedBuild.desc
+            selectedSlot.name = selectedBuild.name;
+            selectedSlot.type = selectedBuild.type;
+            selectedSlot.statInt = selectedBuild.statInt;
+            selectedSlot.stat = selectedBuild.stat;
+            selectedSlot.trainable = selectedBuild.trainable;
 
-                let slot = document.getElementById(selectedSlot.id)
+            let slot = document.getElementById(selectedSlot.id)
 
-                let textBox = slot.querySelector(".gridBoxCenter")
+            let textBox = slot.querySelector(".gridBoxCenter")
 
-                textBox.innerHTML = selectedBuild.name
-                baseBoxButtonSetup();
-                sceneChange()
+            textBox.innerHTML = selectedBuild.name
+            baseBoxButtonSetup();
+            sceneChange()
         })
     }
     // End of the buildBoxSetup functions
@@ -452,102 +461,102 @@ function buildBoxHandler() {
 // Setups the building type select box and adds event listeners so you can switch between different building types.
 function buildBoxTypeHandler() {
 
-        let buildBox = document.getElementById("buildBox")
-        let target = buildBox.querySelector(".flexBoxHorizontal");
+    let buildBox = document.getElementById("buildBox")
+    let target = buildBox.querySelector(".flexBoxHorizontal");
 
-        clearBox(target)
+    clearBox(target)
 
-        for(let i = 0; i < buildingTypes.length; i++) {
-            let container = document.createElement("div");
-            let containerInner = document.createElement("div");
-            let containerText = document.createElement("div");
-            let containerTextInner = document.createElement("div");
+    for(let i = 0; i < buildingTypes.length; i++) {
+        let container = document.createElement("div");
+        let containerInner = document.createElement("div");
+        let containerText = document.createElement("div");
+        let containerTextInner = document.createElement("div");
 
-            container.setAttribute("id", buildingTypes[i].type + "BuildBoxTypeBtn")
+        container.setAttribute("id", buildingTypes[i].type + "BuildBoxTypeBtn")
 
-            container.setAttribute("class", "gridBoxFull");
-            containerInner.setAttribute("class", "gridBoxCenter75");
-            containerText.setAttribute("class", "gridBoxCenter")
-            containerTextInner.setAttribute("class", "textBoxCenter");
+        container.setAttribute("class", "gridBoxFull");
+        containerInner.setAttribute("class", "gridBoxCenter75");
+        containerText.setAttribute("class", "gridBoxCenter")
+        containerTextInner.setAttribute("class", "textBoxCenter");
 
-            containerTextInner.innerText = buildingTypes[i].name
+        containerTextInner.innerText = buildingTypes[i].name
 
-            containerInner.style.background = "blue";
-            containerInner.style.border = "solid";
+        containerInner.style.background = "blue";
+        containerInner.style.border = "solid";
 
-            target.append(container)
-            container.append(containerInner);
-            containerInner.append(containerText)
-            containerText.append(containerTextInner);
+        target.append(container)
+        container.append(containerInner);
+        containerInner.append(containerText)
+        containerText.append(containerTextInner);
 
-            containerInner.addEventListener("click", function() {
-                gameState.buildings.buildTypeFocus = container.id.replace("BuildBoxTypeBtn", "")
-                gameState.buildings.buildItemFocus = false
+        containerInner.addEventListener("click", function() {
+            gameState.buildings.buildTypeFocus = container.id.replace("BuildBoxTypeBtn", "")
+            gameState.buildings.buildItemFocus = false
 
-                let oldDesc = document.getElementById("buildBoxDescDiv")
-                clearBox(oldDesc)
+            let oldDesc = document.getElementById("buildBoxDescDiv")
+            clearBox(oldDesc)
 
-                buildBoxScrollHandler();
-            })
+            buildBoxScrollHandler();
+        })
 
-        }
     }
+}
 
 // Sets up the buildBox scroll menu and the btns that fill it. It also adds an event listener to each button so when clicked the gameState object changes buildItemFocus
 function buildBoxScrollHandler() {
-        let target = document.getElementById("buildBoxScrollDiv")
-        clearBox(target)
+    let target = document.getElementById("buildBoxScrollDiv")
+    clearBox(target)
 
-        let gameStateFocus = gameState.buildings
+    let gameStateFocus = gameState.buildings
 
-        if(!gameStateFocus.buildTypeFocus) {
-            gameStateFocus.buildTypeFocus = "Conditioning"
-        }
-        let focus = gameStateFocus.buildTypeFocus;
-        let focusGroup = $.grep(buildings, function(n) {
-            return n.type === focus
-        })
+    if(!gameStateFocus.buildTypeFocus) {
+        gameStateFocus.buildTypeFocus = "Conditioning"
+    }
+    let focus = gameStateFocus.buildTypeFocus;
+    let focusGroup = $.grep(buildings, function(n) {
+        return n.type === focus
+    })
 
-        if(focusGroup) {
-            for(let i = 0; i < focusGroup.length; i++) {
-                let btn = document.createElement("div");
-                btn.setAttribute("id", "buildBtn" + focusGroup[i].id)
-                btn.setAttribute("class", "gridBoxCenter");
+    if(focusGroup) {
+        for(let i = 0; i < focusGroup.length; i++) {
+            let btn = document.createElement("div");
+            btn.setAttribute("id", "buildBtn" + focusGroup[i].id)
+            btn.setAttribute("class", "gridBoxCenter");
 
-                btn.style.background = "green";
-                btn.style.border = "solid";
-                btn.style.marginBottom = "1vh"
-                btn.style.padding = "1vh";
+            btn.style.background = "green";
+            btn.style.border = "solid";
+            btn.style.marginBottom = "1vh"
+            btn.style.padding = "1vh";
 
-                let text = document.createElement("div");
-                text.setAttribute("class", "textBoxCenter")
-                text.innerText = focusGroup[i].name
+            let text = document.createElement("div");
+            text.setAttribute("class", "textBoxCenter")
+            text.innerText = focusGroup[i].name
 
-                target.append(btn)
-                btn.append(text);
+            target.append(btn)
+            btn.append(text);
 
-                btn.addEventListener("click", function() {
-                    if(gameState.buildItemFocus != focusGroup[i] && gameStateFocus.buildItemFocus != false) {
-                        let btn = document.getElementById("buildBtn" + gameStateFocus.buildItemFocus.id)
-                        if(btn) {
-                            btn.style.background = "green"
-                        }
+            btn.addEventListener("click", function() {
+                if(gameState.buildItemFocus != focusGroup[i] && gameStateFocus.buildItemFocus != false) {
+                    let btn = document.getElementById("buildBtn" + gameStateFocus.buildItemFocus.id)
+                    if(btn) {
+                        btn.style.background = "green"
                     }
-                    gameStateFocus.buildItemFocus = focusGroup[i]
-                    buildSelection();
-                })
-            }
+                }
+                gameStateFocus.buildItemFocus = focusGroup[i]
+                buildSelection();
+            })
         }
     }
+}
 
 
 function buildSelection() {
-        let btn = document.getElementById("buildBtn" + gameState.buildings.buildItemFocus.id)
-        console.log(gameState.buildings.buildItemFocus.id)
-        btn.style.background = "red"
-        let desc = document.getElementById("buildBoxDescDiv");
-        desc.innerText = gameState.buildings.buildItemFocus.desc
-        $("#" + btn.id).off();
+    let btn = document.getElementById("buildBtn" + gameState.buildings.buildItemFocus.id)
+    console.log(gameState.buildings.buildItemFocus.id)
+    btn.style.background = "red"
+    let desc = document.getElementById("buildBoxDescDiv");
+    desc.innerText = gameState.buildings.buildItemFocus.desc
+    $("#" + btn.id).off();
 }
 
 //buildBoxHandler--End of the buildBoxHandler functions
@@ -570,6 +579,9 @@ function buildingFilter(x) {
         if(target.type == "Training") {
             trainingSceneHandler(target);
             buildingTrainingSceneUpdater();
+            for(let i = 0; i < target.capacity; i++) {
+                occupantSlotSetup(target, i, scene)
+            }
         }
         scene.style.display = "grid"
         $("#building" + target.type + "SceneDesc").text(target.desc)
@@ -821,50 +833,50 @@ function personnelInformationHandler(x) {
     }
 }
 
- // Start of the personnelInformationWardrobeFunction
-    $(function personnelWardrobeSetup() {
-        console.log("Howdy I am personnelWardrobe")
-        $("#personnelInformationWardrobeBtnHeadWear").on("click", function() {
-            personnelWardrobe("headWear");
-        })
-        $("#personnelInformationWardrobeBtnEyeWear").on("click", function() {
-            personnelWardrobe("eyeWear");
-        })
-        $("#personnelInformationWardrobeBtnNeckWear").on("click", function() {
-            personnelWardrobe("neckWear");
-        })
-        $("#personnelInformationWardrobeBtnNeckJewelery").on("click", function() {
-            personnelWardrobe("neckJewelery");
-        })
-        $("#personnelInformationWardrobeBtnEarrings").on("click", function() {
-            personnelWardrobe("earrings");
-        })
-        $("#personnelInformationWardrobeBtnRings").on("click", function() {
-            personnelWardrobe("rings");
-        })
-        $("#personnelInformationWardrobeBtnUpperBody").on("click", function() {
-            personnelWardrobe("upperBody");
-        })
-        $("#personnelInformationWardrobeBtnOverShirt").on("click", function() {
-            personnelWardrobe("overShirt");
-        })
-        $("#personnelInformationWardrobeBtnUnderwear").on("click", function() {
-            personnelWardrobe("underwear")
-        })
-        $("#personnelInformationWardrobeBtnLowerBody").on("click", function() {
-            personnelWardrobe("lowerBodyClothing");
-        })
-        $("#personnelInformationWardrobeBtnGenitals").on("click", function() {
-            personnelWardrobe("genitalJewelery");
-        })
-        $("#personnelInformationWardrobeBtnLegs").on("click", function() {
-            personnelWardrobe("legWear");
-        })
-        $("#personnelInformationWardrobeBtnFeet").on("click", function() {
-            personnelWardrobe("feetWear");
-        })
+// Start of the personnelInformationWardrobeFunction
+$(function personnelWardrobeSetup() {
+    console.log("Howdy I am personnelWardrobe")
+    $("#personnelInformationWardrobeBtnHeadWear").on("click", function() {
+        personnelWardrobe("headWear");
     })
-    //End of the personnelInformationSetup
+    $("#personnelInformationWardrobeBtnEyeWear").on("click", function() {
+        personnelWardrobe("eyeWear");
+    })
+    $("#personnelInformationWardrobeBtnNeckWear").on("click", function() {
+        personnelWardrobe("neckWear");
+    })
+    $("#personnelInformationWardrobeBtnNeckJewelery").on("click", function() {
+        personnelWardrobe("neckJewelery");
+    })
+    $("#personnelInformationWardrobeBtnEarrings").on("click", function() {
+        personnelWardrobe("earrings");
+    })
+    $("#personnelInformationWardrobeBtnRings").on("click", function() {
+        personnelWardrobe("rings");
+    })
+    $("#personnelInformationWardrobeBtnUpperBody").on("click", function() {
+        personnelWardrobe("upperBody");
+    })
+    $("#personnelInformationWardrobeBtnOverShirt").on("click", function() {
+        personnelWardrobe("overShirt");
+    })
+    $("#personnelInformationWardrobeBtnUnderwear").on("click", function() {
+        personnelWardrobe("underwear")
+    })
+    $("#personnelInformationWardrobeBtnLowerBody").on("click", function() {
+        personnelWardrobe("lowerBodyClothing");
+    })
+    $("#personnelInformationWardrobeBtnGenitals").on("click", function() {
+        personnelWardrobe("genitalJewelery");
+    })
+    $("#personnelInformationWardrobeBtnLegs").on("click", function() {
+        personnelWardrobe("legWear");
+    })
+    $("#personnelInformationWardrobeBtnFeet").on("click", function() {
+        personnelWardrobe("feetWear");
+    })
+})
+//End of the personnelInformationSetup
 
 function personnelWardrobe(x) {
     let wardrobeSelection = document.getElementById("personnelInformationWardrobeSelection")
@@ -910,10 +922,12 @@ function personnelWardrobe(x) {
 function trainingSceneHandler(x) {
     let building = x;
     console.log(building)
+    let scene = document.getElementById("buildingTrainingScene")
     let desc = document.getElementById("buildingTrainingSceneDesc")
     console.log(desc)
     desc.innerText = building.desc;
     characterTrainingSelect();
+    capacityCheck("buildingTrainingScene", building)
 
 
     function characterTrainingSelect() {
@@ -963,30 +977,35 @@ function trainingSceneHandler(x) {
 
             charNameTextBox.innerText = gameState.personnel.patients[i].name
             charDescTextBox.innerText = gameState.personnel.patients[i].appearance.gender.name
-
-            if(gameState.buildingSceneFocus.occupant === gameState.personnel.patients[i]) {
-                charBorderBox.style.background = "red"
+            let occupyCheck = false;
+            for(let k = 0; k < gameState.buildingSceneFocus.capacity; k++) {
+                if(gameState.buildingSceneFocus.occupant[k] === gameState.personnel.patients[i]) {
+                    charBorderBox.style.background = "red"
+                    occupyCheck = true;
+                    charContainer.addEventListener("click", function() {
+                        gameState.buildingSceneFocus.occupant[k] = false;
+                        occupantSlotSetup(gameState.buildingSceneFocus, k, scene)
+                        characterTrainingSelect();
+                    })
+                    break;
+                }
             }
-
-            charContainer.addEventListener("click", function() {
-                gameState.buildingSceneFocus.occupant = gameState.personnel.patients[i];
-                $("#buildingTrainingSceneOccupantName").text(gameState.buildingSceneFocus.occupant.name)
-                let progressBar = document.getElementById("buildingTrainingSceneProgressBar");
-                if(gameState.buildingSceneFocus.occupant.skills[gameState.buildingSceneFocus.stat]) {
-                    let progress = progressCheck(gameState.buildingSceneFocus.occupant.skills[gameState.buildingSceneFocus.stat].int, 100);
-                    progressBar.style.width = progress + "%";
-                    $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: " + progress + "%")
-                }
-                else {
-                    progressBar.style.width = "0%";
-                    $("#buildingTrainingSceneOccupantCurrentProgress").text("Current Progress: 0%")
-                }
-                console.log(gameState)
-            })
-
+            if(occupyCheck != true) {
+                charContainer.addEventListener("click", function() {
+                    occupantCheck(gameState.personnel.patients[i])
+                    for(let k = 0; k < gameState.buildingSceneFocus.capacity; k++) {
+                        console.log(k)
+                        if(!gameState.buildingSceneFocus.occupant[k]) {
+                            gameState.buildingSceneFocus.occupant[k] =  gameState.personnel.patients[i]
+                            occupantSlotSetup(gameState.buildingSceneFocus, k, scene)
+                            characterTrainingSelect()
+                            break;
+                        }
+                    }
+                })
+            }
         }
     }
-
 }
 //trainingFunction -- End of the Training Scene Function
 
@@ -1077,7 +1096,7 @@ function textHandler(x, y) {
         else {
             finalText ="";
         }
-    return finalText;
+        return finalText;
     }
 }
 //End of Text Handler
@@ -1185,14 +1204,14 @@ function sceneChange(x, y) {
     }
     console.log(newScene.id.toString())
     let parent = $(newScene).parent([".sceneContainerHidden"])
-        console.log(parent[0])
-        if(parent[0] != gameState.currentScene.parent) {
-            console.log("Switched parents on me didn't ya")
-            parent[0].style.display = "grid";
-            gameState.currentScene.parent.style.display = "none"
-            gameState.currentScene.parent = parent[0]
+    console.log(parent[0])
+    if(parent[0] != gameState.currentScene.parent) {
+        console.log("Switched parents on me didn't ya")
+        parent[0].style.display = "grid";
+        gameState.currentScene.parent.style.display = "none"
+        gameState.currentScene.parent = parent[0]
 
-        }
+    }
 
     let oldScene = gameState.currentScene.prior;
 
@@ -1203,7 +1222,66 @@ function sceneChange(x, y) {
         $("#" + newScene.id).css({"display": y})
     }
 }
+//Start of Occupant Check
+function occupantCheck(x) {
+    let occupantFocus = x;
+    let buildingSlots = gameState.buildings.buildingSlots;
+    for(let k = 0; k < buildingSlots.length; k++) {
+        for(let i = 0; i < buildingSlots[k].capacity; i++) {
+            if (buildingSlots[k].occupant[i] === occupantFocus) {
+                buildingSlots[k].occupant[i] = false;
+            }
+        }
+    }
+}
+//End of Occupant Check
 
+//Occupant Slot Setup
+function occupantSlotSetup(x, y, z) {
+    let occupantSlots = z.querySelectorAll(".occupantCapacitySlot");
+    let focus = x.occupant[y];
+    let skill = x.stat;
+    let count = y;
+    let textBoxes = occupantSlots[y].querySelectorAll(".textBoxCenter");
+    let progress = occupantSlots[y].querySelector(".progressBarProgress");
+
+    if(focus == false || !focus) {
+        progress.style.width = "0%"
+        textBoxes[0].innerText = "Unoccupied"
+        textBoxes[1].innerText = "Stat Test";
+        return 0;
+    }
+    if(!focus.skills[skill]) {
+        progress.style.width = "0%"
+        textBoxes[0].innerText = focus.name;
+        textBoxes[1].innerText = "Stat Test";
+    }
+    else {
+        let progressInt = progressCheck(focus.skills[skill].int, 100)
+        progress.style.width = progressInt + "%"
+        textBoxes[0].innerText = focus.name;
+        textBoxes[1].innerText = "Stat Test";
+    }
+}
+//End of Occupant Slot Setup
+//Capacity Check
+function capacityCheck(x, y) {
+    let target = x;
+    let building = y
+    let primaryElement = document.getElementById(target);
+    console.log(primaryElement)
+    let occupantSlots = primaryElement.querySelectorAll(".occupantCapacitySlot");
+    console.log(occupantSlots)
+    for(let i = 0; i < occupantSlots.length; i++) {
+        if(building.capacity > i) {
+            occupantSlots[i].style.display = "grid";
+        }
+        else {
+            occupantSlots[i].style.display = "none";
+        }
+    }
+}
+//End of Capacity Check
 //Arrays
 //BuildingArrays
 let buildingTypes = [
@@ -1215,27 +1293,27 @@ let buildingTypes = [
 ]
 
 let buildings = [
-    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "domesticTasks", statInt: 0.5, capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cookingTraining", name: "Basic Kitchen", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "domesticTasks", statInt: 0.5, capacity: 2, trainable: true, skillTrainer: true, occupant: ["false"], occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "cleaningTraining", name: "Mock Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "domesticTasks", statInt: 0.5, capacity: 1, trainable: true, skillTrainer: true, occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "makeup/5", capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "makeupTraining", name: "Makeup Room", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "makeup", statInt: 0.5, capacity: 2, trainable: true, skillTrainer: true, occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 0, trainable: true, skillTrainer: true, changeFlag: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+    { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 1, trainable: true, skillTrainer: true, occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
-    { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, changeFlag: false, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
+    { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, occupantPrior: false, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
 
-    { id: "hypnoUpg2", name: "Hypno Headphones", type: "Conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, changeFlag: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
+    { id: "hypnoUpg2", name: "Hypno Headphones", type: "Conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, occupantPrior: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "hypnoUpg3", name: "Hypno Headpiece", type: "Conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, changeFlag: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
+    { id: "hypnoUpg3", name: "Hypno Headpiece", type: "Conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, occupantPrior: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
-    { id: "puppyUpg1", name: "Puppy Pound", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, changeFlag: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
+    { id: "puppyUpg1", name: "Puppy Pound", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, occupantPrior: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
 
-    { id: "farmUpg1", name: "Farm", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, changeFlag: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
+    { id: "farmUpg1", name: "Farm", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, occupantPrior: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
 
-    { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, changeFlag: false, desc: "A small cell used to hold patients during their stay at the Spa." },
+    { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, occupantPrior: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 
-    { id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, changeFlag: false, desc: "A basic surgery station used to enhance dolls." }
+    { id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: false, occupantPrior: false, desc: "A basic surgery station used to enhance dolls." }
 ]
 
 // Character Arrays
@@ -1243,11 +1321,11 @@ let buildings = [
 let bodyPartsAlt = [
     height= {
         height:[
-        {name: "very short"},
-        {name: "short"},
-        {name: "medium"},
-        {name: "tall"},
-        {name: "very tall"},
+            {name: "very short"},
+            {name: "short"},
+            {name: "medium"},
+            {name: "tall"},
+            {name: "very tall"},
         ]
     },
 
@@ -1269,7 +1347,7 @@ let bodyPartsAlt = [
             {name: "bald"},
         ],
 
-         eyeColor:[
+        eyeColor:[
             {name: "green"},
             {name: "blue"},
             {name: "brown"},

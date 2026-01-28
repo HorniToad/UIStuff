@@ -7,9 +7,14 @@ background: mediumpurple;
 border-radius: 0.5em; /* Scales with zoom */
 }
 
+@font-face {
+  font-family: vhsGothic; /* set name */
+  src: url(fonts/vhs-gothic.ttf); /* url of the font */
+}
+
 html {
-font-size: .8vw;
-font-family: monospace;
+font-size: .7vw;
+font-family: vhsGothic;
 }
 
 body {
@@ -306,6 +311,13 @@ body {
 .slotContainerBlank {
     height: 5vh;
     padding: 1%;
+}
+
+/*Occupant Slot */
+.occupantCapacitySlot {
+    display: grid;
+    width: 100%;
+    height: 100%;
 }
 
 /* Scroll Boxes */
