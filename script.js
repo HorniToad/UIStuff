@@ -12,10 +12,12 @@ function gameStateHandler() {
 		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Training") {
 			buildingTrainingSceneUpdater();
 		}
-
-
+		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Modification") {
+			buildingModificationSceneUpdater();
+		}
 	}
 	if(gameState.tickState.tickRollOver === true) {
+		modificationHandler();
 	}
 }
 
@@ -193,6 +195,54 @@ function buildingTrainingSceneUpdater() {
 	}
 }
 //End of buildingTrainingSceneUpdater
+//Start of the buildingModificationSceneUpdater
+function buildingModificationSceneUpdater() {
+	let progressBar = document.getElementById("modificationSceneProgressBar")
+	let progressText = document.getElementById("modificationSceneProgressText")
+	let occupiedPanel = document.getElementById("buildingModificationSceneSurgeryActiveCover")
+	let unoccupiedPanel = document.getElementById("buildingModificationSceneSurgeryNoOccupantCover")
+
+
+	if(gameState.buildingSceneFocus.occupant[0]) {
+		let progress = progressCheck(gameState.buildingSceneFocus.progress, gameState.buildingSceneFocus.bodyPartSelected.surgeryTime)
+		progressBar.style.width = progress + "%"
+		progressText.innerText = "Current Surgery Progress: " + progress + "%"
+
+	}
+	if(gameState.buildingSceneFocus.occupant[0] === false && gameState.buildingSceneFocus.potentialOccupant === false) {
+		progressBar.style.width = "0%"
+		progressText.innerText = "Current Surgery Progress: Unoccupied"
+		occupiedPanel.style.display = "none"
+		unoccupiedPanel.style.display = "grid"
+		modificationSceneHandler(gameState.buildingSceneFocus);
+	}
+}
+//End of the buildingModifcaitonSceneUpdater
+//Start of modificationHandler
+function modificationHandler() {
+	let buildingSlots = gameState.buildings.buildingSlots;
+	let selectedBuildings = $.grep(buildingSlots, function(n) {
+		return n.type === "Modification"
+	})
+
+	for(let i = 0; i < selectedBuildings.length; i++) {
+		if(selectedBuildings[i].occupant[0] && selectedBuildings[i].occupant[0] != false) {
+			if(selectedBuildings[i].progress === false) {
+				selectedBuildings[i].progress = 0;
+			}
+			if(selectedBuildings[i].progress === selectedBuildings[i].bodyPartSelected.surgeryTime) {
+				selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].bodyPartSelected.type] = structuredClone(selectedBuildings[i].bodyPartSelected)
+				selectedBuildings[i].occupant[0].changeFlag = true;
+				selectedBuildings[i].occupant[0] = false;
+				selectedBuildings[i].progress = 0;
+			}
+			selectedBuildings[i].progress += 1;
+		}
+	}
+
+	console.log(selectedBuildings)
+}
+//End of modificationHandler
 //gameStateHandler-- End of the Game State Handler
 
 //Start-Up--Start of the gameStartUpFunction and Child Setup Functions
@@ -317,7 +367,7 @@ $(function gameStartUpFunction() {
 		focus.append(currentFloor)
 
 		for(let i = 0; i < slots; i++) {
-			let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: [], type: false, capacity: false, progress: false, stat: false, bodyPartFocus: false, potentialOccupant: false }
+			let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: [], type: false, capacity: false, progress: false, stat: false, bodyPartFocus: false, selectedIndivdualPart: false, bodyPartSelected: false, potentialOccupant: false }
 			let slotDiv = document.createElement("div");
 			let slotDivInner = document.createElement("div");
 			let slotDivCenter = document.createElement("div")
@@ -649,7 +699,7 @@ function personnelGenerator() {
 			if (bodyPartsAlt[i].hasOwnProperty(key)) {
 				value = bodyPartsAlt[i][key];
 				console.log("Value for BodyPartsAlt: " + value)
-				let rand = Math.floor(Math.random() * bodyPartsAlt.length)
+				let rand = Math.floor(Math.random() * value.length)
 				console.log(rand)
 				let choice = value[rand]
 				generatedCharacter.appearance[key] = choice
@@ -1028,26 +1078,21 @@ function modificationSceneHandler(x) {
 
 		$("#buildingModificationSceneSurgeryFocusBtnHead").on("click", function() {
 			building.bodyPartFocus = "head"
-			console.log(building.bodyPartFocus)
 			surgeryPanelFocusSetup();
 		})
 		$("#buildingModificationSceneSurgeryFocusBtnUpperBody").on("click", function() {
 			building.bodyPartFocus = "upperbody"
-			console.log(building.bodyPartFocus)
 			surgeryPanelFocusSetup();
 		})
 		$("#buildingModificationSceneSurgeryFocusBtnLowerBody").on("click", function() {
 			building.bodyPartFocus = "lowerbody"
-			console.log(building.bodyPartFocus)
 			surgeryPanelFocusSetup();
 		})
 	}
 
 	function characterModificationSelect() {
-		console.log("I made it down to the character Training select ma!")
 		clearBox(charPanel)
 		for(let i = 0; i < gameState.personnel.patients.length; i++) {
-			console.log("Looks like I have some patients!")
 			let charContainer = document.createElement("div");
 			let charBorderBox = document.createElement("div");
 			let charGridBoxFull = document.createElement("div");
@@ -1106,6 +1151,12 @@ function modificationSceneHandler(x) {
 						charPanelSlots[c].style.background = "darkslateblue"
 					}
 					charBorderBox.style.background = "yellow"
+					if(building.selectedIndivdualPart != false) {
+						surgerySelectionPanelSetup(building.selectedIndivdualPart)
+					}
+					else {
+						surgeryPanelFocusSetup();
+					}
 				}
 			})
 		}
@@ -1120,17 +1171,11 @@ function modificationSceneHandler(x) {
 		}
 		clearBox(panel)
 		clearBox(selectionPanel)
-		console.log(focusBody)
 		for(let key in focusBody) {
 			let partFocus = focusBody[key]
-			console.log(partFocus)
-			console.log(key)
+
 			if(partFocus) {
 				for(let key in partFocus) {
-					console.log(partFocus[key])
-					console.log(key)
-					console.log(partFocus[key][0].name)
-					console.log(partFocus[key][0].desc)
 					let surgeryFocusPanelBlockBox = document.createElement("div");
 					let surgeryFocusPanelBackground = document.createElement("div");
 					let surgeryFocusPanelGridBoxFull = document.createElement("div");
@@ -1154,11 +1199,8 @@ function modificationSceneHandler(x) {
 					let selectionPanel = document.getElementById("modificationSceneSurgeryFocusPanelChangePanel")
 
 					surgeryFocusPanelBlockBox.addEventListener("click", function() {
-						clearBox(selectionPanel)
-						for(let i = 1; i < partFocus[key].length; i++) {
-							console.log(partFocus[key][i])
-							surgerySelectionPanelSetup(partFocus[key][i])
-						}
+						building.selectedIndivdualPart = partFocus[key]
+						surgerySelectionPanelSetup(partFocus[key])
 					})
 				}
 			}
@@ -1167,33 +1209,41 @@ function modificationSceneHandler(x) {
 
 	function surgerySelectionPanelSetup(x) {
 		let partFocus = x;
-		console.log(partFocus)
-		let surgeryFocusSelectionPanelBlockBox = document.createElement("div");
-		let surgeryFocusSelectionPanelBackground = document.createElement("div");
-		let surgeryFocusSelectionPanelGridBoxFull = document.createElement("div");
-		let surgeryFocusSelectionPanelGridBoxCenter = document.createElement("div");
+		clearBox(selectionPanel)
+		for(let i = 1; i < partFocus.length; i++) {
+			let surgeryFocusSelectionPanelBlockBox = document.createElement("div");
+			let surgeryFocusSelectionPanelBackground = document.createElement("div");
+			let surgeryFocusSelectionPanelGridBoxFull = document.createElement("div");
+			let surgeryFocusSelectionPanelGridBoxCenter = document.createElement("div");
 
-		surgeryFocusSelectionPanelBlockBox.setAttribute("class", "blockBox");
-		surgeryFocusSelectionPanelBackground.setAttribute("class", "borderBoxFullREdgeHidden");
-		surgeryFocusSelectionPanelGridBoxFull.setAttribute("class", "gridBoxFull");
-		surgeryFocusSelectionPanelGridBoxCenter.setAttribute("class", "gridBoxCenter");
+			surgeryFocusSelectionPanelBlockBox.setAttribute("class", "blockBox");
+			surgeryFocusSelectionPanelBackground.setAttribute("class", "borderBoxFullREdgeHidden");
+			surgeryFocusSelectionPanelGridBoxFull.setAttribute("class", "gridBoxFull");
+			surgeryFocusSelectionPanelGridBoxCenter.setAttribute("class", "gridBoxCenter");
 
-		selectionPanel.append(surgeryFocusSelectionPanelBlockBox)
-		surgeryFocusSelectionPanelBlockBox.append(surgeryFocusSelectionPanelBackground);
-		surgeryFocusSelectionPanelBackground.append(surgeryFocusSelectionPanelGridBoxFull);
-		surgeryFocusSelectionPanelGridBoxFull.append(surgeryFocusSelectionPanelGridBoxCenter);
+			selectionPanel.append(surgeryFocusSelectionPanelBlockBox)
+			surgeryFocusSelectionPanelBlockBox.append(surgeryFocusSelectionPanelBackground);
+			surgeryFocusSelectionPanelBackground.append(surgeryFocusSelectionPanelGridBoxFull);
+			surgeryFocusSelectionPanelGridBoxFull.append(surgeryFocusSelectionPanelGridBoxCenter);
 
-		surgeryFocusSelectionPanelGridBoxCenter.innerText = capitalizeFunc(partFocus.name)
+			surgeryFocusSelectionPanelGridBoxCenter.innerText = capitalizeFunc(partFocus[i].name)
 
-		surgeryFocusSelectionPanelBackground.style.background = "mediumslateblue"
-		surgeryFocusSelectionPanelBlockBox.style.height = "2.5vh"
+			surgeryFocusSelectionPanelBackground.style.background = "mediumslateblue"
+			surgeryFocusSelectionPanelBlockBox.style.height = "2.5vh"
 
-		surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
-			building.occupant[0] = building.potentialOccupant;
-			building.potentialOccupant = false
-			activePanel.style.display = "grid"
-			characterModificationSelect();
-		})
+			if(building.potentialOccupant.appearance[partFocus[i].type].name != partFocus[i].name) {
+					surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
+						building.occupant[0] = building.potentialOccupant;
+						building.bodyPartSelected = partFocus[i]
+						building.potentialOccupant = false
+						activePanel.style.display = "grid"
+						characterModificationSelect();
+					})
+			}
+			else {
+				surgeryFocusSelectionPanelBackground.style.background = "red"
+			}
+		}
 	}
 }
 //End of the Modification Scene Handler
@@ -1511,55 +1561,55 @@ let bodyPartsAlt = [
 		]
 	},
 
-	head={
-		hairColor:[
-			{name: "green"},
-			{name: "brown"},
-			{name: "red"},
-			{name: "brown"},
-			{name: "black"},
-			{name: "blue"},
-		],
+head={
+	hairColor:[
+		{name: "green"},
+		{name: "brown"},
+		{name: "red"},
+		{name: "brown"},
+		{name: "black"},
+		{name: "blue"},
+	],
 
-		hairLength:[
-			{name: "short"},
-			{name: "long"},
-			{name: "medium"},
-			{name: "really long"},
-			{name: "bald"},
-		],
+	hairLength:[
+		{name: "short"},
+		{name: "long"},
+		{name: "medium"},
+		{name: "really long"},
+		{name: "bald"},
+	],
 
-		eyeColor:[
-			{name: "green"},
-			{name: "blue"},
-			{name: "brown"},
-			{name: "dark brown"},
-			{name: "gray"},
-		],
-		eyeShape:[
-			{name: "almond"},
-			{name: "round"},
-			{name: "downturned"},
-			{name: "upturned"},
-			{name: "hooded"},
-		],
-		noseShape:[
-			{name: "hooked"},
-			{name: "straight"},
-			{name: "snub"},
-			{name: "bulbous"},
-		],
-		lipShape:[
-			{name: "full"},
-			{name: "round"},
-			{name: "thin"},
-		],
-		earShape:[
-			{name: "pointed"},
-			{name: "narrow"},
-			{name: "broad"},
-		],
-	}
+	eyeColor:[
+		{name: "green"},
+		{name: "blue"},
+		{name: "brown"},
+		{name: "dark brown"},
+		{name: "gray"},
+	],
+	eyeShape:[
+		{name: "almond"},
+		{name: "round"},
+		{name: "downturned"},
+		{name: "upturned"},
+		{name: "hooded"},
+	],
+	noseShape:[
+		{name: "hooked"},
+		{name: "straight"},
+		{name: "snub"},
+		{name: "bulbous"},
+	],
+	lipShape:[
+		{name: "full"},
+		{name: "round"},
+		{name: "thin"},
+	],
+	earShape:[
+		{name: "pointed"},
+		{name: "narrow"},
+		{name: "broad"},
+	],
+}
 ]
 
 let bodyParts =[
@@ -1601,44 +1651,44 @@ let bodyParts =[
 			{name: "fat", size: 9},
 		],
 	},
-	lowerBody={
-		hipSize:[
-			{name: "extremely tiny", size: 0 },
-			{name: "very tiny", size: 1},
-			{name: "tiny", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "wide", size: 6},
-			{name: "very wide", size: 7},
-			{name: "thick", size: 8},
-			{name: "hourglass", size: 9},
-		],
-		thighSize: [
-			{name: "extremely thin", size: 0 },
-			{name: "very thin", size: 1},
-			{name: "thin", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "plump", size: 6},
-			{name: "very plump", size: 7},
-			{name: "thick", size: 8},
-			{name: "fat", size: 9},
-		],
-		assSize: [
-			{name: "extremely tiny", size: 0 },
-			{name: "very tiny", size: 1},
-			{name: "tiny", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "plump", size: 6},
-			{name: "very plump", size: 7},
-			{name: "thick", size: 8},
-			{name: "fat", size: 9},
-		],
-	},
+lowerBody={
+	hipSize:[
+		{name: "extremely tiny", size: 0 },
+		{name: "very tiny", size: 1},
+		{name: "tiny", size: 2},
+		{name: "very small", size: 3},
+		{name: "small", size: 4},
+		{name: "medium", size: 5},
+		{name: "wide", size: 6},
+		{name: "very wide", size: 7},
+		{name: "thick", size: 8},
+		{name: "hourglass", size: 9},
+	],
+	thighSize: [
+		{name: "extremely thin", size: 0 },
+		{name: "very thin", size: 1},
+		{name: "thin", size: 2},
+		{name: "very small", size: 3},
+		{name: "small", size: 4},
+		{name: "medium", size: 5},
+		{name: "plump", size: 6},
+		{name: "very plump", size: 7},
+		{name: "thick", size: 8},
+		{name: "fat", size: 9},
+	],
+	assSize: [
+		{name: "extremely tiny", size: 0 },
+		{name: "very tiny", size: 1},
+		{name: "tiny", size: 2},
+		{name: "very small", size: 3},
+		{name: "small", size: 4},
+		{name: "medium", size: 5},
+		{name: "plump", size: 6},
+		{name: "very plump", size: 7},
+		{name: "thick", size: 8},
+		{name: "fat", size: 9},
+	],
+},
 ]
 
 //Body Type Scale
@@ -1665,7 +1715,7 @@ let firstName = {
 //Personnel Genders
 let genders = [
 	{name: "man", pronounPersonal: "he",  pronounPossesive: "him",  pronounPlural: "his", pronounPlural2: "his"},
-	{name: "woman", pronounPersonal: "she", pronounPossesive: "her", pronounPlural: "hers", pronounPlural2: "her"},
+{name: "woman", pronounPersonal: "she", pronounPossesive: "her", pronounPlural: "hers", pronounPlural2: "her"},
 ]
 
 //Personnel Sexuality
@@ -1674,25 +1724,25 @@ let sexuality = ["straight", "gay", "bisexual", "asexual"]
 //Personnel Traits
 let startingTraits = [
 	{name: "Lazy", desc: "This doll has spent their time avoiding hard or complex work, despite societies pressues.", res: -1, str:-1, int: -1},
-	{name: "Smart", desc: "This dolls mind tends to work quicker than others.", res: 0, str:0, int: 2},
-	{name: "Stubborn", desc: "This doll resists the influences and pushes or others, even if that other is correct.", res: 2, str:1, int: -1},
-	{name: "Slow", desc: "Things tend to go over this dolls head", res: 0, str:0, int: -2},
-	{name: "Strong", desc: "This doll is built quite powerfully. Not someone to underestimate.", res: 0, str:3, int: 0},
-	{name: "Weak", desc: "This doll has a fairly weak build. An easy target.", res: 0, str:-3, int: 0},
+{name: "Smart", desc: "This dolls mind tends to work quicker than others.", res: 0, str:0, int: 2},
+{name: "Stubborn", desc: "This doll resists the influences and pushes or others, even if that other is correct.", res: 2, str:1, int: -1},
+{name: "Slow", desc: "Things tend to go over this dolls head", res: 0, str:0, int: -2},
+{name: "Strong", desc: "This doll is built quite powerfully. Not someone to underestimate.", res: 0, str:3, int: 0},
+{name: "Weak", desc: "This doll has a fairly weak build. An easy target.", res: 0, str:-3, int: 0},
 ]
 
 let startingSkills = [
 	{id: "oralSex", name: "Oral Sex", int: false},
-	{id: "analSex", name: "Anal Sex", int: false},
-	{id: "dominatRole", name: "Domination", int: false},
-	{id: "submissiveRole", name: "Submission", int: false},
-	{id: "dirtyTalk", name: "Dirty Talk", int: false},
-	{id: "domesticTasks", name: "Domestic Skills", int: false},
-	{id: "makeup", name: "Makeup Skills", int: false},
-	{id: "etiquette", name: "Etiquette", int: false},
-	{id: "combat", name: "Combat Skills", int: false},
-	{id: "medicine", name: "Medical Skills", int: false},
-	{id: "social", name: "Social Skills", int: false}
+{id: "analSex", name: "Anal Sex", int: false},
+{id: "dominatRole", name: "Domination", int: false},
+{id: "submissiveRole", name: "Submission", int: false},
+{id: "dirtyTalk", name: "Dirty Talk", int: false},
+{id: "domesticTasks", name: "Domestic Skills", int: false},
+{id: "makeup", name: "Makeup Skills", int: false},
+{id: "etiquette", name: "Etiquette", int: false},
+{id: "combat", name: "Combat Skills", int: false},
+{id: "medicine", name: "Medical Skills", int: false},
+{id: "social", name: "Social Skills", int: false}
 ]
 
 let startingClothing = [
@@ -1895,89 +1945,89 @@ let bodyPartsObj = {
 		eyes:{
 			eyeColor:[
 				{name: "Eye Color", desc:"Change Eye Color"},
-				{name: "green"},
-				{name: "blue"},
-				{name: "brown"},
-				{name: "dark brown"},
-				{name: "gray"},
+				{name: "green", surgeryTime: 3, type: "eyeColor"},
+				{name: "blue", surgeryTime: 3, type: "eyeColor"},
+				{name: "brown", surgeryTime: 3, type: "eyeColor"},
+				{name: "dark brown",surgeryTime: 3, type: "eyeColor"},
+				{name: "gray", surgeryTime: 3, type: "eyeColor"},
 			],
 			eyeShape:[
-				{name: "Eye Shape", desc:"Change Eye Shape"},
-				{name: "almond"},
-				{name: "hooded"},
-				{name: "downturned"},
-				{name: "upturned"},
-				{name: "round"},
+				{name: "Eye Shape", desc:"Change Eye Shape", type: "eyeColor"},
+				{name: "almond", type: "eyeShape"},
+				{name: "hooded", type: "eyeShape"},
+				{name: "downturned", type: "eyeShape"},
+				{name: "upturned", type: "eyeShape"},
+				{name: "round", type: "eyeShape"},
 			],
 		},
 		nose:{
 			noseShape:[
 				{name: "Nose Shape", desc:"Change Nose Shape"},
-				{name: "hooked"},
-				{name: "straight"},
-				{name: "snub"},
-				{name: "bulbous"},
+				{name: "hooked", type: "noseShape"},
+				{name: "straight", type: "noseShape"},
+				{name: "snub", type: "noseShape"},
+				{name: "bulbous", type: "noseShape"},
 			],
 		},
 
 		ears: {
 			earShape:[
 				{name: "Ear Shape", desc:"Change Ear Shape"},
-				{name: "pointed"},
-				{name: "narrow"},
-				{name: "broad"},
+				{name: "pointed", type: "earShape"},
+				{name: "narrow", type: "earShape"},
+				{name: "broad", type: "earShape"},
 			],
 		},
 
 		lips: {
 			lipShape:[
 				{name: "Lip Shape", desc:"Change Lip Shape"},
-				{name: "full"},
-				{name: "round"},
-				{name: "thin"},
+				{name: "full", type: "lipShape"},
+				{name: "round", type: "lipShape"},
+				{name: "thin", type: "lipShape"},
 			],
 		},
 	},
 	upperbody:{
 		chest: {
 			breastSize:[
-			{name: "Breast Size", desc:"Change Breast Size"},
-			{name: "flat", size: 0 },
-			{name: "very tiny", size: 1},
-			{name: "tiny", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "plump", size: 6},
-			{name: "very plump", size: 7},
-			{name: "fat", size: 8},
-			{name: "very fat", size: 9},
+				{name: "Breast Size", desc:"Change Breast Size"},
+				{name: "flat", size: 0, type: "breastSize" },
+				{name: "very tiny", size: 1, type: "breastSize"},
+				{name: "tiny", size: 2, type: "breastSize"},
+				{name: "very small", size: 3, type: "breastSize"},
+				{name: "small", size: 4, type: "breastSize"},
+				{name: "medium", size: 5, type: "breastSize"},
+				{name: "plump", size: 6, type: "breastSize"},
+				{name: "very plump", size: 7, type: "breastSize"},
+				{name: "fat", size: 8, type: "breastSize"},
+				{name: "very fat", size: 9, type: "breastSize"},
 			],
 			shoulderWidth: [
 				{name: "Shoulder Width", desc:"Change Shoulder Width"},
-				{name: "extremely tiny", size: 0 },
-				{name: "very tiny", size: 1},
-				{name: "tiny", size: 2},
-				{name: "very small", size: 3},
-				{name: "small", size: 4},
-				{name: "medium", size: 5},
-				{name: "wide", size: 6},
-				{name: "very wide", size: 7},
-				{name: "broad", size: 8},
-				{name: "very broad", size: 9},
+				{name: "extremely tiny", size: 0, type: "shoulderWidth"},
+				{name: "very tiny", size: 1, type: "shoulderWidth"},
+				{name: "tiny", size: 2, type: "shoulderWidth"},
+				{name: "very small", size: 3, type: "shoulderWidth"},
+				{name: "small", size: 4, type: "shoulderWidth"},
+				{name: "medium", size: 5, type: "shoulderWidth"},
+				{name: "wide", size: 6, type: "shoulderWidth"},
+				{name: "very wide", size: 7, type: "shoulderWidth"},
+				{name: "broad", size: 8, type: "shoulderWidth"},
+				{name: "very broad", size: 9, type: "shoulderWidth"},
 			],
 			waistSize: [
 				{name: "Waist Size", desc:"Change Waist Size"},
-				{name: "extremely tiny", size: 0 },
-				{name: "very tiny", size: 1},
-				{name: "tiny", size: 2},
-				{name: "very small", size: 3},
-				{name: "small", size: 4},
-				{name: "medium", size: 5},
-				{name: "plump", size: 6},
-				{name: "very plump", size: 7},
-				{name: "thick", size: 8},
-				{name: "fat", size: 9},
+				{name: "extremely tiny", size: 0, type: "waistSize" },
+				{name: "very tiny", size: 1, type: "waistSize"},
+				{name: "tiny", size: 2, type: "waistSize"},
+				{name: "very small", size: 3, type: "waistSize"},
+				{name: "small", size: 4, type: "waistSize"},
+				{name: "medium", size: 5, type: "waistSize"},
+				{name: "plump", size: 6, type: "waistSize"},
+				{name: "very plump", size: 7, type: "waistSize"},
+				{name: "thick", size: 8, type: "waistSize"},
+				{name: "fat", size: 9, type: "waistSize"},
 			],
 		}
 	},
@@ -1985,42 +2035,42 @@ let bodyPartsObj = {
 		lowerbody: {
 			hipSize:[
 				{name: "Hip Size", desc:"Change Hip Size"},
-				{name: "extremely tiny", size: 0 },
-				{name: "very tiny", size: 1},
-				{name: "tiny", size: 2},
-				{name: "very small", size: 3},
-				{name: "small", size: 4},
-				{name: "medium", size: 5},
-				{name: "wide", size: 6},
-				{name: "very wide", size: 7},
-				{name: "thick", size: 8},
-				{name: "hourglass", size: 9},
+				{name: "extremely tiny", size: 0, type: "hipSize" },
+				{name: "very tiny", size: 1, type: "hipSize"},
+				{name: "tiny", size: 2, type: "hipSize"},
+				{name: "very small", size: 3, type: "hipSize"},
+				{name: "small", size: 4, type: "hipSize"},
+				{name: "medium", size: 5, type: "hipSize"},
+				{name: "wide", size: 6, type: "hipSize"},
+				{name: "very wide", size: 7, type: "hipSize"},
+				{name: "thick", size: 8, type: "hipSize"},
+				{name: "hourglass", size: 9, type: "hipSize"},
 			],
 			thighSize: [
 				{name: "Thigh Size", desc:"Change Thigh Size"},
-				{name: "extremely thin", size: 0 },
-				{name: "very thin", size: 1},
-				{name: "thin", size: 2},
-				{name: "very small", size: 3},
-				{name: "small", size: 4},
-				{name: "medium", size: 5},
-				{name: "plump", size: 6},
-				{name: "very plump", size: 7},
-				{name: "thick", size: 8},
-				{name: "fat", size: 9},
+				{name: "extremely thin", size: 0, type: "thighSize" },
+				{name: "very thin", size: 1, type: "thighSize" },
+				{name: "thin", size: 2, type: "thighSize" },
+				{name: "very small", size: 3, type: "thighSize" },
+				{name: "small", size: 4, type: "thighSize" },
+				{name: "medium", size: 5, type: "thighSize" },
+				{name: "plump", size: 6, type: "thighSize" },
+				{name: "very plump", size: 7, type: "thighSize" },
+				{name: "thick", size: 8, type: "thighSize" },
+				{name: "fat", size: 9, type: "thighSize" },
 			],
 			assSize: [
 				{name: "Ass Size", desc:"Change Ass Size"},
-				{name: "extremely tiny", size: 0 },
-				{name: "very tiny", size: 1},
-				{name: "tiny", size: 2},
-				{name: "very small", size: 3},
-				{name: "small", size: 4},
-				{name: "medium", size: 5},
-				{name: "plump", size: 6},
-				{name: "very plump", size: 7},
-				{name: "thick", size: 8},
-				{name: "fat", size: 9},
+				{name: "extremely tiny", size: 0, type: "assSize"  },
+				{name: "very tiny", size: 1, type: "assSize" },
+				{name: "tiny", size: 2, type: "assSize" },
+				{name: "very small", size: 3, type: "assSize" },
+				{name: "small", size: 4, type: "assSize" },
+				{name: "medium", size: 5, type: "assSize" },
+				{name: "plump", size: 6, type: "assSize" },
+				{name: "very plump", size: 7, type: "assSize" },
+				{name: "thick", size: 8, type: "assSize" },
+				{name: "fat", size: 9, type: "assSize" },
 			],
 		}
 	},

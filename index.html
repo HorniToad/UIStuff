@@ -984,11 +984,11 @@
                                           <div class="gridBoxDualRowGap">
                                              <div class="gridBox" style="width: 95%; height: 50%; padding-top: 1%; justify-self: center;">
                                                 <div class="progressBar" style="border-radius: 5px;">
-                                                   <div class="progressBarProgress" style="background: mediumslateblue"></div>
+                                                   <div class="progressBarProgress" id="modificationSceneProgressBar" style="background: mediumslateblue"></div>
                                                 </div>
                                              </div>
                                              <div class="gridBox">
-                                                <div class="gridBoxCenter">Current Progress: 0%</div>
+                                                <div class="gridBoxCenter" id="modificationSceneProgressText">Current Surgery Progress: Unoccupied</div>
                                              </div>
                                           </div>
                                        </div>
@@ -1050,7 +1050,7 @@
                                           <div class="gridBoxFull">
                                              <div class="backgroundInsetTopFull">
                                                 <div class="gridBoxFull" style="position: relative">
-                                                   <div class="absoluteBoxFull" id="buildingModificationSceneSurgeryNoOccupantCover" style="background: mediumslateblue">
+                                                   <div class="absoluteBoxFull" id="buildingModificationSceneSurgeryNoOccupantCover" style="background: mediumslateblue; z-index: 1">
                                                       <div class="gridBoxFull">
                                                         <div class="gridBoxCenter">
                                                           No Occupant Selected
