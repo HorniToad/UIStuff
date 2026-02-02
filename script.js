@@ -204,7 +204,7 @@ function buildingModificationSceneUpdater() {
 
 
 	if(gameState.buildingSceneFocus.occupant[0]) {
-		let progress = progressCheck(gameState.buildingSceneFocus.progress, gameState.buildingSceneFocus.bodyPartSelected.surgeryTime)
+		let progress = progressCheck(gameState.buildingSceneFocus.progress, gameState.buildingSceneFocus.selectedIndivdualPart[0].surgeryTime)
 		progressBar.style.width = progress + "%"
 		progressText.innerText = "Current Surgery Progress: " + progress + "%"
 
@@ -230,7 +230,7 @@ function modificationHandler() {
 			if(selectedBuildings[i].progress === false) {
 				selectedBuildings[i].progress = 0;
 			}
-			if(selectedBuildings[i].progress === selectedBuildings[i].bodyPartSelected.surgeryTime) {
+			if(selectedBuildings[i].progress === selectedBuildings[i].selectedIndivdualPart[0].surgeryTime) {
 				selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].bodyPartSelected.type] = structuredClone(selectedBuildings[i].bodyPartSelected)
 				selectedBuildings[i].occupant[0].changeFlag = true;
 				selectedBuildings[i].occupant[0] = false;
@@ -1144,7 +1144,7 @@ function modificationSceneHandler(x) {
 			}
 
 			charContainer.addEventListener("click", function() {
-				if(!building.occupant[0] || building.occupant[0] === false) {
+				if(building.occupant[0] != gameState.personnel.patients[i]) {
 					hidePanel.style.display = "none"
 					building.potentialOccupant = gameState.personnel.patients[i]
 					for(let c = 0; c < charPanelSlots.length; c++) {
@@ -1158,6 +1158,12 @@ function modificationSceneHandler(x) {
 						surgeryPanelFocusSetup();
 					}
 				}
+				else {
+                    building.occupant[0] =  false;
+                    hidePanel.style.display = "grid"
+                    activePanel.style.display = "none"
+                    characterModificationSelect();
+                }
 			})
 		}
 		let charPanelSlots = charPanel.querySelectorAll(".borderBoxFullREdgeHidden")
@@ -1234,6 +1240,7 @@ function modificationSceneHandler(x) {
 			if(building.potentialOccupant.appearance[partFocus[i].type].name != partFocus[i].name) {
 					surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
 						building.occupant[0] = building.potentialOccupant;
+                        occupantCheck(building.occupant[0])
 						building.bodyPartSelected = partFocus[i]
 						building.potentialOccupant = false
 						activePanel.style.display = "grid"
@@ -1944,16 +1951,16 @@ let bodyPartsObj = {
 	head:{
 		eyes:{
 			eyeColor:[
-				{name: "Eye Color", desc:"Change Eye Color"},
-				{name: "green", surgeryTime: 3, type: "eyeColor"},
-				{name: "blue", surgeryTime: 3, type: "eyeColor"},
-				{name: "brown", surgeryTime: 3, type: "eyeColor"},
-				{name: "dark brown",surgeryTime: 3, type: "eyeColor"},
-				{name: "gray", surgeryTime: 3, type: "eyeColor"},
+				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 3, type: "eyeColor" },
+				{name: "green", type: "eyeColor"},
+				{name: "blue", type: "eyeColor"},
+				{name: "brown", type: "eyeColor"},
+				{name: "dark brown", type: "eyeColor"},
+				{name: "gray", type: "eyeColor"},
 			],
 			eyeShape:[
-				{name: "Eye Shape", desc:"Change Eye Shape", type: "eyeColor"},
-				{name: "almond", type: "eyeShape"},
+				{name: "Eye Shape", desc:"Change Eye Shape", surgeryTime: 5,  type: "eyeColor"},
+				{name: "almond",  type: "eyeShape"},
 				{name: "hooded", type: "eyeShape"},
 				{name: "downturned", type: "eyeShape"},
 				{name: "upturned", type: "eyeShape"},
@@ -1962,7 +1969,7 @@ let bodyPartsObj = {
 		},
 		nose:{
 			noseShape:[
-				{name: "Nose Shape", desc:"Change Nose Shape"},
+				{name: "Nose Shape", desc:"Change Nose Shape", surgeryTime: 5,},
 				{name: "hooked", type: "noseShape"},
 				{name: "straight", type: "noseShape"},
 				{name: "snub", type: "noseShape"},
@@ -1972,7 +1979,7 @@ let bodyPartsObj = {
 
 		ears: {
 			earShape:[
-				{name: "Ear Shape", desc:"Change Ear Shape"},
+				{name: "Ear Shape", desc:"Change Ear Shape", surgeryTime: 5,},
 				{name: "pointed", type: "earShape"},
 				{name: "narrow", type: "earShape"},
 				{name: "broad", type: "earShape"},
@@ -1981,7 +1988,7 @@ let bodyPartsObj = {
 
 		lips: {
 			lipShape:[
-				{name: "Lip Shape", desc:"Change Lip Shape"},
+				{name: "Lip Shape", desc:"Change Lip Shape", surgeryTime: 5,},
 				{name: "full", type: "lipShape"},
 				{name: "round", type: "lipShape"},
 				{name: "thin", type: "lipShape"},
@@ -1991,7 +1998,7 @@ let bodyPartsObj = {
 	upperbody:{
 		chest: {
 			breastSize:[
-				{name: "Breast Size", desc:"Change Breast Size"},
+				{name: "Breast Size", desc:"Change Breast Size", surgeryTime: 10,},
 				{name: "flat", size: 0, type: "breastSize" },
 				{name: "very tiny", size: 1, type: "breastSize"},
 				{name: "tiny", size: 2, type: "breastSize"},
@@ -2004,7 +2011,7 @@ let bodyPartsObj = {
 				{name: "very fat", size: 9, type: "breastSize"},
 			],
 			shoulderWidth: [
-				{name: "Shoulder Width", desc:"Change Shoulder Width"},
+				{name: "Shoulder Width", desc:"Change Shoulder Width", surgeryTime: 15,},
 				{name: "extremely tiny", size: 0, type: "shoulderWidth"},
 				{name: "very tiny", size: 1, type: "shoulderWidth"},
 				{name: "tiny", size: 2, type: "shoulderWidth"},
@@ -2017,7 +2024,7 @@ let bodyPartsObj = {
 				{name: "very broad", size: 9, type: "shoulderWidth"},
 			],
 			waistSize: [
-				{name: "Waist Size", desc:"Change Waist Size"},
+				{name: "Waist Size", desc:"Change Waist Size", surgeryTime: 15,},
 				{name: "extremely tiny", size: 0, type: "waistSize" },
 				{name: "very tiny", size: 1, type: "waistSize"},
 				{name: "tiny", size: 2, type: "waistSize"},
@@ -2034,7 +2041,7 @@ let bodyPartsObj = {
 	lowerbody:{
 		lowerbody: {
 			hipSize:[
-				{name: "Hip Size", desc:"Change Hip Size"},
+				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 15,},
 				{name: "extremely tiny", size: 0, type: "hipSize" },
 				{name: "very tiny", size: 1, type: "hipSize"},
 				{name: "tiny", size: 2, type: "hipSize"},
@@ -2047,7 +2054,7 @@ let bodyPartsObj = {
 				{name: "hourglass", size: 9, type: "hipSize"},
 			],
 			thighSize: [
-				{name: "Thigh Size", desc:"Change Thigh Size"},
+				{name: "Thigh Size", desc:"Change Thigh Size", surgeryTime: 12,},
 				{name: "extremely thin", size: 0, type: "thighSize" },
 				{name: "very thin", size: 1, type: "thighSize" },
 				{name: "thin", size: 2, type: "thighSize" },
@@ -2060,7 +2067,7 @@ let bodyPartsObj = {
 				{name: "fat", size: 9, type: "thighSize" },
 			],
 			assSize: [
-				{name: "Ass Size", desc:"Change Ass Size"},
+				{name: "Ass Size", desc:"Change Ass Size", surgeryTime: 12,},
 				{name: "extremely tiny", size: 0, type: "assSize"  },
 				{name: "very tiny", size: 1, type: "assSize" },
 				{name: "tiny", size: 2, type: "assSize" },
