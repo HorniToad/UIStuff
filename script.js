@@ -3,6 +3,7 @@ let gameState;
 function gameStateHandler() {
 	tickStateCounter();
 	trainingHandler();
+	modificationHandler();
 	if(gameState.currentScene.current) {
 		sceneCheck = gameState.currentScene.current
 		if(sceneCheck.id === "scenePersonnelInformation") {
@@ -17,7 +18,6 @@ function gameStateHandler() {
 		}
 	}
 	if(gameState.tickState.tickRollOver === true) {
-		modificationHandler();
 	}
 }
 
@@ -28,7 +28,7 @@ function tickStateCounter() {
 		gameState.tickState.tickRollOver = false;
 	}
 	else if(gameState.tickState.currentTick == 10){
-		gameState.tickState.currentTick = -1;
+		gameState.tickState.currentTick = 0;
 		gameState.tickState.tickRollOver = true;
 		dateUpdater();
 		console.log(gameState)
@@ -205,6 +205,7 @@ function buildingModificationSceneUpdater() {
 
 	if(gameState.buildingSceneFocus.occupant[0]) {
 		let progress = progressCheck(gameState.buildingSceneFocus.progress, gameState.buildingSceneFocus.selectedIndivdualPart[0].surgeryTime)
+		console.log(gameState.buildingSceneFocus.progress)
 		progressBar.style.width = progress + "%"
 		progressText.innerText = "Current Surgery Progress: " + progress + "%"
 
@@ -230,17 +231,17 @@ function modificationHandler() {
 			if(selectedBuildings[i].progress === false) {
 				selectedBuildings[i].progress = 0;
 			}
-			if(selectedBuildings[i].progress === selectedBuildings[i].selectedIndivdualPart[0].surgeryTime) {
+			if(selectedBuildings[i].progress >= selectedBuildings[i].selectedIndivdualPart[0].surgeryTime) {
 				selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].bodyPartSelected.type] = structuredClone(selectedBuildings[i].bodyPartSelected)
 				selectedBuildings[i].occupant[0].changeFlag = true;
 				selectedBuildings[i].occupant[0] = false;
 				selectedBuildings[i].progress = 0;
 			}
-			selectedBuildings[i].progress += 1;
+			let progress = selectedBuildings[i].progress;
+			progress = mathFixer(1, progress)
+			selectedBuildings[i].progress = progress
 		}
 	}
-
-	console.log(selectedBuildings)
 }
 //End of modificationHandler
 //gameStateHandler-- End of the Game State Handler
@@ -1061,6 +1062,8 @@ function trainingSceneHandler(x) {
 //trainingFunction -- End of the Training Scene Function
 //Start of the Modification Scene Handler
 function modificationSceneHandler(x) {
+	let progressBar = document.getElementById("modificationSceneProgressBar")
+	let progressText = document.getElementById("modificationSceneProgressText")
 	let charPanel = document.getElementById("modificationSceneCharacterSelectionPanel");
 	let panel = document.getElementById("modificationSceneSurgeryFocusPanel")
 	let selectionPanel = document.getElementById("modificationSceneSurgeryFocusPanelChangePanel")
@@ -1144,7 +1147,7 @@ function modificationSceneHandler(x) {
 			}
 
 			charContainer.addEventListener("click", function() {
-				if(building.occupant[0] != gameState.personnel.patients[i]) {
+				if(building.occupant[0] != gameState.personnel.patients[i] && !building.occupant[0]) {
 					hidePanel.style.display = "none"
 					building.potentialOccupant = gameState.personnel.patients[i]
 					for(let c = 0; c < charPanelSlots.length; c++) {
@@ -1158,10 +1161,13 @@ function modificationSceneHandler(x) {
 						surgeryPanelFocusSetup();
 					}
 				}
-				else {
+				else if(building.occupant[0] === gameState.personnel.patients[i]){
                     building.occupant[0] =  false;
                     hidePanel.style.display = "grid"
                     activePanel.style.display = "none"
+					progressBar.style.width = "0%"
+					progressText.innerText = "Current Surgery Progress: Unoccupied"
+					building.progress = 0;
                     characterModificationSelect();
                 }
 			})
@@ -1237,13 +1243,15 @@ function modificationSceneHandler(x) {
 			surgeryFocusSelectionPanelBackground.style.background = "mediumslateblue"
 			surgeryFocusSelectionPanelBlockBox.style.height = "2.5vh"
 
-			if(building.potentialOccupant.appearance[partFocus[i].type].name != partFocus[i].name) {
+			if(building.potentialOccupant.appearance[partFocus[0].type].name != partFocus[i].name) {
 					surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
 						building.occupant[0] = building.potentialOccupant;
                         occupantCheck(building.occupant[0])
 						building.bodyPartSelected = partFocus[i]
 						building.potentialOccupant = false
 						activePanel.style.display = "grid"
+						progressBar.style.width = "0%"
+						progressText.innerText = "Current Surgery Progress: 0.00%"
 						characterModificationSelect();
 					})
 			}
@@ -1416,6 +1424,16 @@ function clearBox(element)
 function capitalizeFunc(x) {
 	let focus = x
 	return focus.charAt(0).toUpperCase() + focus.slice(1)
+}
+
+//Math Fixer
+function mathFixer(x, y) {
+	let addInt = x
+	let num = y
+	let newNum = Number(num)
+	newNum += addInt;
+	newNum = newNum.toFixed(2);
+	return newNum;
 }
 
 // Determines the current progress of a process and returns it
@@ -1951,133 +1969,133 @@ let bodyPartsObj = {
 	head:{
 		eyes:{
 			eyeColor:[
-				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 3, type: "eyeColor" },
-				{name: "green", type: "eyeColor"},
-				{name: "blue", type: "eyeColor"},
-				{name: "brown", type: "eyeColor"},
-				{name: "dark brown", type: "eyeColor"},
-				{name: "gray", type: "eyeColor"},
+				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 30, type: "eyeColor" },
+				{name: "green"},
+				{name: "blue"},
+				{name: "brown"},
+				{name: "dark brown"},
+				{name: "gray"},
 			],
 			eyeShape:[
-				{name: "Eye Shape", desc:"Change Eye Shape", surgeryTime: 5,  type: "eyeColor"},
-				{name: "almond",  type: "eyeShape"},
-				{name: "hooded", type: "eyeShape"},
-				{name: "downturned", type: "eyeShape"},
-				{name: "upturned", type: "eyeShape"},
-				{name: "round", type: "eyeShape"},
+				{name: "Eye Shape", desc:"Change Eye Shape", surgeryTime: 50,  type: "eyeShape"},
+				{name: "almond"},
+				{name: "hooded"},
+				{name: "downturned"},
+				{name: "upturned"},
+				{name: "round"},
 			],
 		},
 		nose:{
 			noseShape:[
-				{name: "Nose Shape", desc:"Change Nose Shape", surgeryTime: 5,},
-				{name: "hooked", type: "noseShape"},
-				{name: "straight", type: "noseShape"},
-				{name: "snub", type: "noseShape"},
-				{name: "bulbous", type: "noseShape"},
+				{name: "Nose Shape", desc:"Change Nose Shape", surgeryTime: 50, type: "noseShape"},
+				{name: "hooked"},
+				{name: "straight"},
+				{name: "snub"},
+				{name: "bulbous"},
 			],
 		},
 
 		ears: {
 			earShape:[
-				{name: "Ear Shape", desc:"Change Ear Shape", surgeryTime: 5,},
-				{name: "pointed", type: "earShape"},
-				{name: "narrow", type: "earShape"},
-				{name: "broad", type: "earShape"},
+				{name: "Ear Shape", desc:"Change Ear Shape", surgeryTime: 50, type: "earShape"},
+				{name: "pointed"},
+				{name: "narrow"},
+				{name: "broad",},
 			],
 		},
 
 		lips: {
 			lipShape:[
-				{name: "Lip Shape", desc:"Change Lip Shape", surgeryTime: 5,},
-				{name: "full", type: "lipShape"},
-				{name: "round", type: "lipShape"},
-				{name: "thin", type: "lipShape"},
+				{name: "Lip Shape", desc:"Change Lip Shape", surgeryTime: 50, type: "lipShape"},
+				{name: "full"},
+				{name: "round"},
+				{name: "thin",},
 			],
 		},
 	},
 	upperbody:{
 		chest: {
 			breastSize:[
-				{name: "Breast Size", desc:"Change Breast Size", surgeryTime: 10,},
-				{name: "flat", size: 0, type: "breastSize" },
-				{name: "very tiny", size: 1, type: "breastSize"},
-				{name: "tiny", size: 2, type: "breastSize"},
-				{name: "very small", size: 3, type: "breastSize"},
-				{name: "small", size: 4, type: "breastSize"},
-				{name: "medium", size: 5, type: "breastSize"},
-				{name: "plump", size: 6, type: "breastSize"},
-				{name: "very plump", size: 7, type: "breastSize"},
-				{name: "fat", size: 8, type: "breastSize"},
-				{name: "very fat", size: 9, type: "breastSize"},
+				{name: "Breast Size", desc:"Change Breast Size", surgeryTime: 100, type: "breastSize"},
+				{name: "flat", size: 0},
+				{name: "very tiny", size: 1},
+				{name: "tiny", size: 2},
+				{name: "very small", size: 3},
+				{name: "small", size: 4,},
+				{name: "medium", size: 5},
+				{name: "plump", size: 6},
+				{name: "very plump", size: 7},
+				{name: "fat", size: 8,},
+				{name: "very fat", size: 9},
 			],
 			shoulderWidth: [
-				{name: "Shoulder Width", desc:"Change Shoulder Width", surgeryTime: 15,},
-				{name: "extremely tiny", size: 0, type: "shoulderWidth"},
-				{name: "very tiny", size: 1, type: "shoulderWidth"},
-				{name: "tiny", size: 2, type: "shoulderWidth"},
-				{name: "very small", size: 3, type: "shoulderWidth"},
-				{name: "small", size: 4, type: "shoulderWidth"},
-				{name: "medium", size: 5, type: "shoulderWidth"},
-				{name: "wide", size: 6, type: "shoulderWidth"},
-				{name: "very wide", size: 7, type: "shoulderWidth"},
-				{name: "broad", size: 8, type: "shoulderWidth"},
-				{name: "very broad", size: 9, type: "shoulderWidth"},
+				{name: "Shoulder Width", desc:"Change Shoulder Width", surgeryTime: 150, type: "shoulderWidth"},
+				{name: "extremely tiny", size: 0},
+				{name: "very tiny", size: 1},
+				{name: "tiny", size: 2},
+				{name: "very small", size: 3},
+				{name: "small", size: 4},
+				{name: "medium", size: 5},
+				{name: "wide", size: 6},
+				{name: "very wide", size: 7},
+				{name: "broad", size: 8},
+				{name: "very broad", size: 9,},
 			],
 			waistSize: [
-				{name: "Waist Size", desc:"Change Waist Size", surgeryTime: 15,},
-				{name: "extremely tiny", size: 0, type: "waistSize" },
-				{name: "very tiny", size: 1, type: "waistSize"},
-				{name: "tiny", size: 2, type: "waistSize"},
-				{name: "very small", size: 3, type: "waistSize"},
-				{name: "small", size: 4, type: "waistSize"},
-				{name: "medium", size: 5, type: "waistSize"},
-				{name: "plump", size: 6, type: "waistSize"},
-				{name: "very plump", size: 7, type: "waistSize"},
-				{name: "thick", size: 8, type: "waistSize"},
-				{name: "fat", size: 9, type: "waistSize"},
+				{name: "Waist Size", desc:"Change Waist Size", surgeryTime: 150, type: "waistSize"},
+				{name: "extremely tiny", size: 0},
+				{name: "very tiny", size: 1},
+				{name: "tiny", size: 2},
+				{name: "very small", size: 3},
+				{name: "small", size: 4},
+				{name: "medium", size: 5},
+				{name: "plump", size: 6},
+				{name: "very plump", size: 7},
+				{name: "thick", size: 8},
+				{name: "fat", size: 9},
 			],
 		}
 	},
 	lowerbody:{
 		lowerbody: {
 			hipSize:[
-				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 15,},
-				{name: "extremely tiny", size: 0, type: "hipSize" },
-				{name: "very tiny", size: 1, type: "hipSize"},
-				{name: "tiny", size: 2, type: "hipSize"},
-				{name: "very small", size: 3, type: "hipSize"},
-				{name: "small", size: 4, type: "hipSize"},
-				{name: "medium", size: 5, type: "hipSize"},
-				{name: "wide", size: 6, type: "hipSize"},
-				{name: "very wide", size: 7, type: "hipSize"},
-				{name: "thick", size: 8, type: "hipSize"},
-				{name: "hourglass", size: 9, type: "hipSize"},
+				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 150, type: "hipSize"},
+				{name: "extremely tiny", size: 0},
+				{name: "very tiny", size: 1},
+				{name: "tiny", size: 2},
+				{name: "very small", size: 3},
+				{name: "small", size: 4,},
+				{name: "medium", size: 5},
+				{name: "wide", size: 6,},
+				{name: "very wide", size: 7,},
+				{name: "thick", size: 8,},
+				{name: "hourglass", size: 9,},
 			],
 			thighSize: [
-				{name: "Thigh Size", desc:"Change Thigh Size", surgeryTime: 12,},
-				{name: "extremely thin", size: 0, type: "thighSize" },
-				{name: "very thin", size: 1, type: "thighSize" },
-				{name: "thin", size: 2, type: "thighSize" },
-				{name: "very small", size: 3, type: "thighSize" },
-				{name: "small", size: 4, type: "thighSize" },
-				{name: "medium", size: 5, type: "thighSize" },
-				{name: "plump", size: 6, type: "thighSize" },
-				{name: "very plump", size: 7, type: "thighSize" },
-				{name: "thick", size: 8, type: "thighSize" },
-				{name: "fat", size: 9, type: "thighSize" },
+				{name: "Thigh Size", desc:"Change Thigh Size", surgeryTime: 120, type: "thighSize"},
+				{name: "extremely thin", size: 0,},
+				{name: "very thin", size: 1,},
+				{name: "thin", size: 2,},
+				{name: "very small", size: 3,},
+				{name: "small", size: 4,},
+				{name: "medium", size: 5,},
+				{name: "plump", size: 6,},
+				{name: "very plump", size: 7},
+				{name: "thick", size: 8,},
+				{name: "fat", size: 9,},
 			],
 			assSize: [
-				{name: "Ass Size", desc:"Change Ass Size", surgeryTime: 12,},
-				{name: "extremely tiny", size: 0, type: "assSize"  },
-				{name: "very tiny", size: 1, type: "assSize" },
-				{name: "tiny", size: 2, type: "assSize" },
-				{name: "very small", size: 3, type: "assSize" },
-				{name: "small", size: 4, type: "assSize" },
-				{name: "medium", size: 5, type: "assSize" },
-				{name: "plump", size: 6, type: "assSize" },
-				{name: "very plump", size: 7, type: "assSize" },
-				{name: "thick", size: 8, type: "assSize" },
-				{name: "fat", size: 9, type: "assSize" },
+				{name: "Ass Size", desc:"Change Ass Size", surgeryTime: 120, type: "assSize"},
+				{name: "extremely tiny", size: 0},
+				{name: "very tiny", size: 1,},
+				{name: "tiny", size: 2,},
+				{name: "very small", size: 3,},
+				{name: "small", size: 4,},
+				{name: "medium", size: 5,},
+				{name: "plump", size: 6,},
+				{name: "very plump", size: 7,},
+				{name: "thick", size: 8,},
+				{name: "fat", size: 9,},
 			],
 		}
 	},
