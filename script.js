@@ -16,6 +16,7 @@ function gameStateHandler() {
 		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Modification") {
 			buildingModificationSceneUpdater();
 		}
+
 	}
 	if(gameState.tickState.tickRollOver === true) {
 	}
@@ -370,7 +371,7 @@ $(function gameStartUpFunction() {
 		focus.append(currentFloor)
 
 		for(let i = 0; i < slots; i++) {
-			let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: [], type: false, capacity: false, progress: false, stat: false, bodyPartFocus: false, selectedIndivdualPart: false, bodyPartSelected: false, potentialOccupant: false }
+			let buildingBase = { active: false, floor: false, id: false, name: false, desc: false, occupant: [], type: false, subType: false, capacity: false, progress: false, stat: false, bodyPartFocus: false, selectedIndivdualPart: false, bodyPartSelected: false, potentialOccupant: false }
 			let slotDiv = document.createElement("div");
 			let slotDivInner = document.createElement("div");
 			let slotDivCenter = document.createElement("div")
@@ -626,6 +627,7 @@ function buildingFilter(x) {
 		sceneChange(buildContainer)
 		gameState.buildingSceneFocus = target
 		console.log(target)
+
 		let scene = document.getElementById("building" + target.type + "Scene")
 		if(target.type == "Training") {
 			trainingSceneHandler(target);
@@ -1572,7 +1574,9 @@ let buildings = [
 
 { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, occupantPrior: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 
-{ id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 0,trainable: false, occupantPrior: false, desc: "A basic surgery station used to enhance dolls." }
+{ id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 0,trainable: false, occupantPrior: false, desc: "A basic surgery station used to enhance dolls." },
+
+{ id: "tattooParlor", name: "Tattoo Parlor", type: "Modification",subType: "Tattoo" cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 0,trainable: false, occupantPrior: false, desc: "A tattoo parlor for marking patients." }
 ]
 
 // Character Arrays
