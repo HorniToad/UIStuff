@@ -232,7 +232,9 @@ function modificationHandler() {
 				selectedBuildings[i].progress = 0;
 			}
 			if(selectedBuildings[i].progress >= selectedBuildings[i].selectedIndivdualPart[0].surgeryTime) {
-				selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].bodyPartSelected.type] = structuredClone(selectedBuildings[i].bodyPartSelected)
+				for(let key in selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].selectedIndivdualPart[0].type]) {
+					selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].selectedIndivdualPart[0].type][key] = selectedBuildings[i].bodyPartSelected[key]
+				}
 				selectedBuildings[i].occupant[0].changeFlag = true;
 				selectedBuildings[i].occupant[0] = false;
 				selectedBuildings[i].progress = 0;
@@ -1162,14 +1164,14 @@ function modificationSceneHandler(x) {
 					}
 				}
 				else if(building.occupant[0] === gameState.personnel.patients[i]){
-                    building.occupant[0] =  false;
-                    hidePanel.style.display = "grid"
-                    activePanel.style.display = "none"
+					building.occupant[0] =  false;
+					hidePanel.style.display = "grid"
+					activePanel.style.display = "none"
 					progressBar.style.width = "0%"
 					progressText.innerText = "Current Surgery Progress: Unoccupied"
 					building.progress = 0;
-                    characterModificationSelect();
-                }
+					characterModificationSelect();
+				}
 			})
 		}
 		let charPanelSlots = charPanel.querySelectorAll(".borderBoxFullREdgeHidden")
@@ -1246,7 +1248,7 @@ function modificationSceneHandler(x) {
 			if(building.potentialOccupant.appearance[partFocus[0].type].name != partFocus[i].name) {
 					surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
 						building.occupant[0] = building.potentialOccupant;
-                        occupantCheck(building.occupant[0])
+						occupantCheck(building.occupant[0])
 						building.bodyPartSelected = partFocus[i]
 						building.potentialOccupant = false
 						activePanel.style.display = "grid"
@@ -1640,78 +1642,78 @@ head={
 let bodyParts =[
 	upperBody={
 		breastSize:[
-			{name: "flat", size: 0 },
-			{name: "very tiny", size: 1},
-			{name: "tiny", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "plump", size: 6},
-			{name: "very plump", size: 7},
-			{name: "fat", size: 8},
-			{name: "very fat", size: 9},
+			{name: "flat", size: 0, tattoo: false},
+			{name: "very tiny", size: 1, tattoo: false},
+			{name: "tiny", size: 2, tattoo: false},
+			{name: "very small", size: 3, tattoo: false},
+			{name: "small", size: 4, tattoo: false},
+			{name: "medium", size: 5, tattoo: false},
+			{name: "plump", size: 6, tattoo: false},
+			{name: "very plump", size: 7, tattoo: false},
+			{name: "fat", size: 8, tattoo: false},
+			{name: "very fat", size: 9, tattoo: false},
 		],
 		shoulderWidth: [
-			{name: "extremely tiny", size: 0 },
-			{name: "very tiny", size: 1},
-			{name: "tiny", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "wide", size: 6},
-			{name: "very wide", size: 7},
-			{name: "broad", size: 8},
-			{name: "very broad", size: 9},
+			{name: "extremely tiny", size: 0, tattoo: false },
+			{name: "very tiny", size: 1, tattoo: false},
+			{name: "tiny", size: 2, tattoo: false},
+			{name: "very small", size: 3, tattoo: false},
+			{name: "small", size: 4, tattoo: false},
+			{name: "medium", size: 5, tattoo: false},
+			{name: "wide", size: 6, tattoo: false},
+			{name: "very wide", size: 7, tattoo: false},
+			{name: "broad", size: 8, tattoo: false},
+			{name: "very broad", size: 9, tattoo: false},
 		],
 		waistSize: [
-			{name: "extremely tiny", size: 0 },
-			{name: "very tiny", size: 1},
-			{name: "tiny", size: 2},
-			{name: "very small", size: 3},
-			{name: "small", size: 4},
-			{name: "medium", size: 5},
-			{name: "plump", size: 6},
-			{name: "very plump", size: 7},
-			{name: "thick", size: 8},
-			{name: "fat", size: 9},
+			{name: "extremely tiny", size: 0, tattoo: false },
+			{name: "very tiny", size: 1, tattoo: false},
+			{name: "tiny", size: 2, tattoo: false},
+			{name: "very small", size: 3, tattoo: false},
+			{name: "small", size: 4, tattoo: false},
+			{name: "medium", size: 5, tattoo: false},
+			{name: "plump", size: 6, tattoo: false},
+			{name: "very plump", size: 7, tattoo: false},
+			{name: "thick", size: 8, tattoo: false},
+			{name: "fat", size: 9, tattoo: false},
 		],
 	},
 lowerBody={
 	hipSize:[
-		{name: "extremely tiny", size: 0 },
-		{name: "very tiny", size: 1},
-		{name: "tiny", size: 2},
-		{name: "very small", size: 3},
-		{name: "small", size: 4},
-		{name: "medium", size: 5},
-		{name: "wide", size: 6},
-		{name: "very wide", size: 7},
-		{name: "thick", size: 8},
-		{name: "hourglass", size: 9},
+		{name: "extremely tiny", size: 0, tattoo: false },
+		{name: "very tiny", size: 1, tattoo: false},
+		{name: "tiny", size: 2, tattoo: false},
+		{name: "very small", size: 3, tattoo: false},
+		{name: "small", size: 4, tattoo: false},
+		{name: "medium", size: 5, tattoo: false},
+		{name: "wide", size: 6, tattoo: false},
+		{name: "very wide", size: 7, tattoo: false},
+		{name: "thick", size: 8, tattoo: false},
+		{name: "hourglass", size: 9, tattoo: false},
 	],
 	thighSize: [
-		{name: "extremely thin", size: 0 },
-		{name: "very thin", size: 1},
-		{name: "thin", size: 2},
-		{name: "very small", size: 3},
-		{name: "small", size: 4},
-		{name: "medium", size: 5},
-		{name: "plump", size: 6},
-		{name: "very plump", size: 7},
-		{name: "thick", size: 8},
-		{name: "fat", size: 9},
+		{name: "extremely thin", size: 0, tattoo: false },
+		{name: "very thin", size: 1, tattoo: false},
+		{name: "thin", size: 2, tattoo: false},
+		{name: "very small", size: 3, tattoo: false},
+		{name: "small", size: 4, tattoo: false},
+		{name: "medium", size: 5, tattoo: false},
+		{name: "plump", size: 6, tattoo: false},
+		{name: "very plump", size: 7, tattoo: false},
+		{name: "thick", size: 8, tattoo: false},
+		{name: "fat", size: 9, tattoo: false},
 	],
 	assSize: [
-		{name: "extremely tiny", size: 0 },
-		{name: "very tiny", size: 1},
-		{name: "tiny", size: 2},
-		{name: "very small", size: 3},
-		{name: "small", size: 4},
-		{name: "medium", size: 5},
-		{name: "plump", size: 6},
-		{name: "very plump", size: 7},
-		{name: "thick", size: 8},
-		{name: "fat", size: 9},
+		{name: "extremely tiny", size: 0, tattoo: false },
+		{name: "very tiny", size: 1, tattoo: false},
+		{name: "tiny", size: 2, tattoo: false},
+		{name: "very small", size: 3, tattoo: false},
+		{name: "small", size: 4, tattoo: false},
+		{name: "medium", size: 5, tattoo: false},
+		{name: "plump", size: 6, tattoo: false},
+		{name: "very plump", size: 7, tattoo: false},
+		{name: "thick", size: 8, tattoo: false},
+		{name: "fat", size: 9, tattoo: false},
 	],
 },
 ]
@@ -1757,7 +1759,7 @@ let startingTraits = [
 ]
 
 let startingSkills = [
-	{id: "oralSex", name: "Oral Sex", int: false},
+{id: "oralSex", name: "Oral Sex", int: false},
 {id: "analSex", name: "Anal Sex", int: false},
 {id: "dominatRole", name: "Domination", int: false},
 {id: "submissiveRole", name: "Submission", int: false},
