@@ -13,7 +13,7 @@ function gameStateHandler() {
 		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Training") {
 			buildingTrainingSceneUpdater();
 		}
-		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Modification") {
+		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Modification" && gameState.buildingSceneFocus.subType === false) {
 			buildingModificationSceneUpdater();
 		}
 
@@ -211,7 +211,7 @@ function buildingModificationSceneUpdater() {
 		progressText.innerText = "Current Surgery Progress: " + progress + "%"
 
 	}
-	if(gameState.buildingSceneFocus.occupant[0] === false && gameState.buildingSceneFocus.potentialOccupant === false) {
+	if(!gameState.buildingSceneFocus.occupant[0] && gameState.buildingSceneFocus.potentialOccupant === false || gameState.buildingSceneFocus.occupant[0] === false && gameState.buildingSceneFocus.potentialOccupant === false) {
 		progressBar.style.width = "0%"
 		progressText.innerText = "Current Surgery Progress: Unoccupied"
 		occupiedPanel.style.display = "none"
@@ -482,6 +482,10 @@ $(function gameStartUpFunction() {
 			selectedSlot.desc = selectedBuild.desc
 			selectedSlot.name = selectedBuild.name;
 			selectedSlot.type = selectedBuild.type;
+			if(!selectedBuild.subType) {
+				selectedBuild.subType = false;
+			}
+			selectedSlot.subType = selectedBuild.subType;
 			selectedSlot.statInt = selectedBuild.statInt;
 			selectedSlot.stat = selectedBuild.stat;
 			selectedSlot.trainable = selectedBuild.trainable;
@@ -620,15 +624,26 @@ function buildingFilter(x) {
 	console.log(target)
 	if(target != undefined) {
 		if(gameState.buildingSceneFocus && gameState.buildingSceneFocus != target) {
-			let oldTarget = document.getElementById("building" + gameState.buildingSceneFocus.type + "Scene")
+			let oldTarget;
+			if(gameState.buildingSceneFocus.subType === false) {
+				oldTarget = document.getElementById("building" + gameState.buildingSceneFocus.type + "Scene")
+			}
+			else {
+				oldTarget = document.getElementById("building" + gameState.buildingSceneFocus.subType + "Scene")
+			}
 			oldTarget.style.display = "none";
 		}
 		let buildContainer = document.getElementById("buildingSceneBox")
 		sceneChange(buildContainer)
 		gameState.buildingSceneFocus = target
 		console.log(target)
-
-		let scene = document.getElementById("building" + target.type + "Scene")
+		let scene;
+		if(target.subType === false) {
+			scene = document.getElementById("building" + target.type + "Scene")
+		}
+		else {
+			scene = document.getElementById("building" + target.subType + "Scene")
+		}
 		if(target.type == "Training") {
 			trainingSceneHandler(target);
 			buildingTrainingSceneUpdater();
@@ -636,8 +651,13 @@ function buildingFilter(x) {
 				occupantSlotSetup(target, i, scene)
 			}
 		}
-		else if(target.type == "Modification") {
+		else if(target.type == "Modification" && target.subType === false) {
+			console.log("I made it to the modificationSceneHandler!");
+			buildingModificationSceneUpdater();
 			modificationSceneHandler(target);
+		}
+		else if(target.type == "Modification" && target.subType === "Tattoo") {
+			tattooSceneHandler(target)
 		}
 		scene.style.display = "grid"
 		$("#building" + target.type + "SceneDesc").text(target.desc)
@@ -1249,8 +1269,8 @@ function modificationSceneHandler(x) {
 
 			if(building.potentialOccupant.appearance[partFocus[0].type].name != partFocus[i].name) {
 					surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
+						occupantCheck(building.potentialOccupant)
 						building.occupant[0] = building.potentialOccupant;
-						occupantCheck(building.occupant[0])
 						building.bodyPartSelected = partFocus[i]
 						building.potentialOccupant = false
 						activePanel.style.display = "grid"
@@ -1266,6 +1286,13 @@ function modificationSceneHandler(x) {
 	}
 }
 //End of the Modification Scene Handler
+//Start of the Tattoo Scene Handler
+function tattooSceneHandler(x) {
+	let building = x;
+	console.log("Looks like I am gonna get a tattoo")
+	console.log(building)
+}
+//End of the Tattoo Scene Handler
 //Start of Text Handler
 function textHandler(x, y) {
 	let textFocus = x
@@ -1491,6 +1518,7 @@ function occupantCheck(x) {
 		for(let i = 0; i < buildingSlots[k].capacity; i++) {
 			if (buildingSlots[k].occupant[i] === occupantFocus) {
 				buildingSlots[k].occupant[i] = false;
+				buildingSlots[k].progress = 0;
 			}
 		}
 	}
@@ -1574,9 +1602,9 @@ let buildings = [
 
 { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, occupantPrior: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 
-{ id: "basicSurgery", name: "Basic Surgery Station", type: "Modification", cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 0,trainable: false, occupantPrior: false, desc: "A basic surgery station used to enhance dolls." },
+{ id: "basicSurgery", name: "Basic Surgery Station", type: "Modification",  cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 1,trainable: false, occupantPrior: false, desc: "A basic surgery station used to enhance dolls." },
 
-{ id: "tattooParlor", name: "Tattoo Parlor", type: "Modification",subType: "Tattoo" cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 0,trainable: false, occupantPrior: false, desc: "A tattoo parlor for marking patients." }
+{ id: "tattooParlor", name: "Tattoo Parlor", type: "Modification",subType: "Tattoo", cost: 750, build: 5, unlocked: false, base: true, stats: "none", bodyPartFocus: false, capacity: 1,trainable: false, occupantPrior: false, desc: "A tattoo parlor for marking patients." }
 ]
 
 // Character Arrays
