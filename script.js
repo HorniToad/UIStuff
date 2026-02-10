@@ -2211,7 +2211,7 @@ let bodyPartsObj = {
 
 	},
 	lowerbody:{
-		lowerbody: {
+		hips: {
 			hipSize:[
 				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 150, type: "hipSize", part: "hip"},
 				{name: "extremely tiny", size: 0},
@@ -2225,6 +2225,8 @@ let bodyPartsObj = {
 				{name: "thick", size: 8,},
 				{name: "hourglass", size: 9,},
 			],
+		},
+		thigh: {
 			thighSize: [
 				{name: "Thigh Size", desc:"Change Thigh Size", surgeryTime: 120, type: "thighSize", part: "thigh"},
 				{name: "extremely thin", size: 0,},
@@ -2238,6 +2240,8 @@ let bodyPartsObj = {
 				{name: "thick", size: 8,},
 				{name: "fat", size: 9,},
 			],
+		},
+		ass: {
 			assSize: [
 				{name: "Ass Size", desc:"Change Ass Size", surgeryTime: 120, type: "assSize", part: "ass"},
 				{name: "extremely tiny", size: 0},
@@ -2250,8 +2254,9 @@ let bodyPartsObj = {
 				{name: "very plump", size: 7,},
 				{name: "thick", size: 8,},
 				{name: "fat", size: 9,},
+				{name: "fast af", size: 9,},
 			],
-		}
+		},
 	},
 }
 //End of Non-Starting Arrays
