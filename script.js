@@ -233,8 +233,12 @@ function modificationHandler() {
 				selectedBuildings[i].progress = 0;
 			}
 			if(selectedBuildings[i].progress >= selectedBuildings[i].selectedIndivdualPart[0].surgeryTime) {
-				for(let key in selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].selectedIndivdualPart[0].type]) {
-					selectedBuildings[i].occupant[0].appearance[selectedBuildings[i].selectedIndivdualPart[0].type][key] = selectedBuildings[i].bodyPartSelected[key]
+				let bodyPart = selectedBuildings[i].selectedIndivdualPart[0].part
+				let bodyAttr = selectedBuildings[i].selectedIndivdualPart[0].type
+				for(let key in selectedBuildings[i].occupant[0].appearance[bodyPart][bodyAttr]) {
+					if(selectedBuildings[i].bodyPartSelected[key] != undefined) {
+						selectedBuildings[i].occupant[0].appearance[bodyPart][bodyAttr][key] = selectedBuildings[i].bodyPartSelected[key]
+					}
 				}
 				selectedBuildings[i].occupant[0].changeFlag = true;
 				selectedBuildings[i].occupant[0] = false;
@@ -640,9 +644,11 @@ function buildingFilter(x) {
 		let scene;
 		if(target.subType === false) {
 			scene = document.getElementById("building" + target.type + "Scene")
+			$("#building" + target.type + "SceneDesc").text(target.desc)
 		}
 		else {
 			scene = document.getElementById("building" + target.subType + "Scene")
+			$("#building" + target.subType + "SceneDesc").text(target.desc)
 		}
 		if(target.type == "Training") {
 			trainingSceneHandler(target);
@@ -660,7 +666,6 @@ function buildingFilter(x) {
 			tattooSceneHandler(target)
 		}
 		scene.style.display = "grid"
-		$("#building" + target.type + "SceneDesc").text(target.desc)
 	}
 	else {
 		console.log("Something has gone wrong with the building filter. Target is undefined!")
@@ -710,24 +715,41 @@ function personnelGenerator() {
 	for(let i = 0; i < bodyParts.length; i++) {
 		for(let key in bodyParts[i]) {
 			if (bodyParts[i].hasOwnProperty(key)) {
+				console.log(key)
 				value = bodyParts[i][key];
-				let rand = Math.floor(Math.random() * (selectedBodyType.max - selectedBodyType.min + 1)+ selectedBodyType.min)
-				console.log(rand)
-				let choice = value[rand]
-				generatedCharacter.appearance[key] = choice
+				console.log(value)
+				for(let key2 in value) {
+					console.log(key2)
+					let rand = Math.floor(Math.random() * (selectedBodyType.max - selectedBodyType.min + 1)+ selectedBodyType.min)
+					console.log(rand)
+					let choice = value[key2][rand]
+					console.log(choice)
+					generatedCharacter.appearance[key] = {[key2]:choice}
+				}
 			}
 		}
 	}
 	for(let i = 0; i < bodyPartsAlt.length; i++) {
 		console.log(bodyPartsAlt[i])
 		for(let key in bodyPartsAlt[i]) {
+			console.log(key)
 			if (bodyPartsAlt[i].hasOwnProperty(key)) {
+				console.log(key)
 				value = bodyPartsAlt[i][key];
-				console.log("Value for BodyPartsAlt: " + value)
-				let rand = Math.floor(Math.random() * value.length)
-				console.log(rand)
-				let choice = value[rand]
-				generatedCharacter.appearance[key] = choice
+				console.log(value)
+				for(let key2 in value) {
+					console.log(key2)
+					let rand = Math.floor(Math.random() * value[key2].length)
+					console.log(rand)
+					console.log(value[key2])
+					let choice = value[key2][rand]
+					console.log(choice)
+					let newObj = {[key2]:choice}
+					if(!generatedCharacter.appearance[key]) {
+						generatedCharacter.appearance[key] = {};
+					}
+					Object.assign(generatedCharacter.appearance[key], newObj)
+				}
 			}
 		}
 	}
@@ -1212,6 +1234,7 @@ function modificationSceneHandler(x) {
 
 			if(partFocus) {
 				for(let key in partFocus) {
+
 					let surgeryFocusPanelBlockBox = document.createElement("div");
 					let surgeryFocusPanelBackground = document.createElement("div");
 					let surgeryFocusPanelGridBoxFull = document.createElement("div");
@@ -1226,7 +1249,7 @@ function modificationSceneHandler(x) {
 					surgeryFocusPanelBlockBox.append(surgeryFocusPanelBackground);
 					surgeryFocusPanelBackground.append(surgeryFocusPanelGridBoxFull);
 					surgeryFocusPanelGridBoxFull.append(surgeryFocusPanelGridBoxCenter);
-
+					console.log(partFocus)
 					surgeryFocusPanelGridBoxCenter.innerText = partFocus[key][0].name
 
 					surgeryFocusPanelBackground.style.background = "darkslateblue"
@@ -1266,18 +1289,21 @@ function modificationSceneHandler(x) {
 
 			surgeryFocusSelectionPanelBackground.style.background = "mediumslateblue"
 			surgeryFocusSelectionPanelBlockBox.style.height = "2.5vh"
-
-			if(building.potentialOccupant.appearance[partFocus[0].type].name != partFocus[i].name) {
-					surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
-						occupantCheck(building.potentialOccupant)
-						building.occupant[0] = building.potentialOccupant;
-						building.bodyPartSelected = partFocus[i]
-						building.potentialOccupant = false
-						activePanel.style.display = "grid"
-						progressBar.style.width = "0%"
-						progressText.innerText = "Current Surgery Progress: 0.00%"
-						characterModificationSelect();
-					})
+			console.log(partFocus[0].type)
+			console.log(partFocus[0].part)
+			console.log(building.potentialOccupant.appearance[partFocus[0].part])
+			console.log(building.potentialOccupant.appearance[partFocus[0].part][partFocus[0].type])
+			if(building.potentialOccupant.appearance[partFocus[0].part][partFocus[0].type].name != partFocus[i].name) {
+				surgeryFocusSelectionPanelBlockBox.addEventListener("click", function() {
+					occupantCheck(building.potentialOccupant)
+					building.occupant[0] = building.potentialOccupant;
+					building.bodyPartSelected = partFocus[i]
+					building.potentialOccupant = false
+					activePanel.style.display = "grid"
+					progressBar.style.width = "0%"
+					progressText.innerText = "Current Surgery Progress: 0.00%"
+					characterModificationSelect();
+				})
 			}
 			else {
 				surgeryFocusSelectionPanelBackground.style.background = "red"
@@ -1289,8 +1315,72 @@ function modificationSceneHandler(x) {
 //Start of the Tattoo Scene Handler
 function tattooSceneHandler(x) {
 	let building = x;
-	console.log("Looks like I am gonna get a tattoo")
-	console.log(building)
+	let panel = document.getElementById("buildingTattooSceneBodySectionFocusPanel");
+	btnSetup();
+	function btnSetup() {
+		$("#buildingTattooSceneBodySectionFocusBtnHead").on("click", function() {
+			tattooSceneBodyPartSelectorSetup("head");
+		})
+
+		$("#buildingTattooSceneBodySectionFocusBtnUpperBody").on("click", function() {
+			tattooSceneBodyPartSelectorSetup("upperbody")
+		})
+
+		$("#buildingTattooSceneBodySectionFocusBtnLowerBody").on("click", function() {
+			tattooSceneBodyPartSelectorSetup("lowerbody")
+		})
+	}
+
+	function inputSetup() {
+
+	}
+
+
+	function tattooSceneBodyPartSelectorSetup(x) {
+		building.bodyPartFocus = x;
+		let focusBody = bodyPartsObj[building.bodyPartFocus];
+		if(!focusBody) {
+			building.bodyPartFocus = "head"
+			focusBody = bodyPartsObj[building.bodyPartFocus]
+		}
+		clearBox(panel)
+		for(let key in focusBody) {
+			let partFocus = focusBody[key]
+			console.log(focusBody)
+			if(partFocus) {
+				for(let key in partFocus) {
+					console.log(partFocus)
+					console.log(partFocus[key])
+					let tattooFocusPanelBlockBox = document.createElement("div");
+					let tattooFocusPanelBackground = document.createElement("div");
+					let tattooFocusPanelGridBoxFull = document.createElement("div");
+					let tattooFocusPanelGridBoxCenter = document.createElement("div");
+
+					tattooFocusPanelBlockBox.setAttribute("class", "blockBox");
+					tattooFocusPanelBackground.setAttribute("class", "borderBoxFullREdgeHidden");
+					tattooFocusPanelGridBoxFull.setAttribute("class", "gridBoxFull");
+					tattooFocusPanelGridBoxCenter.setAttribute("class", "gridBoxCenter");
+
+					panel.append(tattooFocusPanelBlockBox)
+					tattooFocusPanelBlockBox.append(tattooFocusPanelBackground);
+					tattooFocusPanelBackground.append(tattooFocusPanelGridBoxFull);
+					tattooFocusPanelGridBoxFull.append(tattooFocusPanelGridBoxCenter);
+
+					tattooFocusPanelGridBoxCenter.innerText = capitalizeFunc(partFocus[key][0].part)
+
+					tattooFocusPanelBackground.style.background = "mediumslateblue"
+					tattooFocusPanelBlockBox.style.height = "2.5vh"
+
+					let selectionPanel = document.getElementById("modificationSceneSurgeryFocusPanelChangePanel")
+
+					tattooFocusPanelBlockBox.addEventListener("click", function() {
+						building.selectedIndivdualPart = partFocus[key]
+						surgerySelectionPanelSetup(partFocus[key])
+					})
+				}
+			}
+		}
+	}
 }
 //End of the Tattoo Scene Handler
 //Start of Text Handler
@@ -1609,83 +1699,129 @@ let buildings = [
 
 // Character Arrays
 // Body Parts
-let bodyPartsAlt = [
-	height= {
-		height:[
-			{name: "very short"},
-			{name: "short"},
-			{name: "medium"},
-			{name: "tall"},
-			{name: "very tall"},
-		]
-	},
 
-head={
-	hairColor:[
-		{name: "green"},
-		{name: "brown"},
-		{name: "red"},
-		{name: "brown"},
-		{name: "black"},
-		{name: "blue"},
-	],
-
-	hairLength:[
+let height= {
+	height:[
+		{name: "very short"},
 		{name: "short"},
-		{name: "long"},
 		{name: "medium"},
-		{name: "really long"},
-		{name: "bald"},
-	],
-
-	eyeColor:[
-		{name: "green"},
-		{name: "blue"},
-		{name: "brown"},
-		{name: "dark brown"},
-		{name: "gray"},
-	],
-	eyeShape:[
-		{name: "almond"},
-		{name: "round"},
-		{name: "downturned"},
-		{name: "upturned"},
-		{name: "hooded"},
-	],
-	noseShape:[
-		{name: "hooked"},
-		{name: "straight"},
-		{name: "snub"},
-		{name: "bulbous"},
-	],
-	lipShape:[
-		{name: "full"},
-		{name: "round"},
-		{name: "thin"},
-	],
-	earShape:[
-		{name: "pointed"},
-		{name: "narrow"},
-		{name: "broad"},
-	],
+		{name: "tall"},
+		{name: "very tall"},
+	]
 }
+
+let bodyPartsAlt = [
+
+	head={
+		hair: {
+			hairColor:[
+				{name: "green"},
+				{name: "brown"},
+				{name: "red"},
+				{name: "brown"},
+				{name: "black"},
+				{name: "blue"},
+			],
+
+			hairLength:[
+				{name: "short"},
+				{name: "long"},
+				{name: "medium"},
+				{name: "really long"},
+				{name: "bald"},
+			],
+		},
+
+		eyes: {
+			eyeColor:[
+				{name: "green"},
+				{name: "blue"},
+				{name: "brown"},
+				{name: "dark brown"},
+				{name: "gray"},
+			],
+			eyeShape:[
+				{name: "almond"},
+				{name: "round"},
+				{name: "downturned"},
+				{name: "upturned"},
+				{name: "hooded"},
+			],
+		},
+		nose: {
+			noseShape:[
+				{name: "hooked"},
+				{name: "straight"},
+				{name: "snub"},
+				{name: "bulbous"},
+			],
+		},
+		lips: {
+			lipShape:[
+				{name: "full"},
+				{name: "round"},
+				{name: "thin"},
+			],
+		},
+		ears: {
+			earShape:[
+				{name: "pointed"},
+				{name: "narrow"},
+				{name: "broad"},
+			],
+		},
+
+	}
 ]
 
 let bodyParts =[
 	upperBody={
-		breastSize:[
-			{name: "flat", size: 0, tattoo: false},
-			{name: "very tiny", size: 1, tattoo: false},
-			{name: "tiny", size: 2, tattoo: false},
-			{name: "very small", size: 3, tattoo: false},
-			{name: "small", size: 4, tattoo: false},
-			{name: "medium", size: 5, tattoo: false},
-			{name: "plump", size: 6, tattoo: false},
-			{name: "very plump", size: 7, tattoo: false},
-			{name: "fat", size: 8, tattoo: false},
-			{name: "very fat", size: 9, tattoo: false},
-		],
-		shoulderWidth: [
+		breast : {
+			breastSize:[
+				{name: "flat", size: 0, tattoo: false},
+				{name: "very tiny", size: 1, tattoo: false},
+				{name: "tiny", size: 2, tattoo: false},
+				{name: "very small", size: 3, tattoo: false},
+				{name: "small", size: 4, tattoo: false},
+				{name: "medium", size: 5, tattoo: false},
+				{name: "plump", size: 6, tattoo: false},
+				{name: "very plump", size: 7, tattoo: false},
+				{name: "fat", size: 8, tattoo: false},
+				{name: "very fat", size: 9, tattoo: false},
+			],
+		},
+		shoulder: {
+			shoulderWidth: [
+				{name: "extremely tiny", size: 0, tattoo: false },
+				{name: "very tiny", size: 1, tattoo: false},
+				{name: "tiny", size: 2, tattoo: false},
+				{name: "very small", size: 3, tattoo: false},
+				{name: "small", size: 4, tattoo: false},
+				{name: "medium", size: 5, tattoo: false},
+				{name: "wide", size: 6, tattoo: false},
+				{name: "very wide", size: 7, tattoo: false},
+				{name: "broad", size: 8, tattoo: false},
+				{name: "very broad", size: 9, tattoo: false},
+			],
+		},
+		waist: {
+			waistSize: [
+				{name: "extremely tiny", size: 0, tattoo: false },
+				{name: "very tiny", size: 1, tattoo: false},
+				{name: "tiny", size: 2, tattoo: false},
+				{name: "very small", size: 3, tattoo: false},
+				{name: "small", size: 4, tattoo: false},
+				{name: "medium", size: 5, tattoo: false},
+				{name: "plump", size: 6, tattoo: false},
+				{name: "very plump", size: 7, tattoo: false},
+				{name: "thick", size: 8, tattoo: false},
+				{name: "fat", size: 9, tattoo: false},
+			],
+		},
+	},
+lowerBody={
+	hip: {
+		hipSize:[
 			{name: "extremely tiny", size: 0, tattoo: false },
 			{name: "very tiny", size: 1, tattoo: false},
 			{name: "tiny", size: 2, tattoo: false},
@@ -1694,10 +1830,26 @@ let bodyParts =[
 			{name: "medium", size: 5, tattoo: false},
 			{name: "wide", size: 6, tattoo: false},
 			{name: "very wide", size: 7, tattoo: false},
-			{name: "broad", size: 8, tattoo: false},
-			{name: "very broad", size: 9, tattoo: false},
+			{name: "thick", size: 8, tattoo: false},
+			{name: "hourglass", size: 9, tattoo: false},
 		],
-		waistSize: [
+	},
+	thigh: {
+		thighSize: [
+			{name: "extremely thin", size: 0, tattoo: false },
+			{name: "very thin", size: 1, tattoo: false},
+			{name: "thin", size: 2, tattoo: false},
+			{name: "very small", size: 3, tattoo: false},
+			{name: "small", size: 4, tattoo: false},
+			{name: "medium", size: 5, tattoo: false},
+			{name: "plump", size: 6, tattoo: false},
+			{name: "very plump", size: 7, tattoo: false},
+			{name: "thick", size: 8, tattoo: false},
+			{name: "fat", size: 9, tattoo: false},
+		],
+	},
+	ass: {
+		assSize: [
 			{name: "extremely tiny", size: 0, tattoo: false },
 			{name: "very tiny", size: 1, tattoo: false},
 			{name: "tiny", size: 2, tattoo: false},
@@ -1710,43 +1862,6 @@ let bodyParts =[
 			{name: "fat", size: 9, tattoo: false},
 		],
 	},
-lowerBody={
-	hipSize:[
-		{name: "extremely tiny", size: 0, tattoo: false },
-		{name: "very tiny", size: 1, tattoo: false},
-		{name: "tiny", size: 2, tattoo: false},
-		{name: "very small", size: 3, tattoo: false},
-		{name: "small", size: 4, tattoo: false},
-		{name: "medium", size: 5, tattoo: false},
-		{name: "wide", size: 6, tattoo: false},
-		{name: "very wide", size: 7, tattoo: false},
-		{name: "thick", size: 8, tattoo: false},
-		{name: "hourglass", size: 9, tattoo: false},
-	],
-	thighSize: [
-		{name: "extremely thin", size: 0, tattoo: false },
-		{name: "very thin", size: 1, tattoo: false},
-		{name: "thin", size: 2, tattoo: false},
-		{name: "very small", size: 3, tattoo: false},
-		{name: "small", size: 4, tattoo: false},
-		{name: "medium", size: 5, tattoo: false},
-		{name: "plump", size: 6, tattoo: false},
-		{name: "very plump", size: 7, tattoo: false},
-		{name: "thick", size: 8, tattoo: false},
-		{name: "fat", size: 9, tattoo: false},
-	],
-	assSize: [
-		{name: "extremely tiny", size: 0, tattoo: false },
-		{name: "very tiny", size: 1, tattoo: false},
-		{name: "tiny", size: 2, tattoo: false},
-		{name: "very small", size: 3, tattoo: false},
-		{name: "small", size: 4, tattoo: false},
-		{name: "medium", size: 5, tattoo: false},
-		{name: "plump", size: 6, tattoo: false},
-		{name: "very plump", size: 7, tattoo: false},
-		{name: "thick", size: 8, tattoo: false},
-		{name: "fat", size: 9, tattoo: false},
-	],
 },
 ]
 
@@ -1791,7 +1906,7 @@ let startingTraits = [
 ]
 
 let startingSkills = [
-{id: "oralSex", name: "Oral Sex", int: false},
+	{id: "oralSex", name: "Oral Sex", int: false},
 {id: "analSex", name: "Anal Sex", int: false},
 {id: "dominatRole", name: "Domination", int: false},
 {id: "submissiveRole", name: "Submission", int: false},
@@ -2001,9 +2116,9 @@ let clothing = {
 //Body Parts Arrays
 let bodyPartsObj = {
 	head:{
-		eyes:{
+		eyes: {
 			eyeColor:[
-				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 30, type: "eyeColor" },
+				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 30, type: "eyeColor", part: "eyes" },
 				{name: "green"},
 				{name: "blue"},
 				{name: "brown"},
@@ -2011,7 +2126,7 @@ let bodyPartsObj = {
 				{name: "gray"},
 			],
 			eyeShape:[
-				{name: "Eye Shape", desc:"Change Eye Shape", surgeryTime: 50,  type: "eyeShape"},
+				{name: "Eye Shape", desc:"Change Eye Shape", surgeryTime: 50,  type: "eyeShape", part: "eyes"},
 				{name: "almond"},
 				{name: "hooded"},
 				{name: "downturned"},
@@ -2019,9 +2134,9 @@ let bodyPartsObj = {
 				{name: "round"},
 			],
 		},
-		nose:{
+		nose: {
 			noseShape:[
-				{name: "Nose Shape", desc:"Change Nose Shape", surgeryTime: 50, type: "noseShape"},
+				{name: "Nose Shape", desc:"Change Nose Shape", surgeryTime: 50, type: "noseShape", part: "nose"},
 				{name: "hooked"},
 				{name: "straight"},
 				{name: "snub"},
@@ -2031,26 +2146,26 @@ let bodyPartsObj = {
 
 		ears: {
 			earShape:[
-				{name: "Ear Shape", desc:"Change Ear Shape", surgeryTime: 50, type: "earShape"},
+				{name: "Ear Shape", desc:"Change Ear Shape", surgeryTime: 50, type: "earShape", part: "ears"},
 				{name: "pointed"},
 				{name: "narrow"},
 				{name: "broad",},
 			],
 		},
-
 		lips: {
 			lipShape:[
-				{name: "Lip Shape", desc:"Change Lip Shape", surgeryTime: 50, type: "lipShape"},
+				{name: "Lip Shape", desc:"Change Lip Shape", surgeryTime: 50, type: "lipShape", part: "lips"},
 				{name: "full"},
 				{name: "round"},
 				{name: "thin",},
 			],
 		},
+
 	},
 	upperbody:{
-		chest: {
+		breast: {
 			breastSize:[
-				{name: "Breast Size", desc:"Change Breast Size", surgeryTime: 100, type: "breastSize"},
+				{name: "Breast Size", desc:"Change Breast Size", surgeryTime: 5, type: "breastSize", part: "breast"},
 				{name: "flat", size: 0},
 				{name: "very tiny", size: 1},
 				{name: "tiny", size: 2},
@@ -2062,8 +2177,10 @@ let bodyPartsObj = {
 				{name: "fat", size: 8,},
 				{name: "very fat", size: 9},
 			],
+		},
+		shoulder: {
 			shoulderWidth: [
-				{name: "Shoulder Width", desc:"Change Shoulder Width", surgeryTime: 150, type: "shoulderWidth"},
+				{name: "Shoulder Width", desc:"Change Shoulder Width", surgeryTime: 150, type: "shoulderWidth", part: "shoulder"},
 				{name: "extremely tiny", size: 0},
 				{name: "very tiny", size: 1},
 				{name: "tiny", size: 2},
@@ -2075,8 +2192,10 @@ let bodyPartsObj = {
 				{name: "broad", size: 8},
 				{name: "very broad", size: 9,},
 			],
+		},
+		waist: {
 			waistSize: [
-				{name: "Waist Size", desc:"Change Waist Size", surgeryTime: 150, type: "waistSize"},
+				{name: "Waist Size", desc:"Change Waist Size", surgeryTime: 150, type: "waistSize", part: "waist"},
 				{name: "extremely tiny", size: 0},
 				{name: "very tiny", size: 1},
 				{name: "tiny", size: 2},
@@ -2088,12 +2207,13 @@ let bodyPartsObj = {
 				{name: "thick", size: 8},
 				{name: "fat", size: 9},
 			],
-		}
+		},
+
 	},
 	lowerbody:{
 		lowerbody: {
 			hipSize:[
-				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 150, type: "hipSize"},
+				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 150, type: "hipSize", part: "hip"},
 				{name: "extremely tiny", size: 0},
 				{name: "very tiny", size: 1},
 				{name: "tiny", size: 2},
@@ -2106,7 +2226,7 @@ let bodyPartsObj = {
 				{name: "hourglass", size: 9,},
 			],
 			thighSize: [
-				{name: "Thigh Size", desc:"Change Thigh Size", surgeryTime: 120, type: "thighSize"},
+				{name: "Thigh Size", desc:"Change Thigh Size", surgeryTime: 120, type: "thighSize", part: "thigh"},
 				{name: "extremely thin", size: 0,},
 				{name: "very thin", size: 1,},
 				{name: "thin", size: 2,},
@@ -2119,7 +2239,7 @@ let bodyPartsObj = {
 				{name: "fat", size: 9,},
 			],
 			assSize: [
-				{name: "Ass Size", desc:"Change Ass Size", surgeryTime: 120, type: "assSize"},
+				{name: "Ass Size", desc:"Change Ass Size", surgeryTime: 120, type: "assSize", part: "ass"},
 				{name: "extremely tiny", size: 0},
 				{name: "very tiny", size: 1,},
 				{name: "tiny", size: 2,},
@@ -2137,24 +2257,24 @@ let bodyPartsObj = {
 //End of Non-Starting Arrays
 //Text Parser Library Array
 let library = {
-	assSize: ["appearance", "assSize", "name"],
+	assSize: ["appearance", "ass", "assSize", "name"],
 	bodyType:["appearance","bodyType", "name"],
-	breastSize:["appearance", "breastSize", "name"],
-	earShape: ["appearance", "earShape", "name"],
-	eyeColor:["appearance", "eyeColor", "name"],
-	eyeShape:["appearance", "eyeShape", "name"],
+	breastSize:["appearance", "breast", "breastSize", "name"],
+	earShape: ["appearance", "ears", "earShape", "name"],
+	eyeColor:["appearance", "eyes", "eyeColor", "name"],
+	eyeShape:["appearance", "eyes", "eyeShape", "name"],
 	eyeWear: ["appearance", "eyeWear", "name"],
 	eyeWearID: ["appearance", "eyeWear", "id"],
 	gender: ["appearance","gender", "name"],
 	genitalJewelery: ["appearance", "genitalJewelery", "name"],
 	genitalJeweleryID: ["appearance", "genitalJewelery", "id"],
-	hairColor: ["appearance", "hairColor", "name"],
-	hairLength: ["appearance", "hairLength", "name"],
+	hairColor: ["appearance", "hair", "hairColor", "name"],
+	hairLength: ["appearance", "hair", "hairLength", "name"],
 	height:["appearance", "height", "name"],
-	hipSize: ["appearance", "hipSize", "name"],
+	hipSize: ["appearance", "hip", "hipSize", "name"],
 	legWear: ["appearance", "legWear", "name"],
 	legWearID: ["appearance", "legWear", "id"],
-	lipShape: ["appearance", "lipShape", "name"],
+	lipShape: ["appearance", "lips", "lipShape", "name"],
 	lowerBodyClothing: ["appearance", "lowerBodyClothing", "name"],
 	lowerBodyClothingID: ["appearance", "lowerBodyClothing", "id"],
 	name: ["name"],
@@ -2162,7 +2282,7 @@ let library = {
 	neckJeweleryID:["appearance", "neckJewelery", "id"],
 	neckWear:["appearance", "neckWear", "name"],
 	neckWearID:["appearance", "neckWear", "id"],
-	noseShape:["appearance", "noseShape", "name"],
+	noseShape:["appearance", "nose", "noseShape", "name"],
 	pronounPersonal:["appearance","gender", "pronounPersonal"],
 	pronounPossesive:["appearance","gender", "pronounPossesive"],
 	pronounPlural:["appearance","gender", "pronounPlural"],
@@ -2171,11 +2291,11 @@ let library = {
 	shirtID:["appearance", "upperBody", "id"],
 	shoes: ["appearance", "feetWear", "name"],
 	shoesID: ["appearance", "feetWear", "id"],
-	shoulderWidth:["appearance", "shoulderWidth", "name"],
-	thighSize: ["appearance", "thighSize", "name"],
+	shoulderWidth:["appearance", "shoulder", "shoulderWidth", "name"],
+	thighSize: ["appearance", "thigh", "thighSize", "name"],
 	underwear:["appearance", "underwear", "name"],
 	underwearID:["appearance", "underwear", "id"],
-	waistSize:["appearance", "waistSize", "name"],
+	waistSize:["appearance", "waist", "waistSize", "name"],
 }
 
 let text = {
