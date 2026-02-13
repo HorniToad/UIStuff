@@ -2,8 +2,18 @@ let gameState;
 //gameStateHandler-- Start of the Game State Handler
 function gameStateHandler() {
 	tickStateCounter();
-	trainingHandler();
-	modificationHandler();
+	let buildingSlots = gameState.buildings.buildingSlots;
+	for(let i = 0; i < buildingSlots.length; i++) {
+		if(buildingSlots[i].trainable === true) {
+			trainingHandler(buildingSlots[i]);
+		}
+		else if(buildingSlots[i].type === "Modification" && buildingSlots[i].subType === false) {
+			modificationHandler(buildingSlots[i]);
+		}
+		else if(buildingSlots[i].type === "Modification" && buildingSlots[i].subType === "Tattoo") {
+			tattooHandler();
+		}
+	}
 	if(gameState.currentScene.current) {
 		sceneCheck = gameState.currentScene.current
 		if(sceneCheck.id === "scenePersonnelInformation") {
@@ -112,38 +122,32 @@ function dateUpdater() {
 }
 
 //TrainingHandler Function Start
-function trainingHandler() {
-	let buildingSlots = gameState.buildings.buildingSlots;
-	let selectedBuildings = $.grep(buildingSlots, function(n) {
-		return n.trainable === true
-	})
+function trainingHandler(x) {
+	let selectedBuilding = x
 
-	for(let i = 0; i < selectedBuildings.length; i++) {
-		for(let c = 0; c < selectedBuildings[i].occupant.length; c++) {
-			if(selectedBuildings[i].occupant[c] != false) {
-				console.log(selectedBuildings[i])
-				if(!selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat]) {
-					selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat] = structuredClone(skills[selectedBuildings[i].stat])
-					console.log(skills[selectedBuildings[i].stat])
-					console.log(selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat])
-					let statFocus = selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat]
-					statFocus.int += selectedBuildings[i].statInt;
+		for(let c = 0; c < selectedBuilding.occupant.length; c++) {
+			if(selectedBuilding.occupant[c] != false) {
+				if(!selectedBuilding.occupant[c].skills[selectedBuilding.stat]) {
+					selectedBuilding.occupant[c].skills[selectedBuilding.stat] = structuredClone(skills[selectedBuilding.stat])
+					console.log(skills[selectedBuilding.stat])
+					console.log(selectedBuilding.occupant[c].skills[selectedBuilding.stat])
+					let statFocus = selectedBuilding.occupant[c].skills[selectedBuilding.stat]
+					statFocus.int += selectedBuilding.statInt;
 				}
 				else {
-					let statFocus = selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat]
-					statFocus.int += selectedBuildings[i].statInt;
-					console.log("Selected Building Stat Int: " + selectedBuildings[i].statInt + " StatFocus: " + statFocus.int)
+					let statFocus = selectedBuilding.occupant[c].skills[selectedBuilding.stat]
+					statFocus.int += selectedBuilding.statInt;
+					console.log("Selected Building Stat Int: " + selectedBuilding.statInt + " StatFocus: " + statFocus.int)
 					if(statFocus.int > 100) {
 						statFocus.int = 100;
-						selectedBuildings[i].occupant[c] = false;
+						selectedBuilding.occupant[c] = false;
 					}
 				}
-				if(selectedBuildings[i].occupant[c]) {
-					console.log(selectedBuildings[i].occupant[c].name + " skill in " + selectedBuildings[i].stat + " is " + selectedBuildings[i].occupant[c].skills[selectedBuildings[i].stat].int)
+				if(selectedBuilding.occupant[c]) {
+					console.log(selectedBuilding.occupant[c].name + " skill in " + selectedBuilding.stat + " is " + selectedBuilding.occupant[c].skills[selectedBuilding.stat].int)
 				}
 			}
 		}
-	}
 }
 //TrainingHanlder Function End
 
@@ -206,7 +210,6 @@ function buildingModificationSceneUpdater() {
 
 	if(gameState.buildingSceneFocus.occupant[0]) {
 		let progress = progressCheck(gameState.buildingSceneFocus.progress, gameState.buildingSceneFocus.selectedIndivdualPart[0].surgeryTime)
-		console.log(gameState.buildingSceneFocus.progress)
 		progressBar.style.width = progress + "%"
 		progressText.innerText = "Current Surgery Progress: " + progress + "%"
 
@@ -221,36 +224,42 @@ function buildingModificationSceneUpdater() {
 }
 //End of the buildingModifcaitonSceneUpdater
 //Start of modificationHandler
-function modificationHandler() {
-	let buildingSlots = gameState.buildings.buildingSlots;
-	let selectedBuildings = $.grep(buildingSlots, function(n) {
-		return n.type === "Modification"
-	})
-
-	for(let i = 0; i < selectedBuildings.length; i++) {
-		if(selectedBuildings[i].occupant[0] && selectedBuildings[i].occupant[0] != false) {
-			if(selectedBuildings[i].progress === false) {
-				selectedBuildings[i].progress = 0;
+function modificationHandler(x) {
+	let selectedBuilding = x
+		if(selectedBuilding.occupant[0] && selectedBuilding.occupant[0] != false) {
+			if(selectedBuilding.progress === false) {
+				selectedBuilding.progress = 0;
 			}
-			if(selectedBuildings[i].progress >= selectedBuildings[i].selectedIndivdualPart[0].surgeryTime) {
-				let bodyPart = selectedBuildings[i].selectedIndivdualPart[0].part
-				let bodyAttr = selectedBuildings[i].selectedIndivdualPart[0].type
-				for(let key in selectedBuildings[i].occupant[0].appearance[bodyPart][bodyAttr]) {
-					if(selectedBuildings[i].bodyPartSelected[key] != undefined) {
-						selectedBuildings[i].occupant[0].appearance[bodyPart][bodyAttr][key] = selectedBuildings[i].bodyPartSelected[key]
+			if(selectedBuilding.progress >= selectedBuilding.selectedIndivdualPart[0].surgeryTime) {
+				let bodyPart = selectedBuilding.selectedIndivdualPart[0].part
+				let bodyAttr = selectedBuilding.selectedIndivdualPart[0].type
+				for(let key in selectedBuilding.occupant[0].appearance[bodyPart][bodyAttr]) {
+					if(selectedBuilding.bodyPartSelected[key] != undefined) {
+						selectedBuilding.occupant[0].appearance[bodyPart][bodyAttr][key] = selectedBuilding.bodyPartSelected[key]
 					}
 				}
-				selectedBuildings[i].occupant[0].changeFlag = true;
-				selectedBuildings[i].occupant[0] = false;
-				selectedBuildings[i].progress = 0;
+				selectedBuilding.occupant[0].changeFlag = true;
+				selectedBuilding.occupant[0] = false;
+				selectedBuilding.progress = 0;
 			}
-			let progress = selectedBuildings[i].progress;
+			let progress = selectedBuilding.progress;
 			progress = mathFixer(1, progress)
-			selectedBuildings[i].progress = progress
-		}
+			console.log(progress)
+			selectedBuilding.progress = progress
 	}
 }
 //End of modificationHandler
+// Start of Tattoo Scene Updater
+function tattooSceneUpdater() {
+
+}
+//End of Tattoo Scene Updater
+// Start of Tattoo Handler
+function tattooHandler() {
+
+}
+
+//End of Tattoo Handler
 //gameStateHandler-- End of the Game State Handler
 
 //Start-Up--Start of the gameStartUpFunction and Child Setup Functions
@@ -715,39 +724,40 @@ function personnelGenerator() {
 	for(let i = 0; i < bodyParts.length; i++) {
 		for(let key in bodyParts[i]) {
 			if (bodyParts[i].hasOwnProperty(key)) {
-				console.log(key)
+				if(!generatedCharacter.appearance[key]) {
+					generatedCharacter.appearance[key] = {};
+				}
 				value = bodyParts[i][key];
-				console.log(value)
+				let tattooTemp = {
+					text: false, color: false, image: false, desc: "none",
+				}
+				let tattooObj = {tattoo: tattooTemp}
+				Object.assign(generatedCharacter.appearance[key], tattooObj)
 				for(let key2 in value) {
-					console.log(key2)
-					let rand = Math.floor(Math.random() * (selectedBodyType.max - selectedBodyType.min + 1)+ selectedBodyType.min)
-					console.log(rand)
+					let rand = Math.floor(Math.random() * value[key2].length)
 					let choice = value[key2][rand]
-					console.log(choice)
-					generatedCharacter.appearance[key] = {[key2]:choice}
+					let newObj = {[key2]:choice}
+					Object.assign(generatedCharacter.appearance[key], newObj)
 				}
 			}
 		}
 	}
 	for(let i = 0; i < bodyPartsAlt.length; i++) {
-		console.log(bodyPartsAlt[i])
 		for(let key in bodyPartsAlt[i]) {
-			console.log(key)
 			if (bodyPartsAlt[i].hasOwnProperty(key)) {
-				console.log(key)
+				if(!generatedCharacter.appearance[key]) {
+					generatedCharacter.appearance[key] = {};
+				}
 				value = bodyPartsAlt[i][key];
-				console.log(value)
+				let tattooTemp = {
+					text: false, color: false, image: false, desc: "none",
+				}
+				let tattooObj = {tattoo: tattooTemp}
+				Object.assign(generatedCharacter.appearance[key], tattooObj)
 				for(let key2 in value) {
-					console.log(key2)
 					let rand = Math.floor(Math.random() * value[key2].length)
-					console.log(rand)
-					console.log(value[key2])
 					let choice = value[key2][rand]
-					console.log(choice)
 					let newObj = {[key2]:choice}
-					if(!generatedCharacter.appearance[key]) {
-						generatedCharacter.appearance[key] = {};
-					}
 					Object.assign(generatedCharacter.appearance[key], newObj)
 				}
 			}
@@ -1315,42 +1325,166 @@ function modificationSceneHandler(x) {
 //Start of the Tattoo Scene Handler
 function tattooSceneHandler(x) {
 	let building = x;
+	building.potentialOccupant = gameState.personnel.patients[0];
 	let panel = document.getElementById("buildingTattooSceneBodySectionFocusPanel");
+	let charPanel = document.getElementById("buildingTattooSceneCharacterSelectionPanel")
+	let tattooImage = document.getElementById("buildingTattooSceneBodySectionInputTattooImage");
+	let tattooColor = document.getElementById("buildingTattooSceneBodySectionInputTattooColor");
+	let tattooText = document.getElementById("buildingTattooSceneBodySectionInputTattooText")
+	let finalText = document.getElementById("buildingTattooSceneBodySectionTattooFinalText")
 	btnSetup();
+	inputSetup();
+	tattooSceneBodyPartSelectorSetup();
+	textSetup();
+	characterTattooSelect();
 	function btnSetup() {
+		$("#buildingTattooSceneBodySectionFocusBtnHead").off();
 		$("#buildingTattooSceneBodySectionFocusBtnHead").on("click", function() {
 			tattooSceneBodyPartSelectorSetup("head");
 		})
-
+		$("#buildingTattooSceneBodySectionFocusBtnUpperBody").off();
 		$("#buildingTattooSceneBodySectionFocusBtnUpperBody").on("click", function() {
 			tattooSceneBodyPartSelectorSetup("upperbody")
 		})
-
+		$("#buildingTattooSceneBodySectionFocusBtnLowerBody").off();
 		$("#buildingTattooSceneBodySectionFocusBtnLowerBody").on("click", function() {
 			tattooSceneBodyPartSelectorSetup("lowerbody")
 		})
+		let tattooBtn = document.getElementById("buildingTattooSceneTattooBtn");
+		let tattooBtnText = tattooBtn.querySelector(".gridBoxCenter")
+		let tattooBtnBackground = tattooBtn.querySelector(".borderBoxFullREdgeHidden")
+		$("#buildingTattooSceneTattooBtn").off();
+		if(building.occupant[0] == false || !building.occupant[0]) {
+			if(building.potentialOccupant == false) {
+				tattooBtnText.innerText = "No Patient Selected";
+				tattooBtnBackground.style.background = "yellow"
+			}
+			else {
+				tattooBtnText.innerText = "Tattoo Patient";
+				tattooBtnBackground.style.background = "green"
+			}
+			$("#buildingTattooSceneTattooBtn").on("click", function() {
+				if(building.potentialOccupant != false) {
+					tattooBtnBackground.style.background = "red"
+					tattooBtnText.innerText = "Tattoo Parlor Occupied";
+					building.occupant[0] = building.potentialOccupant
+					building.potentialOccupant = false;
+					building.occupant[0].changeFlag = true;
+					characterTattooSelect();
+					tattooSceneBodyPartSelectorSetup();
+					tattooHandler();
+					textSetup();
+					console.log(building.occupant[0])
+				}
+			})
+		}
+	}
+
+	function textSetup() {
+		let text;
+		let tattooColorText;
+		if(building.potentialOccupant != false) {
+			if(tattooColor.value != "") {
+				tattooColorText = " has a " + tattooColor.value + " "
+			}
+			else{
+				tattooColorText = " has a "
+			}
+
+			let tattooImageText
+			if(tattooImage.value != "") {
+				tattooImageText = tattooImage.value + " tattoo on "
+			}
+			else{
+				tattooImageText = " tattoo on "
+			}
+
+			let tattooTextText
+			if(tattooText.value != "") {
+				tattooTextText = " with the text " + tattooText.value
+			}
+			else {
+				tattooTextText = "."
+			}
+
+			text = capitalizeFunc(building.potentialOccupant.appearance.gender.pronounPersonal) + tattooColorText + tattooImageText + building.potentialOccupant.appearance.gender.pronounPlural2 + " " + building.selectedIndivdualPart[0].part + tattooTextText;
+		}
+		else if(building.occupant[0] != false && building.occupant[0]){
+			text = "Parlor Occupied by " + building.occupant[0].name
+		}
+		else {
+			text = ""
+		}
+		finalText.innerText = text;
 	}
 
 	function inputSetup() {
-
+		tattooColor.addEventListener("input", function() {
+			textSetup();
+		})
+		tattooText.addEventListener("input", function() {
+			textSetup();
+		})
+		tattooImage.addEventListener("input", function() {
+			textSetup();
+		})
 	}
 
+	function tattooHandler() {
+		let desc;
+		if(tattooColor.value != "" && tattooImage.value != "" && tattooText.value != "") {
+			desc = "tattooed with a " + tattooColor.value + " " + tattooImage.value + " with the text " + tattooText.value + ","
+		}
+
+		else if(tattooColor.value != "" && tattooImage.value != "" && tattooText.value == "") {
+			desc = "tattooed with a " + tattooColor.value + " " + tattooImage.value + ","
+		}
+
+		else if(tattooColor.value != "" && tattooImage.value == "" && tattooText.value != "") {
+			desc = "tattooed with " + tattooColor.value +  " text spelling " + tattooText.value + ","
+		}
+
+		else if(tattooColor.value != "" && tattooImage.value == "" && tattooText.value == "") {
+			desc = "tattooed with a" + tattooColor.value +  " mark"
+		}
+
+		else if(tattooColor.value == "" && tattooImage.value != "" && tattooText.value != "") {
+			desc = "tattooed with a " + tattooImage.value + " with the text " + tattooText.value + ","
+		}
+
+		else if(tattooColor.value == "" && tattooImage.value != "" && tattooText.value == "") {
+			desc = "tattooed with a " + tattooImage.value + ","
+		}
+
+		else if(tattooColor.value == "" && tattooImage.value == "" && tattooText.value != "") {
+			desc = "tattooed with the text " + tattooText.value + ","
+		}
+
+		else {
+			desc = "tattooed with indecipherable markings,"
+		}
+		let tattooObj = {image: tattooText.value, color: tattooColor.value, text: tattooText.value, desc: desc}
+		building.tattooTemplate = tattooObj
+		console.log(building)
+	}
 
 	function tattooSceneBodyPartSelectorSetup(x) {
-		building.bodyPartFocus = x;
-		let focusBody = bodyPartsObj[building.bodyPartFocus];
-		if(!focusBody) {
-			building.bodyPartFocus = "head"
-			focusBody = bodyPartsObj[building.bodyPartFocus]
-		}
-		clearBox(panel)
-		for(let key in focusBody) {
-			let partFocus = focusBody[key]
-			console.log(focusBody)
-			if(partFocus) {
-				for(let key in partFocus) {
-					console.log(partFocus)
-					console.log(partFocus[key])
+		clearBox(panel);
+		if(building.occupant[0] == false || !building.occupant[0]) {
+			if(x) {
+				building.bodyPartFocus = x;
+			}
+			let focusBody = bodyPartsObj[building.bodyPartFocus];
+			if(!focusBody) {
+				building.bodyPartFocus = "head"
+				focusBody = bodyPartsObj[building.bodyPartFocus]
+			}
+			for(let key in focusBody) {
+				let partFocus = focusBody[key]
+				if(!building.selectedIndivdualPart) {
+					building.selectedIndivdualPart = partFocus[Object.keys(partFocus)[0]]
+				}
+				if(partFocus) {
 					let tattooFocusPanelBlockBox = document.createElement("div");
 					let tattooFocusPanelBackground = document.createElement("div");
 					let tattooFocusPanelGridBoxFull = document.createElement("div");
@@ -1366,20 +1500,99 @@ function tattooSceneHandler(x) {
 					tattooFocusPanelBackground.append(tattooFocusPanelGridBoxFull);
 					tattooFocusPanelGridBoxFull.append(tattooFocusPanelGridBoxCenter);
 
-					tattooFocusPanelGridBoxCenter.innerText = capitalizeFunc(partFocus[key][0].part)
+					tattooFocusPanelGridBoxCenter.innerText = capitalizeFunc(key)
 
 					tattooFocusPanelBackground.style.background = "mediumslateblue"
 					tattooFocusPanelBlockBox.style.height = "2.5vh"
-
 					let selectionPanel = document.getElementById("modificationSceneSurgeryFocusPanelChangePanel")
 
+					if(building.selectedIndivdualPart[0].part === key) {
+						tattooFocusPanelBackground.style.background = "red"
+					}
 					tattooFocusPanelBlockBox.addEventListener("click", function() {
-						building.selectedIndivdualPart = partFocus[key]
-						surgerySelectionPanelSetup(partFocus[key])
+						building.selectedIndivdualPart = partFocus[Object.keys(partFocus)[0]]
+						tattooSceneBodyPartSelectorSetup();
+						textSetup();
 					})
 				}
 			}
 		}
+		else {
+			clearBox(panel)
+		}
+	}
+
+	function characterTattooSelect() {
+		clearBox(charPanel)
+		for(let i = 0; i < gameState.personnel.patients.length; i++) {
+			let charContainer = document.createElement("div");
+			let charBorderBox = document.createElement("div");
+			let charGridBoxFull = document.createElement("div");
+			let charBox99 = document.createElement("div");
+			let charBoxDualRow = document.createElement("div");
+			let charNameContainer = document.createElement("div");
+			let charNameCenter = document.createElement("div");
+			let charNameTextBox = document.createElement("div");
+			let charDescContainer = document.createElement("div");
+			let charDescCenter = document.createElement("div");
+			let charDescTextBox = document.createElement("div");
+
+			charContainer.setAttribute("class", "gridBox");
+			charBorderBox.setAttribute("class", "borderBoxFullREdgeHidden");
+			charGridBoxFull.setAttribute("class", "gridBoxFull");
+			charBox99.setAttribute("class", "gridBoxCenter99");
+			charBoxDualRow.setAttribute("class", "gridBoxDualRowGap");
+			charNameContainer.setAttribute("class", "gridBoxFull");
+			charNameCenter.setAttribute("class", "gridBoxCenter");
+			charNameTextBox.setAttribute("class", "textBoxCenter");
+			charDescContainer.setAttribute("class", "gridBoxFull");
+			charDescCenter.setAttribute("class", "gridBoxCenter");
+			charDescTextBox.setAttribute("class", "textBoxCenter");
+
+			charPanel.append(charContainer);
+			charContainer.append(charBorderBox);
+			charBorderBox.append(charGridBoxFull);
+			charGridBoxFull.append(charBox99);
+			charBox99.append(charBoxDualRow)
+			charBoxDualRow.append(charNameContainer);
+			charNameContainer.append(charNameCenter);
+			charNameCenter.append(charNameTextBox);
+			charBoxDualRow.append(charDescContainer);
+			charDescContainer.append(charDescCenter);
+			charDescCenter.append(charDescTextBox);
+
+			charContainer.style.height = "7vh";
+			charBorderBox.style.background = "darkslateblue";
+
+			charNameTextBox.innerText = gameState.personnel.patients[i].name
+			charDescTextBox.innerText = gameState.personnel.patients[i].appearance.gender.name
+
+			if(building.occupant[0] === gameState.personnel.patients[i]) {
+				charBorderBox.style.background = "red"
+			}
+
+			if(building.potentialOccupant === gameState.personnel.patients[i]) {
+				charBorderBox.style.background = "yellow"
+			}
+
+			charContainer.addEventListener("click", function() {
+				if(building.occupant[0] != gameState.personnel.patients[i] && !building.occupant[0]) {
+					building.potentialOccupant = gameState.personnel.patients[i]
+					for(let c = 0; c < charPanelSlots.length; c++) {
+						charPanelSlots[c].style.background = "darkslateblue"
+					}
+					charBorderBox.style.background = "yellow"
+				}
+				else if(building.occupant[0] === gameState.personnel.patients[i]){
+					building.occupant[0] =  false;
+					tattooSceneBodyPartSelectorSetup();
+					characterTattooSelect();
+				}
+				btnSetup();
+				textSetup();
+			})
+		}
+		let charPanelSlots = charPanel.querySelectorAll(".borderBoxFullREdgeHidden")
 	}
 }
 //End of the Tattoo Scene Handler
@@ -1820,7 +2033,7 @@ let bodyParts =[
 		},
 	},
 lowerBody={
-	hip: {
+	hips: {
 		hipSize:[
 			{name: "extremely tiny", size: 0, tattoo: false },
 			{name: "very tiny", size: 1, tattoo: false},
@@ -2213,7 +2426,7 @@ let bodyPartsObj = {
 	lowerbody:{
 		hips: {
 			hipSize:[
-				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 150, type: "hipSize", part: "hip"},
+				{name: "Hip Size", desc:"Change Hip Size", surgeryTime: 150, type: "hipSize", part: "hips"},
 				{name: "extremely tiny", size: 0},
 				{name: "very tiny", size: 1},
 				{name: "tiny", size: 2},
@@ -2276,7 +2489,8 @@ let library = {
 	hairColor: ["appearance", "hair", "hairColor", "name"],
 	hairLength: ["appearance", "hair", "hairLength", "name"],
 	height:["appearance", "height", "name"],
-	hipSize: ["appearance", "hip", "hipSize", "name"],
+	hipSize: ["appearance", "hips", "hipSize", "name"],
+	hipTattoo: ["appearance", "hips", "tattoo", "desc"],
 	legWear: ["appearance", "legWear", "name"],
 	legWearID: ["appearance", "legWear", "id"],
 	lipShape: ["appearance", "lips", "lipShape", "name"],
@@ -2298,11 +2512,12 @@ let library = {
 	shoesID: ["appearance", "feetWear", "id"],
 	shoulderWidth:["appearance", "shoulder", "shoulderWidth", "name"],
 	thighSize: ["appearance", "thigh", "thighSize", "name"],
+	thighTattoo: ["appearance", "thigh", "tattoo", "desc"],
 	underwear:["appearance", "underwear", "name"],
 	underwearID:["appearance", "underwear", "id"],
 	waistSize:["appearance", "waist", "waistSize", "name"],
 }
 
 let text = {
-	personnelInformationSceneDesc:{desc: "$name is a $height /$bodyType=medium^medium_sized /$bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair, a $noseShape nose, $lipShape lips, $earShape ears and $eyeColor eyes /$eyeWear=none^*.  /$eyeWearID=glasses^with_a_pair_of_glasses*. /$eyeWearID=eyePatch^with_an_eye_patch*.  /$neckJeweleryID=!none-$neckWearID=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /$neckJeweleryID=!none-$neckWearID=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /$neckWearID=!none-$neckJeweleryID=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /$neckWearID=none-$neckJeweleryID=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /$gender=man^pecs, /$gender=woman^breasts, and $waistSize waist. +$pronounPlural2 hips are $hipSize with $thighSize thighs and a $assSize ass. +$pronounPersonal is wearing /$lowerBodyClothingID=skirt^a_skirt /$lowerBodyClothingID=!skirt^$lowerBodyClothing /$legWearID=!barelegs^with_$legWear_and /$legWearID=barelegs^with /$underwearID=!thong-$underwearID=!speedo^$underwear /$underwearID=!panties-$underwearID=!boxers^a_$underwear underneath /$genitalJeweleryID=chastityCage-$gender=man^with_a_chastity_cage_tight_around_$pronounPlural2_cock /$genitalJeweleryID=chastityCage-$gender=woman^with_a_chastity_cage_tight_around_$pronounPlural2_pussy and a pair of $shoes ."  }
+	personnelInformationSceneDesc:{desc: "$name is a $height /$bodyType=medium^medium_sized /$bodyType=!medium^$bodyType $gender with $hairLength $hairColor hair, a $noseShape nose, $lipShape lips, $earShape ears and $eyeColor eyes /$eyeWear=none^*.  /$eyeWearID=glasses^with_a_pair_of_glasses*. /$eyeWearID=eyePatch^with_an_eye_patch*.  /$neckJeweleryID=!none-$neckWearID=!none^+$pronounPersonal_has_a_$neckJewelery_and_a_$neckWear_on_$pronounPlural2_neck_and /$neckJeweleryID=!none-$neckWearID=none^+$pronounPersonal_has_a_$neckJewelery_on_$pronounPlural2_neck_and /$neckWearID=!none-$neckJeweleryID=none^+$pronounPersonal_has_a_$neckWear_on_$pronounPlural2_neck_and /$neckWearID=none-$neckJeweleryID=none^+$pronounPlural2_neck_is_bare_and_$pronounPersonal is wearing a $shirt covering $pronounPlural2 $shoulderWidth shoulders, $breastSize /$gender=man^pecs, /$gender=woman^breasts, and $waistSize waist. /$hipTattoo=!none^+$pronounPlural2_hips,_$hipTattoo_* /$hipTattoo=none^+$pronounPlural2_hips are $hipSize with /$thighTattoo=!none^$thighSize_thighs,_$thighTattoo_* /$thighTattoo=none^$thighSize_thighs and a $assSize ass. +$pronounPersonal is wearing /$lowerBodyClothingID=skirt^a_skirt /$lowerBodyClothingID=!skirt^$lowerBodyClothing /$legWearID=!barelegs^with_$legWear_and /$legWearID=barelegs^with /$underwearID=!thong-$underwearID=!speedo^$underwear /$underwearID=!panties-$underwearID=!boxers^a_$underwear underneath /$genitalJeweleryID=chastityCage-$gender=man^with_a_chastity_cage_tight_around_$pronounPlural2_cock /$genitalJeweleryID=chastityCage-$gender=woman^with_a_chastity_cage_tight_around_$pronounPlural2_pussy and a pair of $shoes ."  }
 }
