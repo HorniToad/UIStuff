@@ -11,7 +11,7 @@ function gameStateHandler() {
 			modificationHandler(buildingSlots[i]);
 		}
 		else if(buildingSlots[i].type === "Modification" && buildingSlots[i].subType === "Tattoo") {
-			tattooHandler();
+			tattooHandler(buildingSlots[i]);
 		}
 	}
 	if(gameState.currentScene.current) {
@@ -25,6 +25,9 @@ function gameStateHandler() {
 		}
 		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Modification" && gameState.buildingSceneFocus.subType === false) {
 			buildingModificationSceneUpdater();
+		}
+		if(sceneCheck.id === "buildingSceneBox" && gameState.buildingSceneFocus.type === "Modification" && gameState.buildingSceneFocus.subType === "Tattoo") {
+			tattooSceneUpdater();
 		}
 
 	}
@@ -125,29 +128,29 @@ function dateUpdater() {
 function trainingHandler(x) {
 	let selectedBuilding = x
 
-		for(let c = 0; c < selectedBuilding.occupant.length; c++) {
-			if(selectedBuilding.occupant[c] != false) {
-				if(!selectedBuilding.occupant[c].skills[selectedBuilding.stat]) {
-					selectedBuilding.occupant[c].skills[selectedBuilding.stat] = structuredClone(skills[selectedBuilding.stat])
-					console.log(skills[selectedBuilding.stat])
-					console.log(selectedBuilding.occupant[c].skills[selectedBuilding.stat])
-					let statFocus = selectedBuilding.occupant[c].skills[selectedBuilding.stat]
-					statFocus.int += selectedBuilding.statInt;
-				}
-				else {
-					let statFocus = selectedBuilding.occupant[c].skills[selectedBuilding.stat]
-					statFocus.int += selectedBuilding.statInt;
-					console.log("Selected Building Stat Int: " + selectedBuilding.statInt + " StatFocus: " + statFocus.int)
-					if(statFocus.int > 100) {
-						statFocus.int = 100;
-						selectedBuilding.occupant[c] = false;
-					}
-				}
-				if(selectedBuilding.occupant[c]) {
-					console.log(selectedBuilding.occupant[c].name + " skill in " + selectedBuilding.stat + " is " + selectedBuilding.occupant[c].skills[selectedBuilding.stat].int)
+	for(let c = 0; c < selectedBuilding.occupant.length; c++) {
+		if(selectedBuilding.occupant[c] != false) {
+			if(!selectedBuilding.occupant[c].skills[selectedBuilding.stat]) {
+				selectedBuilding.occupant[c].skills[selectedBuilding.stat] = structuredClone(skills[selectedBuilding.stat])
+				console.log(skills[selectedBuilding.stat])
+				console.log(selectedBuilding.occupant[c].skills[selectedBuilding.stat])
+				let statFocus = selectedBuilding.occupant[c].skills[selectedBuilding.stat]
+				statFocus.int += selectedBuilding.statInt;
+			}
+			else {
+				let statFocus = selectedBuilding.occupant[c].skills[selectedBuilding.stat]
+				statFocus.int += selectedBuilding.statInt;
+				console.log("Selected Building Stat Int: " + selectedBuilding.statInt + " StatFocus: " + statFocus.int)
+				if(statFocus.int > 100) {
+					statFocus.int = 100;
+					selectedBuilding.occupant[c] = false;
 				}
 			}
+			if(selectedBuilding.occupant[c]) {
+				console.log(selectedBuilding.occupant[c].name + " skill in " + selectedBuilding.stat + " is " + selectedBuilding.occupant[c].skills[selectedBuilding.stat].int)
+			}
 		}
+	}
 }
 //TrainingHanlder Function End
 
@@ -226,39 +229,70 @@ function buildingModificationSceneUpdater() {
 //Start of modificationHandler
 function modificationHandler(x) {
 	let selectedBuilding = x
-		if(selectedBuilding.occupant[0] && selectedBuilding.occupant[0] != false) {
-			if(selectedBuilding.progress === false) {
-				selectedBuilding.progress = 0;
-			}
-			if(selectedBuilding.progress >= selectedBuilding.selectedIndivdualPart[0].surgeryTime) {
-				let bodyPart = selectedBuilding.selectedIndivdualPart[0].part
-				let bodyAttr = selectedBuilding.selectedIndivdualPart[0].type
-				for(let key in selectedBuilding.occupant[0].appearance[bodyPart][bodyAttr]) {
-					if(selectedBuilding.bodyPartSelected[key] != undefined) {
-						selectedBuilding.occupant[0].appearance[bodyPart][bodyAttr][key] = selectedBuilding.bodyPartSelected[key]
-					}
+	if(selectedBuilding.occupant[0] && selectedBuilding.occupant[0] != false) {
+		if(selectedBuilding.progress === false) {
+			selectedBuilding.progress = 0;
+		}
+		if(selectedBuilding.progress >= selectedBuilding.selectedIndivdualPart[0].surgeryTime) {
+			let bodyPart = selectedBuilding.selectedIndivdualPart[0].part
+			let bodyAttr = selectedBuilding.selectedIndivdualPart[0].type
+			for(let key in selectedBuilding.occupant[0].appearance[bodyPart][bodyAttr]) {
+				if(selectedBuilding.bodyPartSelected[key] != undefined) {
+					selectedBuilding.occupant[0].appearance[bodyPart][bodyAttr][key] = selectedBuilding.bodyPartSelected[key]
 				}
-				selectedBuilding.occupant[0].changeFlag = true;
-				selectedBuilding.occupant[0] = false;
-				selectedBuilding.progress = 0;
 			}
-			let progress = selectedBuilding.progress;
-			progress = mathFixer(1, progress)
-			console.log(progress)
-			selectedBuilding.progress = progress
+			selectedBuilding.occupant[0].changeFlag = true;
+			selectedBuilding.occupant[0] = false;
+			selectedBuilding.progress = 0;
+		}
+		let progress = selectedBuilding.progress;
+		progress = mathFixer(1, progress)
+		console.log(progress)
+		selectedBuilding.progress = progress
 	}
 }
 //End of modificationHandler
 // Start of Tattoo Scene Updater
 function tattooSceneUpdater() {
+	let progressBar = document.getElementById("buildingTattooSceneProgressBar");
+	let progressText = document.getElementById("buildingTattooSceneProgress");
+
+	if(gameState.buildingSceneFocus.occupant[0]) {
+		let progress = progressCheck(gameState.buildingSceneFocus.progress, 10)
+		progressBar.style.width = progress + "%"
+		progressText.innerText = "Current Tattoo Progress: " + progress + "%"
+
+	}
+	if(!gameState.buildingSceneFocus.occupant[0] && gameState.buildingSceneFocus.potentialOccupant === false || gameState.buildingSceneFocus.occupant[0] === false && gameState.buildingSceneFocus.potentialOccupant === false) {
+		progressBar.style.width = "0%"
+		progressText.innerText = "Current Tattoo Progress: Unoccupied"
+		tattooSceneHandler(gameState.buildingSceneFocus);
+	}
 
 }
 //End of Tattoo Scene Updater
 // Start of Tattoo Handler
-function tattooHandler() {
-
+function tattooHandler(x) {
+	let selectedBuilding = x
+	if(selectedBuilding.occupant[0] && selectedBuilding.occupant[0] != false) {
+		if(selectedBuilding.progress === false) {
+			selectedBuilding.progress = 0;
+		}
+		if(selectedBuilding.progress >= 10) {
+			console.log(selectedBuilding.selectedIndivdualPart[0].part)
+			console.log(selectedBuilding.occupant[0])
+			selectedBuilding.occupant[0].appearance[selectedBuilding.selectedIndivdualPart[0].part].tattoo = structuredClone(selectedBuilding.tattooTemplate);
+			selectedBuilding.occupant[0].changeFlag = true;
+			selectedBuilding.occupant[0] = false;
+			selectedBuilding.progress = 0;
+			return 0;
+		}
+		let progress = selectedBuilding.progress;
+		progress = mathFixer(1, progress)
+		console.log(progress)
+		selectedBuilding.progress = progress
+	}
 }
-
 //End of Tattoo Handler
 //gameStateHandler-- End of the Game State Handler
 
@@ -905,6 +939,23 @@ function personnelInformationHandler(x) {
 	function skillsPanelSetup(x) {
 		let skills = x
 		let panel = document.getElementById("personnelInformationSkillPanel");
+		let panelKink = document.getElementById("personnelInformationKinkPanel")
+
+		$("#personnelInformationSkillBtn").off();
+		$("personnelInformationSkillBtn").on("click", function() {
+			panel.style.display = "grid";
+			panelKink.style.display = "none";
+			$("personnelInformationSkillBtnText").css({"color": "white"})
+			$("personnelInformationKinkBtnText").css({"color": "black"})
+		})
+
+		$("#personnelInformationKinkBtn").off();
+		$("#personnelInformationKinkBtn").on("click", function() {
+			panelKink.style.display = "grid";
+			panel.style.display = "none"
+			$("personnelInformationKinkBtnText").css({"color": "white"})
+			$("personnelInformationSkillBtnText").css({"color": "black"})
+		})
 
 		clearBox(panel)
 
@@ -938,6 +989,10 @@ function personnelInformationHandler(x) {
 			skillDualRow.append(progressBar);
 			progressBar.append(progressBarProgress);
 		}
+	}
+
+	function skillsPanelBtnSetup() {
+
 	}
 }
 
@@ -1401,7 +1456,7 @@ function tattooSceneHandler(x) {
 
 			let tattooTextText
 			if(tattooText.value != "") {
-				tattooTextText = " with the text " + tattooText.value
+				tattooTextText = ' with the text "' + tattooText.value + '"'
 			}
 			else {
 				tattooTextText = "."
@@ -1433,7 +1488,7 @@ function tattooSceneHandler(x) {
 	function tattooHandler() {
 		let desc;
 		if(tattooColor.value != "" && tattooImage.value != "" && tattooText.value != "") {
-			desc = "tattooed with a " + tattooColor.value + " " + tattooImage.value + " with the text " + tattooText.value + ","
+			desc = "tattooed with a " + tattooColor.value + " " + tattooImage.value + ' with the text "' + tattooText.value + '",'
 		}
 
 		else if(tattooColor.value != "" && tattooImage.value != "" && tattooText.value == "") {
@@ -1441,7 +1496,7 @@ function tattooSceneHandler(x) {
 		}
 
 		else if(tattooColor.value != "" && tattooImage.value == "" && tattooText.value != "") {
-			desc = "tattooed with " + tattooColor.value +  " text spelling " + tattooText.value + ","
+			desc = "tattooed with " + tattooColor.value +  ' text spelling "' + tattooText.value + '",'
 		}
 
 		else if(tattooColor.value != "" && tattooImage.value == "" && tattooText.value == "") {
@@ -1449,7 +1504,7 @@ function tattooSceneHandler(x) {
 		}
 
 		else if(tattooColor.value == "" && tattooImage.value != "" && tattooText.value != "") {
-			desc = "tattooed with a " + tattooImage.value + " with the text " + tattooText.value + ","
+			desc = "tattooed with a " + tattooImage.value + ' with the text "' + tattooText.value + '",'
 		}
 
 		else if(tattooColor.value == "" && tattooImage.value != "" && tattooText.value == "") {
@@ -1457,7 +1512,7 @@ function tattooSceneHandler(x) {
 		}
 
 		else if(tattooColor.value == "" && tattooImage.value == "" && tattooText.value != "") {
-			desc = "tattooed with the text " + tattooText.value + ","
+			desc = 'tattooed with the text "' + tattooText.value + '",'
 		}
 
 		else {
@@ -1481,10 +1536,12 @@ function tattooSceneHandler(x) {
 			}
 			for(let key in focusBody) {
 				let partFocus = focusBody[key]
+				console.log(partFocus)
 				if(!building.selectedIndivdualPart) {
 					building.selectedIndivdualPart = partFocus[Object.keys(partFocus)[0]]
 				}
-				if(partFocus) {
+				console.log(Object.values(partFocus)[0].tattooAble)
+				if(partFocus && Object.values(partFocus)[0][0].tattooAble != false) {
 					let tattooFocusPanelBlockBox = document.createElement("div");
 					let tattooFocusPanelBackground = document.createElement("div");
 					let tattooFocusPanelGridBoxFull = document.createElement("div");
@@ -1585,6 +1642,7 @@ function tattooSceneHandler(x) {
 				}
 				else if(building.occupant[0] === gameState.personnel.patients[i]){
 					building.occupant[0] =  false;
+					building.progress = 0;
 					tattooSceneBodyPartSelectorSetup();
 					characterTattooSelect();
 				}
@@ -1878,7 +1936,6 @@ function capacityCheck(x, y) {
 //BuildingArrays
 let buildingTypes = [
 	{ id: "conditioningSlot", type: "Conditioning", name: "Conditioning", cost: 10, build: 5, unlocked: true, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
-{ id: "kinkTrainer", type: "Kink", name: "Kink Trainer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 { id: "patientCapacity", type: "Capacity", name: "Patient Capacity", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 { id: "bodyChanger", type: "Modification", name: "Body Changer", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 { id: "trainingSlot", type: "Training", name: "Training", cost: 10, build: 5, unlocked: false, stats: "resistance/-1", desc: "A basic hypnosis screen that helps to relax those who stare into it" },
@@ -1893,15 +1950,15 @@ let buildings = [
 
 { id: "speechTraining", name: "Speech Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stats: "resistance/-5", capacity: 1, trainable: true, skillTrainer: true, occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
 
+{ id: "puppyTraining", name: "Puppy Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "puppy", statInt: 0.5, capacity: 2, trainable: true, skillTrainer: true, occupant: ["false"], occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+
+{ id: "farmTraining", name: "Farm Training", type: "Training", cost: 350, build: 5, unlocked: true, base: true, stat: "farm", statInt: 0.5, capacity: 2, trainable: true, skillTrainer: true, occupant: ["false"], occupantPrior: false, desc: "A basic hypnosis screen that helps to relax those who stare into it" },
+
 { id: "resistanceRemoval1", name: "Relaxation Center", type: "Conditioning", cost: 350, build: 5, unlocked: true, base: true, stat: "resistance", statInt: -1, capacity: 0, trainable: true, occupantPrior: false, desc: "A small room used for helping less enthusiastic wifes relax and accept their new role. With the aid of speakers sending a constant stream of subliminal messages to whoever occupies it." },
 
 { id: "hypnoUpg2", name: "Hypno Headphones", type: "Conditioning", cost: 1000, build: 10, unlocked: false, base: false, stats: "resistance/-10", capacity: 0, trainable: true, occupantPrior: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
 
 { id: "hypnoUpg3", name: "Hypno Headpiece", type: "Conditioning", cost: 2000, build: 10, unlocked: false, base: false, stats: "resistance/-20", capacity: 0, trainable: true, occupantPrior: false, desc: "A set of headphones that is strapped to the patients b head to ensure constant subliminal messages."},
-
-{ id: "puppyUpg1", name: "Puppy Pound", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, occupantPrior: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "petPlay"},
-
-{ id: "farmUpg1", name: "Farm", type: "Kink", cost: 500, build: 5, unlocked: false, base: true, stats: "none", capacity: 0,trainable: true, effect: 1, occupantPrior: false, desc: "A small room dedicated to training patients into good little puppies.", kinks: "farmPlay"},
 
 { id: "cellUpg1", name: "Cell", type: "Capacity", cost: 250, build: 5, unlocked: true, base: true, stats: "none", capacity: 1,trainable: false, occupantPrior: false, desc: "A small cell used to hold patients during their stay at the Spa." },
 
@@ -2234,7 +2291,9 @@ let skills = {
 	etiquette:{id: "etiquette", name: "Etiquette", int: false},
 	combat:{id: "combat", name: "Combat Skills", int: false},
 	medicine:{id: "medicine", name: "Medical Skills", int: false},
-	social:{id: "social", name: "Social Skills", int: false}
+	social:{id: "social", name: "Social Skills", int: false},
+	farm:{id: "farm", name: "Farm Skills", int: false, kink: true},
+	puppy:{id: "puppy", name: "Puppy Skills", int: false, kink: true},
 }
 
 let clothing = {
@@ -2331,7 +2390,7 @@ let bodyPartsObj = {
 	head:{
 		eyes: {
 			eyeColor:[
-				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 30, type: "eyeColor", part: "eyes" },
+				{name: "Eye Color", desc:"Change Eye Color", surgeryTime: 30, type: "eyeColor", part: "eyes", tattooAble: false },
 				{name: "green"},
 				{name: "blue"},
 				{name: "brown"},
